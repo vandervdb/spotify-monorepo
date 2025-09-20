@@ -6,20 +6,17 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
-rootProject.name = "spotify-monorepo"
-
-// Tes modules
-include(
-//    ":spotify-client",
-//    ":android-app",
-//    ":rn-turbomodule"
-)
-
 pluginManagement {
     repositories {
-        gradlePluginPortal()
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
@@ -28,7 +25,16 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal() // dev local
     }
-
 }
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+rootProject.name = "spotify-monorepo"
+include(":android-lib")
+include(":apps:android-sample")
+include(":packages:core-domain")
+include(":packages:core-dto")
+include(":packages:core-logger")
 
