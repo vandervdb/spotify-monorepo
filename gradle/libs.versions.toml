@@ -2,11 +2,17 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 # ---------- Versions ----------
 [versions]
+android-compileSdk = "36"
+android-minSdk = "24"
+android-targetSdk = "36"
+android-versionCode = "1"
+android-versionName = "1.0"
+
 kotlin = "2.2.20"
 agp = "8.11.2"
 
 # Compose
-compose-compiler = "1.5.15"
+#compose-compiler = "1.5.15"
 compose-bom      = "2025.09.00"
 
 # KotlinX
@@ -15,6 +21,7 @@ serialization = "1.9.0"
 
 # DI
 hilt = "2.57.1"
+hilt-androidx = "1.2.0"
 
 # AndroidX & UI
 androidx-core-ktx = "1.17.0"
@@ -23,6 +30,14 @@ material          = "1.13.0"
 activity-compose  = "1.11.0"
 lifecycle         = "2.9.4"
 navigation        = "2.9.4"
+browser           = "1.8.0"
+datastore         = "1.1.1"
+compose-material3-adaptive = "1.0.0"
+
+# Other libs
+gson  = "2.11.0"
+coil  = "2.7.0"
+ktor  = "2.3.12"
 
 # Test
 junit4        = "4.13.2"
@@ -43,13 +58,15 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 # Hilt
-hilt-android   = { module = "com.google.dagger:hilt-android",   version.ref = "hilt" }
-hilt-compiler  = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-android        = { module = "com.google.dagger:hilt-android",   version.ref = "hilt" }
+hilt-compiler       = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-androidx" }
 
 # AndroidX
-androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
-appcompat         = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-material          = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-core-ktx   = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
+appcompat           = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+material            = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-browser    = { module = "androidx.browser:browser", version.ref = "browser" }
 
 # Compose (via BOM)
 compose-bom                 = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
@@ -60,6 +77,7 @@ compose-material3           = { module = "androidx.compose.material3:material3" 
 compose-material-icons-ext  = { module = "androidx.compose.material:material-icons-extended" }
 compose-runtime             = { module = "androidx.compose.runtime:runtime" }
 compose-runtime-livedata    = { module = "androidx.compose.runtime:runtime-livedata" }
+androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3.adaptive:adaptive-navigation-suite", version.ref = "compose-material3-adaptive" }
 activity-compose            = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 navigation-compose          = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 
@@ -68,16 +86,26 @@ lifecycle-runtime-ktx       = { module = "androidx.lifecycle:lifecycle-runtime-k
 lifecycle-viewmodel-ktx     = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 lifecycle-runtime-compose   = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
+# Other libs
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+gson                  = { module = "com.google.code.gson:gson", version.ref = "gson" }
+coil-compose          = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+
+# Ktor
+ktor-client-core                = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp              = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-logging             = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
 # Tests
 junit4                 = { module = "junit:junit", version.ref = "junit4" }
 androidx-test-ext-junit= { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
 espresso-core          = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
-
-# Mock libs
-mockk    = { module = "io.mockk:mockk", version.ref = "mockk" }
-mockito  = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockk                  = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockito                = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 
 # ---------- Plugins ----------
 [plugins]
@@ -86,5 +114,6 @@ android-library       = { id = "com.android.library",                     versio
 kotlin-android        = { id = "org.jetbrains.kotlin.android",            version.ref = "kotlin" }
 kotlin-compose        = { id = "org.jetbrains.kotlin.plugin.compose",     version.ref = "kotlin" }
 kotlin-serialization  = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-kapt           = { id = "org.jetbrains.kotlin.kapt",               version.ref = "kotlin" }
+kotlin-jvm            = { id = "org.jetbrains.kotlin.jvm",                version.ref = "kotlin" }
+hilt-android          = { id = "dagger.hilt.android.plugin",              version.ref = "hilt" }
 hilt                  = { id = "com.google.dagger.hilt.android",          version.ref = "hilt" }

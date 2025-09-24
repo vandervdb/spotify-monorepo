@@ -1,28 +1,122 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    `maven-publish`
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt)
+    id("kotlin-kapt")
 }
 
-    android {
+android {
     namespace = "org.vander.spotifyclient"
-    compileSdk = 36
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-    minSdk = 24
+        minSdk = libs.versions.android.minSdk.get().toInt()
 
-      testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
-      consumerProguardFiles("consumer-rules.pro")
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+
+        val spotifyClientSecret = gradle.extra["spotifyClientSecret"] as String
+        val spotifyClientId = gradle.extra["spotifyClientId"] as String
+        buildConfigField("String", "CLIENT_SECRET", "\"$spotifyClientSecret\"")
+        buildConfigField("String", "CLIENT_ID", "\"$spotifyClientId\"")
     }
 
     buildTypes {
-       release {
-           isMinifyEnabled = false
-           proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-       }
-    }
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
     }
 
-  dependencies {
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 
-  }
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+}
+
+dependencies {
+    // --- KotlinX
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.serialization.json)
+
+    // --- AndroidX Core
+    implementation(libs.androidx.core.ktx)
+
+    // --- Lifecycle
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.runtime.compose)
+
+    // --- Navigation
+    implementation(libs.navigation.compose)
+
+    // --- Compose (via BOM)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
+
+    // Material 3 + Adaptive
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.ext)
+    implementation(libs.androidx.material3.adaptive.navigation.suite)
+
+    // Activity Compose
+    implementation(libs.activity.compose)
+
+    // --- Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    // si nécessaire :
+    // kapt(libs.androidx.hilt.compiler)
+
+    // --- Spotify SDK (local AARs)
+    implementation(files("libs/spotify-app-remote-release-0.8.0.aar"))
+    implementation(files("libs/spotify-auth-release-2.1.0.aar"))
+
+    // --- AndroidX Utils
+    implementation(libs.androidx.browser)
+
+    // --- Ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.serialization.kotlinx.json)
+
+    // --- DataStore
+    implementation(libs.datastore.preferences)
+
+    // --- Gson
+    implementation(libs.gson)
+
+    // --- Coil (images)
+    implementation(libs.coil.compose)
+
+    // --- Tests
+    testImplementation(libs.junit4)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    debugImplementation(libs.compose.ui.test.manifest)
+}
