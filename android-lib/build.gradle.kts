@@ -53,6 +53,11 @@ android {
 }
 
 dependencies {
+
+    // --- Projects
+    implementation(project(":packages:core-domain"))
+    implementation(project(":packages:core-dto"))
+
     // --- KotlinX
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
@@ -119,4 +124,5 @@ dependencies {
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)
+
 }

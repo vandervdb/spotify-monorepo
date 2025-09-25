@@ -1,4 +1,4 @@
-package org.vander.spotifyclient.data.remote.dto
+package com.vander.core.dto
 
 import kotlinx.serialization.Serializable
 
