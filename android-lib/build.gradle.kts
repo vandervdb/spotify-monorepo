@@ -83,7 +83,6 @@ dependencies {
     // Material 3 + Adaptive
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.ext)
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
 
     // Activity Compose
     implementation(libs.activity.compose)

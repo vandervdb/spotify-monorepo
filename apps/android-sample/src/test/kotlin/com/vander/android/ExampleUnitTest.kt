@@ -1,4 +1,4 @@
-package com.vander.android_sample
+package com.vander.android
 
 import org.junit.Test
 

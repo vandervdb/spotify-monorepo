@@ -8,7 +8,6 @@ import androidx.activity.result.ActivityResultLauncher
 import com.vander.core.domain.state.SessionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import org.vander.spotifyclient.domain.state.SessionState
 
 interface SpotifySessionManager {
     val sessionState: StateFlow<SessionState>
