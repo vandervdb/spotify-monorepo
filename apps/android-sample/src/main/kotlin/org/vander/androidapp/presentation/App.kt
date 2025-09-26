@@ -1,4 +1,4 @@
-package com.vander.android.sample
+package org.vander.androidapp.presentation
 
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult

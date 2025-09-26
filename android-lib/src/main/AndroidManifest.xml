@@ -1,2 +1,14 @@
-<manifest package="org.vander.spotifyclient">
+<manifest package="org.vander.spotifyclient"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+    <activity
+            android:name=".SpotifyAuthorizationActivity">
+        <intent-filter>
+
+            <data
+                    android:host="\${redirectHostName}"
+                    android:scheme="\${redirectSchemeName}"/>
+        </intent-filter>
+    </activity>
+</application>
 </manifest>

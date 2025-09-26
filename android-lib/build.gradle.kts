@@ -23,6 +23,11 @@ android {
         val spotifyClientId = gradle.extra["spotifyClientId"] as String
         buildConfigField("String", "CLIENT_SECRET", "\"$spotifyClientSecret\"")
         buildConfigField("String", "CLIENT_ID", "\"$spotifyClientId\"")
+
+        manifestPlaceholders["redirectSchemeName"] = "org-vander-androidapp"
+        manifestPlaceholders["redirectHostName"] = "callback"
+
+
     }
 
     buildTypes {
@@ -57,6 +62,7 @@ dependencies {
     // --- Projects
     implementation(project(":packages:core-domain"))
     implementation(project(":packages:core-dto"))
+    implementation(project(":packages:core-ui"))
 
     // --- KotlinX
     implementation(libs.kotlinx.coroutines.core)

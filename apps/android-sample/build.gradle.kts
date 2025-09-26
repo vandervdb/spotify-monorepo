@@ -22,8 +22,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        manifestPlaceholders["redirectSchemeName"] = "org-vander-androidapp"
-        manifestPlaceholders["redirectHostName"] = "callback"
     }
 
     buildTypes {
@@ -57,6 +55,7 @@ dependencies {
     implementation(project(":android-lib"))
     implementation(project(":packages:fake"))
     implementation(project(":packages:core-ui"))
+    implementation(project(":packages:core-domain"))
 
     // --- AndroidX - Core & Lifecycle (catalog)
     implementation(libs.androidx.core.ktx)
@@ -74,6 +73,7 @@ dependencies {
     implementation(libs.activity.compose)
 
     // Material 3 + Icons + Adaptive (catalog)
+    implementation(libs.material)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.ext)
     implementation(libs.androidx.material3.window.size)
@@ -90,6 +90,7 @@ dependencies {
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.android)
     kapt(libs.androidx.hilt.compiler) // pour @HiltViewModel uniquement
+//    implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.navigation.compose)
 
 
