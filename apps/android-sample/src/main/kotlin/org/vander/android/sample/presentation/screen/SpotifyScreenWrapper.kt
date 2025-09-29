@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.vander.android.sample.theme.SpotifyGreen
-import com.vander.android.sample.R
+import org.vander.android.sample.R
 import org.vander.android.sample.presentation.viewmodel.SpotifyViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

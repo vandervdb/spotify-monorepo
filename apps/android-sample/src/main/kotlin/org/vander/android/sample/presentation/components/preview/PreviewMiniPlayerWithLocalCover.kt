@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import org.vander.fake.spotify.FakeMiniPlayerViewModel
-import com.vander.android.sample.R
+import org.vander.android.sample.R
 import org.vander.android.sample.presentation.components.MiniPlayerWithPainter
 
 @Preview(showBackground = true)

@@ -1,7 +1,6 @@
 package org.vander.spotifyclient.data.remote.datasource
 
 import org.vander.core.domain.auth.ITokenProvider
-import org.vander.core.dto.CurrentlyPlayingWithQueueDto
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -10,6 +9,7 @@ import org.vander.spotifyclient.domain.datasource.IRemoteQueueDataSource
 import org.vander.spotifyclient.utils.parseSpotifyResult
 import javax.inject.Inject
 import javax.inject.Named
+import org.vander.core.dto.CurrentlyPlayingWithQueueDto
 
 
 class RemoteQueueDataSource @Inject constructor(

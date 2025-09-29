@@ -10,17 +10,20 @@ plugins {
 }
 
 android {
-    namespace = "com.vander.android.sample"
+    namespace = "org.vander.android.sample"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.vander.android_sample"
+        applicationId = "org.vander.android.sample"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = libs.versions.android.versionCode.get().toInt()
         versionName = libs.versions.android.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders["redirectSchemeName"] = "org-vander-androidapp"
+        manifestPlaceholders["redirectHostName"] = "callback"
 
     }
 
@@ -44,6 +47,10 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    dexOptions {
+        javaMaxHeapSize = "2g"
     }
 
 }

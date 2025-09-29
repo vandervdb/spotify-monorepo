@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import org.vander.androidapp.data.util.SPOTIFY_COVER_UI
-import com.vander.android.sample.R
+import org.vander.android.sample.R
 
 @Composable
 fun SpotifyTrackCover(
