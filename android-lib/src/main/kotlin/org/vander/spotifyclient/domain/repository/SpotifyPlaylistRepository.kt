@@ -1,6 +1,6 @@
 package org.vander.spotifyclient.domain.repository
 
-import com.vander.core.domain.data.SpotifyPlaylistsResponse
+import org.vander.core.domain.data.SpotifyPlaylistsResponse
 import kotlinx.coroutines.flow.StateFlow
 
 interface SpotifyPlaylistRepository {

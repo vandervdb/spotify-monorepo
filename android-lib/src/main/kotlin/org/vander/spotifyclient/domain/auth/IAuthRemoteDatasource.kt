@@ -1,6 +1,6 @@
 package org.vander.spotifyclient.domain.auth
 
-import com.vander.core.dto.TokenResponseDto
+import org.vander.core.dto.TokenResponseDto
 
 
 interface IAuthRemoteDatasource {

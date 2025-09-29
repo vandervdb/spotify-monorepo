@@ -2,7 +2,7 @@ package org.vander.spotifyclient.domain.appremote
 
 import android.content.Context
 import com.spotify.android.appremote.api.SpotifyAppRemote
-import com.vander.core.domain.state.RemoteClientState
+import org.vander.core.domain.state.RemoteClientState
 import kotlinx.coroutines.flow.StateFlow
 
 interface ISpotifyAppRemoteProvider {

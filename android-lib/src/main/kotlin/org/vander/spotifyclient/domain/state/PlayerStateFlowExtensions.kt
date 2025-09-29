@@ -1,8 +1,8 @@
 package org.vander.spotifyclient.domain.state
 
-import com.vander.core.domain.state.PlayerState
-import com.vander.core.domain.state.copyWithBase
-import com.vander.core.domain.state.copyWithSaved
+import org.vander.core.domain.state.PlayerState
+import org.vander.core.domain.state.copyWithBase
+import org.vander.core.domain.state.copyWithSaved
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**

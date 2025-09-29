@@ -1,6 +1,6 @@
 package org.vander.spotifyclient.domain.datasource
 
-import com.vander.core.dto.CurrentlyPlayingWithQueueDto
+import org.vander.core.dto.CurrentlyPlayingWithQueueDto
 
 
 fun interface IRemoteQueueDataSource {

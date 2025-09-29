@@ -1,7 +1,7 @@
 package org.vander.spotifyclient.domain.player
 
-import com.vander.core.domain.state.PlayerConnectionState
-import com.vander.core.domain.state.PlayerStateData
+import org.vander.core.domain.state.PlayerConnectionState
+import org.vander.core.domain.state.PlayerStateData
 import kotlinx.coroutines.flow.StateFlow
 
 interface ISpotifyPlayerClient {

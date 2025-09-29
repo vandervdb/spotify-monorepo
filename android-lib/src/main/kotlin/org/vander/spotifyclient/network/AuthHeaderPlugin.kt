@@ -1,6 +1,6 @@
 package org.vander.spotifyclient.network
 
-import com.vander.core.domain.auth.ITokenProvider
+import org.vander.core.domain.auth.ITokenProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpClientPlugin
 import io.ktor.client.request.HttpRequestPipeline

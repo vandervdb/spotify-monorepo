@@ -1,7 +1,7 @@
 package org.vander.spotifyclient.domain.usecase
 
 import android.util.Log
-import com.vander.core.domain.data.CurrentlyPlaying
+import org.vander.core.domain.data.CurrentlyPlaying
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

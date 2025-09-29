@@ -1,6 +1,6 @@
 package org.vander.spotifyclient.domain.datasource
 
-import com.vander.core.dto.SpotifyPlaylistsResponseDto
+import org.vander.core.dto.SpotifyPlaylistsResponseDto
 
 
 fun interface IRemotePlaylistDataSource {
