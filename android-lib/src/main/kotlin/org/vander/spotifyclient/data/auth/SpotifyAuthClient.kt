@@ -74,16 +74,24 @@ class SpotifyAuthClient @Inject constructor() : ISpotifyAuthClient {
             Log.d(TAG, "Résultat OK")
             val response = AuthorizationClient.getResponse(result.resultCode, data)
             when (response.type) {
+                AuthorizationResponse.Type.TOKEN -> {
+                    Log.d(TAG, "Access Token reçu: ${response.accessToken}")
+                    onResult(Result.success(response.accessToken))
+                }
                 AuthorizationResponse.Type.CODE -> {
                     Log.d(TAG, "Code d'autorisation reçu: ${response.code}")
                     onResult(Result.success(response.code))
                 }
-
+                AuthorizationResponse.Type.ERROR -> {
+                    Log.e(TAG, "Erreur Spotify Auth: ${response.error}")
+                    onResult(Result.failure(Exception("Spotify Auth Error: ${response.error}")))
+                }
                 else -> {
-                    Log.e(TAG, "Erreur dans la réponse: ${response.error}")
-                    onResult(Result.failure<String>(Exception(response.error)))
+                    Log.e(TAG, "Type de réponse inattendu: ${response.type}")
+                    onResult(Result.failure(Exception("Unexpected response type: ${response.type}")))
                 }
             }
+
         } else {
             Log.e(TAG, "Erreur lors de la connexion à Spotify, code résultat: ${result.resultCode}")
             onResult(Result.failure<String>(Exception(result.resultCode.toString())))

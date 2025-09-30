@@ -1,0 +1,31 @@
+{
+  "extends": "../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "../packages/core-config-ts"
+    },
+    {
+      "path": "../packages/http-client-ts"
+    },
+    {
+      "path": "../packages/core-constants-ts"
+    },
+    {
+      "path": "../packages/core-dto-ts"
+    },
+    {
+      "path": "../packages/core-logger-ts"
+    },
+    {
+      "path": "../packages/core-domain-ts"
+    },
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

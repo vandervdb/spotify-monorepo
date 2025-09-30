@@ -1,0 +1,3 @@
+interface PlaylistService {
+  fetchUserPlaylist: () => void;
+}

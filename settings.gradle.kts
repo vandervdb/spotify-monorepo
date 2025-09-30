@@ -44,7 +44,6 @@ include(":apps:android-sample")
 include(":packages:core-domain")
 include(":packages:core-dto")
 include(":packages:core-ui")
-include(":packages:core-logger")
 include(":packages:fake")
 
 
