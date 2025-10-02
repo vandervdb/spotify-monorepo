@@ -7,8 +7,8 @@ import {
   isErr,
   isHttpError,
   Result,
-} from '@react-native-spotify/core-domain';
-import { createMock, mockFnOf } from '@react-native-spotify/test-utils';
+} from '@core/domain';
+import { createMock, mockFnOf } from '@test/utils';
 
 jest.mock('axios', () => {
   const m = { create: jest.fn(), isAxiosError: jest.fn() };

@@ -1,5 +1,5 @@
 {
-  "name": "http-client",
+  "name": "@http/client",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -8,7 +8,8 @@
   "types": "./dist/index.d.ts",
   "source": "src/index.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -b tsconfig.json",
+    "clean": "tsc -b --clean",
     "lint": "eslint .",
     "test": "jest"
   },
@@ -22,6 +23,19 @@
     }
   },
   "dependencies": {
+    "@core/domain": "workspace:*",
+    "@core/dto": "workspace:*",
+    "@core/logger": "workspace:*",
+    "@test/utils": "workspace:*",
     "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5.6"
+  },
+  "peerDependencies": {
+    "react": "^18",
+    "react-dom": "^18"
   }
 }

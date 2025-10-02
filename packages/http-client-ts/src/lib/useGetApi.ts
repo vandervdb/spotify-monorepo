@@ -1,5 +1,5 @@
 import { useApiFactory } from './useApiFactory';
-import type { AuthService, Result } from '@react-native-spotify/core-domain';
+import type { AuthService, Result } from '@core/domain';
 
 /**
  * A hook function that generates a GET API call using a specified base URL, endpoint,

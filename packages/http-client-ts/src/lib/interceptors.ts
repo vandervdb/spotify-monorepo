@@ -4,8 +4,8 @@ import {
   AxiosRequestHeaders,
   InternalAxiosRequestConfig,
 } from 'axios';
-import { log } from '@react-native-spotify/core-logger';
-import { AuthService } from '@react-native-spotify/core-domain';
+import { log } from '@core/logger';
+import { AuthService } from '@core/domain';
 
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;

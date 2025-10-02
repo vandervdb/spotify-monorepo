@@ -1,11 +1,11 @@
-import { API_CONSTANTS } from '@react-native-spotify/core-constants';
+import { API_CONSTANTS } from '@core/constants';
 import {
   AuthService,
   NowPlayingClient,
-} from '@react-native-spotify/core-domain';
-import { SpotifyPlaybackStateDto } from '@react-native-spotify/core-dto';
-import { log } from '@react-native-spotify/core-logger';
-import { CreateGetApiFn } from '@react-native-spotify/http-client';
+} from '@core/domain';
+import { SpotifyPlaybackStateDto } from 'core-dto';
+import { log } from '@core/logger';
+import { CreateGetApiFn } from 'http-client';
 
 export class DefaultNowPlayingClient implements NowPlayingClient {
   constructor(

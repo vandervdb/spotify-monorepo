@@ -1,7 +1,7 @@
 import { AuthorizeResult } from 'react-native-app-auth';
-import { SpotifyTokenResponseDto } from '@react-native-spotify/core-dto';
-import { TokenData } from '@react-native-spotify/core-domain';
-import { API_CONSTANTS } from '@react-native-spotify/core-constants';
+import { SpotifyTokenResponseDto } from 'core-dto';
+import { TokenData } from '@core/domain';
+import { API_CONSTANTS } from '@core/constants';
 
 export function mapAuthorizeResultToTokenData(
   auth: AuthorizeResult,

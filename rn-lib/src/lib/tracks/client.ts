@@ -1,14 +1,14 @@
-import { API_CONSTANTS } from '@react-native-spotify/core-constants';
+import { API_CONSTANTS } from '@core/constants';
 import {
   AuthService,
   Result,
   TrackClient,
-} from '@react-native-spotify/core-domain';
-import { log } from '@react-native-spotify/core-logger';
+} from '@core/domain';
+import { log } from '@core/logger';
 import {
   CreateGetApiFn,
   CreatePutApiFn,
-} from '@react-native-spotify/http-client';
+} from 'http-client';
 
 export class DefaultTrackClient implements TrackClient {
   constructor(

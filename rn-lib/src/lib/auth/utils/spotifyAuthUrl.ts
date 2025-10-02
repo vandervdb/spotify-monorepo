@@ -1,5 +1,5 @@
-import { API_CONSTANTS } from '@react-native-spotify/core-constants';
-import { getEnv } from '@react-native-spotify/core-config';
+import { API_CONSTANTS } from '@core/constants';
+import { getEnv } from 'core-config';
 import { AuthConfiguration } from 'react-native-app-auth';
 import valuesIn from 'lodash/valuesIn';
 

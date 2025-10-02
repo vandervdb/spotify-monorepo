@@ -2,9 +2,9 @@ import {
   AuthService,
   HttpError,
   Result,
-} from '@react-native-spotify/core-domain';
+} from '@core/domain';
 
-export type ApiMethod = 'get' | 'post | put | delete';
+export type ApiMethod = 'get' | 'post' | 'put' | 'delete';
 
 export type ApiHeaders = Record<string, string>;
 

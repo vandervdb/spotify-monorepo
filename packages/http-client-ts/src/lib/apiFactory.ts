@@ -6,8 +6,8 @@ import {
   HttpError,
   ok,
   Result,
-} from '@react-native-spotify/core-domain';
-import { log } from '@react-native-spotify/core-logger';
+} from '@core/domain';
+import { log } from '@core/logger';
 
 function createBaseApi(
   baseUrl: string,
@@ -104,4 +104,78 @@ export function createPostApi<T>(
   };
 
   return { post };
+}
+
+export function createPutApi<T>(
+  baseUrl: string,
+  url: string,
+  headers?: Record<string, string>,
+  authService?: AuthService,
+) {
+  const instance = createBaseApi(baseUrl, headers, authService);
+
+  const put = async (): Promise<Result<T, HttpError>> => {
+    try {
+      const response = await instance.put(url);
+      return ok(response.data);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        const httpErr: HttpError = {
+          kind: 'http put',
+          status: e.response?.status,
+          code: e.code,
+          message: e.message,
+          data: e.response?.data,
+          cause: e,
+        };
+        log.error('Erreur Axios: ', e);
+        return err(httpErr);
+      }
+      log.error('Erreur inconnue: ', e);
+      return err<HttpError>({
+        kind: 'http put',
+        message: 'Erreur inconnue',
+        cause: e,
+      });
+    }
+  };
+
+  return { put };
+}
+
+export function createDeleteApi<T>(
+  baseUrl: string,
+  url: string,
+  headers?: Record<string, string>,
+  authService?: AuthService,
+) {
+  const instance = createBaseApi(baseUrl, headers, authService);
+
+  const deleteMethod = async (): Promise<Result<T, HttpError>> => {
+    try {
+      const response = await instance.delete(url);
+      return ok(response.data);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        const httpErr: HttpError = {
+          kind: 'http delete',
+          status: e.response?.status,
+          code: e.code,
+          message: e.message,
+          data: e.response?.data,
+          cause: e,
+        };
+        log.error('Erreur Axios: ', e);
+        return err(httpErr);
+      }
+      log.error('Erreur inconnue: ', e);
+      return err<HttpError>({
+        kind: 'http delete',
+        message: 'Erreur inconnue',
+        cause: e,
+      });
+    }
+  };
+
+  return { delete: deleteMethod };
 }

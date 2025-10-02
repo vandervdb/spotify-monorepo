@@ -2,8 +2,8 @@ import {
   NowPlaying,
   NowPlayingClient,
   NowPlayingStore,
-} from '@react-native-spotify/core-domain';
-import { log } from '@react-native-spotify/core-logger';
+} from '@core/domain';
+import { log } from '@core/logger';
 import { makeAutoObservable, observable, runInAction } from 'mobx';
 import { mapPlaybackStateToNowPlaying } from './mapPlaybackStateToNowPlaying';
 

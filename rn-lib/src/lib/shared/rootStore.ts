@@ -4,10 +4,10 @@ import {
   NowPlayingStore,
   SecureStorage,
   TokenData,
-} from '@react-native-spotify/core-domain';
+} from '@core/domain';
 import { DefaultAuthService, DefaultAuthStore } from '../auth';
 import { DefaultNowPlayingClient, DefaultNowPlayingStore } from '../playing';
-import { CreateGetApiFn } from '@react-native-spotify/http-client';
+import { CreateGetApiFn } from 'http-client';
 
 export type RootDeps = {
   auth: { authClient: AuthClient; storage: SecureStorage<TokenData> };

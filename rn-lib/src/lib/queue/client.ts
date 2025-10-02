@@ -1,11 +1,11 @@
-import { CreateGetApiFn } from '@react-native-spotify/http-client';
+import { CreateGetApiFn } from 'http-client';
 import {
   AuthService,
   QueueClient,
   Result,
-} from '@react-native-spotify/core-domain';
-import { CurrentlyPlayingWithQueueDto } from '@react-native-spotify/core-dto';
-import { API_CONSTANTS } from '@react-native-spotify/core-constants';
+} from '@core/domain';
+import { CurrentlyPlayingWithQueueDto } from 'core-dto';
+import { API_CONSTANTS } from '@core/constants';
 
 export class DefaultQueueClient implements QueueClient {
   constructor(

@@ -2,7 +2,7 @@ import {
   AuthService,
   isOk,
   TrackClient,
-} from '@react-native-spotify/core-domain';
+} from '@core/domain';
 import { makeAutoObservable, observable } from 'mobx';
 
 export class DefaultTrackStore {

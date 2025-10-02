@@ -1,5 +1,5 @@
-import TrackService from '@react-native-spotify/core-domain/src/lib/track/TrackService';
-import { isOk, TrackClient, unwrap } from '@react-native-spotify/core-domain';
+import TrackService from 'core-domain/src/lib/track/TrackService';
+import { isOk, TrackClient, unwrap } from '@core/domain';
 
 export class DefaultTrackService implements TrackService {
   constructor(private readonly client: TrackClient) {}

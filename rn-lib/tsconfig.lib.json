@@ -5,6 +5,12 @@
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
+
+    "composite": true,
+    "incremental": true,
+    "declaration": true,
+    "declarationMap": true,
+
     "emitDeclarationOnly": false,
     "module": "esnext",
     "moduleResolution": "node",
@@ -15,22 +21,22 @@
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../core-config/tsconfig.lib.json"
+      "path": "../packages/core-config-ts/tsconfig.lib.json"
     },
     {
-      "path": "../http-client/tsconfig.lib.json"
+      "path": "../packages/http-client-ts/tsconfig.lib.json"
     },
     {
-      "path": "../core-constants/tsconfig.lib.json"
+      "path": "../packages/core-constants-ts/tsconfig.lib.json"
     },
     {
-      "path": "../core-dto/tsconfig.lib.json"
+      "path": "../packages/core-dto-ts/tsconfig.lib.json"
     },
     {
-      "path": "../core-logger/tsconfig.lib.json"
+      "path": "../packages/core-logger-ts/tsconfig.lib.json"
     },
     {
-      "path": "../core-domain/tsconfig.lib.json"
+      "path": "../packages/core-domain-ts/tsconfig.lib.json"
     }
   ],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]

@@ -1,8 +1,8 @@
 import {
   SpotifyPlaybackStateDto,
   SpotifyRepeatState,
-} from '@react-native-spotify/core-dto';
-import type { NowPlaying, RepeatMode } from '@react-native-spotify/core-domain';
+} from 'core-dto';
+import type { NowPlaying, RepeatMode } from '@core/domain';
 
 /**
  * Pick the "best" image (prefer >=300px width), fallback to the largest.

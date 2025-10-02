@@ -1,4 +1,4 @@
-import { AuthService, AuthStore } from '@react-native-spotify/core-domain';
+import { AuthService, AuthStore } from '@core/domain';
 
 export class DefaultAuthService implements AuthService {
   constructor(private authStore: AuthStore) {}

@@ -21,39 +21,39 @@ module.exports = {
           stream: 'readable-stream',
           buffer: '@craftzdog/react-native-buffer',
 
-          '@react-native-spotify/core-config': path.resolve(
+          '@core/config': path.resolve(
             __dirname,
-            'core-config/src',
+            'packages/core-config-ts/src',
           ),
-          '@react-native-spotify/core-constants': path.resolve(
+          '@core/constants': path.resolve(
             __dirname,
-            'core-constants/src',
+            'packages/core-constants-ts/src',
           ),
-          '@react-native-spotify/core-domain': path.resolve(
+          '@core/domain': path.resolve(
             __dirname,
-            'core-domain/src',
+            'packages/core-domain-ts/src',
           ),
-          '@react-native-spotify/core-dto': path.resolve(
+          '@core/dto': path.resolve(
             __dirname,
-            'core-dto/src',
+            'packages/core-dto-ts/src',
           ),
-          '@react-native-spotify/core-logger': path.resolve(
+          '@core/logger': path.resolve(
             __dirname,
-            'core-logger/src',
+            'packages/core-logger-ts/src',
           ),
-          '@react-native-spotify/test-utils': path.resolve(
+          '@test/utils': path.resolve(
             __dirname,
-            'test-utils/src',
+            'packages/test-utils-ts/src',
           ),
-          '@react-native-spotify/http-client': path.resolve(
+          '@http/client': path.resolve(
             __dirname,
-            'http-client/src',
+            'packages/http-client-ts/src',
           ),
-          '@react-native-spotify/keychain-service': path.resolve(
+          '@keychain/service': path.resolve(
             __dirname,
-            'keychain-service/src',
+            'packages/keychain-service-ts/src',
           ),
-          '@react-native-spotify/spotify-client': path.resolve(
+          '@spotify/client': path.resolve(
             __dirname,
             'spotify-client/src',
           ),

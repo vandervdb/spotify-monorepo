@@ -1,12 +1,12 @@
-import { SERVICES } from '@react-native-spotify/core-constants';
+import { SERVICES } from '@core/constants';
 import * as Keychain from 'react-native-keychain';
 import { STORAGE_TYPE } from 'react-native-keychain';
-import { log } from '@react-native-spotify/core-logger';
+import { log } from '@core/logger';
 import {
   SecureStorage,
   TokenData,
   UserCredentials,
-} from '@react-native-spotify/core-domain';
+} from '@core/domain';
 
 function createSecureStorage<T>(
   storageKey: string,

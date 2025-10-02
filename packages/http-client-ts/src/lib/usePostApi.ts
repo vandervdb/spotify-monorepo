@@ -1,5 +1,5 @@
 import { useApiFactory } from './useApiFactory';
-import type { AuthService, Result } from '@react-native-spotify/core-domain';
+import type { AuthService, Result } from '@core/domain';
 
 /**
  * A hook to create a factory function for making POST API requests.
