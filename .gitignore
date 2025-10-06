@@ -1,40 +1,82 @@
-# Gradle files
-.gradle/
-build/
+# --- Yarn (Berry) / Node ---
+node_modules/
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+# (garde .yarn/releases et .yarn/plugins si tu les utilises)
 
-# Local configuration file (sdk path, etc)
-local.properties
+# --- Environnements ---
+.env
+.env.*
+!.env.example
 
-# Log/OS Files
-*.log
+# --- Caches / Bundlers / Metro ---
+.cache/
+.metro/
+**/.cache/
+.expo/
+.eslintcache
+*.tsbuildinfo
 
-# Android Studio generated files and folders
-captures/
-.externalNativeBuild/
-.cxx/
-*.aab
+# --- Monorepo packages (builds courants) ---
+**/build/
+**/dist/
+**/out/
+**/tmp/
+**/.turbo/
+**/.nx/
+
+# --- iOS (global) ---
+**/ios/Pods/
+!**/ios/Podfile.lock
+**/ios/build/
+**/ios/DerivedData/
+**/ios/*.xcworkspace/xcuserdata/
+**/ios/*.xcodeproj/xcuserdata/
+**/*.xcuserstate
+**/*.xcuserdatad
+**/*.xcscmblueprint
+
+# --- Android (global) ---
+**/android/.gradle/
+**/android/.cxx/
+**/android/local.properties
+**/android/captures/
+**/android/*.iml
+**/android/.idea/
+**/android/build/
+**/android/app/build/
+**/android/app/debug.keystore
+**/android/app/*.keystore
+**/android/app/*.jks
 *.apk
-output-metadata.json
+*.aab
 
-# IntelliJ
-*.iml
+# --- Tests / rapports ---
+coverage/
+**/coverage/
+reports/
+**/reports/
+
+# --- Fastlane ---
+**/fastlane/report.xml
+**/fastlane/screenshots/
+**/fastlane/test_output/
+
+# --- Éditeurs / OS ---
+.vscode/
 .idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+*.iml
+.DS_Store
+Thumbs.db
+*.swp
+*.orig
+.watchman*
 
-# Keystore files
-*.jks
-*.keystore
-
-# Google Services (e.g. APIs or Firebase)
-google-services.json
-
-# Android Profiling
-*.hprof
-
-# Ignore Gradle project-specific cache directory
-.gradle
-
-# Ignore Gradle build output directory
-build
+# --- Divers RN ---
+**/.gradle/
+**/.DS_Store

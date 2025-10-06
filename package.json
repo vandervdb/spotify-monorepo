@@ -5,37 +5,41 @@
   "workspaces": [
     "ts-lib/*",
     "rn-lib/*",
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
-    "bootstrap": "yarn install --ignore-scripts && yarn workspaces run build",
+    "bootstrap": "yarn install --mode update-lockfile && yarn install && yarn workspaces foreach -A -p -t run build",
     "build": "yarn workspaces foreach -A -p -t run build",
     "lint": "yarn workspaces foreach -A -p -t run lint",
     "test": "yarn workspaces foreach -A -p -t run test",
-    "clean": "yarn workspaces foreach -A -p -t run clean"
+    "clean": "yarn workspaces foreach -A -p -t run clean",
+    "android": "yarn workspace rn-sample android",
+    "ios": "yarn workspace rn-sample ios",
+    "start": "yarn workspace rn-sample start",
+    "start-reset": "yarn workspace rn-sample start --reset-cache",
+    "typecheck": "yarn workspaces foreach -A -t run typecheck"
   },
   "dependencies": {
     "@babel/runtime": "^7.23.0",
     "@craftzdog/react-native-buffer": "*",
-    "@react-native/metro-config": "*",
+    "@react-native-community/cli": "13.6.7",
     "@react-navigation/elements": "^2.6.4",
     "@react-navigation/native": "^7.1.17",
     "@react-navigation/native-stack": "^7.3.26",
     "@testing-library/jest-native": "*",
     "@testing-library/react-native": "*",
-    "@vitejs/plugin-react": "*",
     "axios": "1.11.0",
     "esbuild": "*",
     "jest": "*",
     "jsonc-eslint-parser": "*",
     "lodash": "^4.17.21",
-    "metro-config": "*",
     "mobx": "^6.13.7",
     "mobx-react-lite": "^4.1.0",
     "prop-types": "^15.8.1",
-    "react": "~18.3.1",
-    "react-dom": "~18.3.1",
-    "react-native": "~0.76.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-native": "0.76.3",
     "react-native-app-auth": "^8.0.3",
     "react-native-get-random-values": "^1.11.0",
     "react-native-keychain": "^10.0.0",
@@ -43,14 +47,20 @@
     "react-native-quick-crypto": "^0.7.14",
     "react-native-safe-area-context": "^5.6.1",
     "react-native-screens": "^4.16.0",
-    "react-native-svg": "~15.8.0",
+    "react-native-svg": "15.8.0",
     "react-native-svg-transformer": "^1.5.1",
     "tslib": "*"
   },
   "resolutions": {
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-native": "0.76.3"
+    "react-native": "0.76.3",
+    "metro": "0.81.5",
+    "metro-*": "0.81.5",
+    "@react-native/community-cli-plugin": "0.76.3",
+    "@react-native/dev-middleware": "0.76.3",
+    "@react-native-community/cli-*": "13.6.7",
+    "connect": "3.7.0"
   },
   "peerDependencies": {
     "react": "18.x",

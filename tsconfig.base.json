@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
     "target": "ES2020",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "strict": true,
     "skipLibCheck": true,
+
     "baseUrl": ".",
     "paths": {
       "@rn-lib/*": ["packages/rn-lib-ts/*"],
@@ -25,7 +27,8 @@
       "@keychain/service/*": ["packages/keychain-service-ts/*"],
       "@test/utils": ["packages/test-utils-ts/src/index.ts"],
       "@test/utils/*": ["packages/test-utils-ts/*"],
-      "@feature-now-playing/*": ["packages/feature-now-playing/*"]
+      "@feature-now-playing/*": ["packages/feature-now-playing/*"],
+      "RnSample/*": ["apps/RnSample/*"]
     }
 
   }
