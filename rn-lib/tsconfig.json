@@ -1,7 +1,21 @@
 {
   "extends": "../tsconfig.base.json",
-  "files": [],
-  "include": [],
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": false,
+    "types": ["react", "react-native"]
+  },
+  "include": ["src"],
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
   "references": [
     {
       "path": "../packages/core-config-ts"
@@ -20,12 +34,6 @@
     },
     {
       "path": "../packages/core-domain-ts"
-    },
-    {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
     }
   ]
 }

@@ -1,5 +1,4 @@
-import TrackService from 'core-domain/src/lib/track/TrackService';
-import { isOk, TrackClient, unwrap } from '@core/domain';
+import { isOk, TrackClient, unwrap, TrackService } from '@core/domain';
 
 export class DefaultTrackService implements TrackService {
   constructor(private readonly client: TrackClient) {}

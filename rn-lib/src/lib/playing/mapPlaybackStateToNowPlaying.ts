@@ -1,7 +1,7 @@
 import {
   SpotifyPlaybackStateDto,
   SpotifyRepeatState,
-} from 'core-dto';
+} from '@core/dto';
 import type { NowPlaying, RepeatMode } from '@core/domain';
 
 /**

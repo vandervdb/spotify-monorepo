@@ -3,9 +3,9 @@ import {
   AuthService,
   NowPlayingClient,
 } from '@core/domain';
-import { SpotifyPlaybackStateDto } from 'core-dto';
+import { SpotifyPlaybackStateDto } from '@core/dto';
 import { log } from '@core/logger';
-import { CreateGetApiFn } from 'http-client';
+import { CreateGetApiFn } from '@http/client';
 
 export class DefaultNowPlayingClient implements NowPlayingClient {
   constructor(

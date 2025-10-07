@@ -1,24 +1,8 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/jest",
-    "types": [
-      "jest",
-      "node"
-    ],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true
+    "noEmit": true,
+    "types": ["jest"]
   },
-  "include": [
-    "jest.config.ts",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.d.ts"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    }
-  ]
+  "include": ["src", "**/*.spec.ts", "**/*.test.ts", "**/*.tsx"]
 }

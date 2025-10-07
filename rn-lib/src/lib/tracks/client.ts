@@ -8,7 +8,7 @@ import { log } from '@core/logger';
 import {
   CreateGetApiFn,
   CreatePutApiFn,
-} from 'http-client';
+} from '@http/client';
 
 export class DefaultTrackClient implements TrackClient {
   constructor(

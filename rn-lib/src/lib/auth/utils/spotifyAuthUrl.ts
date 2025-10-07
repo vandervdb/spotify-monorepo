@@ -1,5 +1,5 @@
 import { API_CONSTANTS } from '@core/constants';
-import { getEnv } from 'core-config';
+import { getEnv } from '@core/config';
 import { AuthConfiguration } from 'react-native-app-auth';
 import valuesIn from 'lodash/valuesIn';
 

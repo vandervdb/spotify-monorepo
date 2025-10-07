@@ -1,3 +1,4 @@
+// tsconfig.base.json
 {
   "compilerOptions": {
     "target": "ES2020",
@@ -5,31 +6,47 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
+
     "strict": true,
     "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "noEmit": true,
 
     "baseUrl": ".",
     "paths": {
-      "@rn-lib/*": ["packages/rn-lib-ts/*"],
-      "@core/config": ["packages/core-config-ts/src/index.ts"],
-      "@core/config/*": ["packages/core-config-ts/*"],
-      "@core/constants": ["packages/core-constants-ts/src/index.ts"],
-      "@core/constants/*": ["packages/core-constants-ts/*"],
-      "@core/domain": ["packages/core-domain-ts/src/index.ts"],
-      "@core/domain/*": ["packages/core-domain-ts/*"],
-      "@core/dto": ["packages/core-dto-ts/src/index.ts"],
-      "@core/dto/*": ["packages/core-dto-ts/*"],
-      "@core/logger": ["packages/core-logger-ts/src/index.ts"],
-      "@core/logger/*": ["packages/core-logger-ts/*"],
-      "@http/client": ["packages/http-client-ts/src/index.ts"],
-      "@http/client/*": ["packages/http-client-ts/*"],
-      "@keychain/service": ["packages/keychain-service-ts/src/index.ts"],
-      "@keychain/service/*": ["packages/keychain-service-ts/*"],
-      "@test/utils": ["packages/test-utils-ts/src/index.ts"],
-      "@test/utils/*": ["packages/test-utils-ts/*"],
-      "@feature-now-playing/*": ["packages/feature-now-playing/*"],
-      "RnSample/*": ["apps/RnSample/*"]
-    }
+      "@spotify/client": ["rn-lib/src/index.ts"],
+      "@spotify/client/*": ["rn-lib/src/*"],
 
+      "@core/config": ["packages/core-config-ts/src/index.ts"],
+      "@core/config/*": ["packages/core-config-ts/src/*"],
+
+      "@core/constants": ["packages/core-constants-ts/src/index.ts"],
+      "@core/constants/*": ["packages/core-constants-ts/src/*"],
+
+      "@core/domain": ["packages/core-domain-ts/src/index.ts"],
+      "@core/domain/*": ["packages/core-domain-ts/src/*"],
+
+      "@core/dto": ["packages/core-dto-ts/src/index.ts"],
+      "@core/dto/*": ["packages/core-dto-ts/src/*"],
+
+      "@core/logger": ["packages/core-logger-ts/src/index.ts"],
+      "@core/logger/*": ["packages/core-logger-ts/src/*"],
+
+      "@http/client": ["packages/http-client-ts/src/index.ts"],
+      "@http/client/*": ["packages/http-client-ts/src/*"],
+
+      "@keychain/service": ["packages/keychain-service-ts/src/index.ts"],
+      "@keychain/service/*": ["packages/keychain-service-ts/src/*"],
+
+      "@test/utils": ["packages/test-utils-ts/src/index.ts"],
+      "@test/utils/*": ["packages/test-utils-ts/src/*"],
+
+      "@feature-now-playing/*": ["packages/feature-now-playing/src/*"],
+
+      "RnSample/*": ["apps/RnSample/src/*"]
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { AuthorizeResult } from 'react-native-app-auth';
-import { SpotifyTokenResponseDto } from 'core-dto';
+import { SpotifyTokenResponseDto } from '@core/dto';
 import { TokenData } from '@core/domain';
 import { API_CONSTANTS } from '@core/constants';
 

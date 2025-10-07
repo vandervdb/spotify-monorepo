@@ -4,7 +4,7 @@
   "packageManager": "yarn@4.10.3",
   "workspaces": [
     "ts-lib/*",
-    "rn-lib/*",
+    "rn-lib",
     "packages/*",
     "apps/*"
   ],
@@ -67,6 +67,7 @@
     "react-native": "0.76.x"
   },
   "devDependencies": {
+    "@types/node": "18.16.9",
     "typescript": "^5.9.3"
   }
 }

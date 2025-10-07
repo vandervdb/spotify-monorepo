@@ -1,10 +1,10 @@
-import { CreateGetApiFn } from 'http-client';
+import { CreateGetApiFn } from '@http/client';
 import {
   AuthService,
   QueueClient,
   Result,
 } from '@core/domain';
-import { CurrentlyPlayingWithQueueDto } from 'core-dto';
+import { CurrentlyPlayingWithQueueDto } from '@core/dto';
 import { API_CONSTANTS } from '@core/constants';
 
 export class DefaultQueueClient implements QueueClient {

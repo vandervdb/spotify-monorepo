@@ -2,9 +2,9 @@ import { AuthClient, Result } from 'packages/core-domain-ts';
 import { buildAuthConfig } from './utils/spotifyAuthUrl';
 import { log } from '@core/logger';
 import { authorize, AuthorizeResult } from 'react-native-app-auth';
-import { SpotifyTokenResponseDto } from 'core-dto';
+import { SpotifyTokenResponseDto } from '@core/dto';
 import { API_CONSTANTS } from '@core/constants';
-import { CreatePostApiFn } from 'http-client';
+import { CreatePostApiFn } from '@http/client';
 
 export class DefaultAuthClient implements AuthClient {
   constructor(private readonly createApi: CreatePostApiFn) {}

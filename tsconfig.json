@@ -1,37 +1,18 @@
+// tsconfig.json (root)
 {
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
   "references": [
-    {
-      "path": "./rn-lib"
-    },
-    {
-      "path": "./packages/core-logger-ts"
-    },
-    {
-      "path": "./packages/http-client-ts"
-    },
-    {
-      "path": "./packages/keychain-service-ts"
-    },
-    {
-      "path": "./packages/core-constants-ts"
-    },
-    {
-      "path": "./packages/core-config-ts"
-    },
-    {
-      "path": "./packages/core-domain-ts"
-    },
-    {
-      "path": "./packages/core-dto-ts"
-    },
-    {
-      "path": "./packages/test-utils-ts"
-    },
-    {
-      "path": "./apps/RnSample"
-    },
+    { "path": "./rn-lib" },
+    { "path": "./packages/core-logger-ts" },
+    { "path": "./packages/http-client-ts" },
+    { "path": "./packages/keychain-service-ts" },
+    { "path": "./packages/core-constants-ts" },
+    { "path": "./packages/core-config-ts" },
+    { "path": "./packages/core-domain-ts" },
+    { "path": "./packages/core-dto-ts" },
+    { "path": "./packages/test-utils-ts" },
+    { "path": "./apps/RnSample" }
   ]
 }

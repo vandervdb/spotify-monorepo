@@ -1,27 +1,14 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@env": [
-        "./src/lib/env.d.ts"
-      ]
-    },
-    "outDir": "./out-tsc/jest",
+    "noEmit": true,
     "types": ["jest", "node"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "forceConsistentCasingInFileNames": true
+    "module": "CommonJS",
+    "moduleResolution": "node"
   },
   "include": [
     "jest.config.ts",
-    "src/**/*.test.ts",
     "src/**/*.spec.ts",
-    "src/**/*.d.ts"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    }
+    "src/**/*.test.ts"
   ]
 }
