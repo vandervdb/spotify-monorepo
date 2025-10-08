@@ -1,9 +1,9 @@
 /**
  * @format
  */
-
+import './src/setup/polyfill';
 import {AppRegistry} from 'react-native';
-import App from './App';
 import {name as appName} from './app.json';
+import AppContainer from "./src/navigation/AppContainer";
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => AppContainer);
