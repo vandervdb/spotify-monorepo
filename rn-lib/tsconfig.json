@@ -14,14 +14,11 @@
     "noEmit": false,
     "types": ["react", "react-native"]
   },
-  "include": ["src"],
+  "include": ["src", "specs"],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
   "references": [
     {
       "path": "../packages/core-config-ts"
-    },
-    {
-      "path": "../packages/http-client-ts"
     },
     {
       "path": "../packages/core-constants-ts"

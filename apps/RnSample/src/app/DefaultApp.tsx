@@ -19,8 +19,7 @@ type Navigation = NativeStackNavigationProp<RootStackParamList, 'Player'>;
 export const DefaultApp = () => {
   const navigation = useNavigation<Navigation>();
   const scrollViewRef = useRef<null | ScrollView>(null);
-
-  return (
+    return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView

@@ -45,7 +45,9 @@
 
       "@feature-now-playing/*": ["packages/feature-now-playing/src/*"],
 
-      "RnSample/*": ["apps/RnSample/src/*"]
+      "RnSample/*": ["apps/RnSample/src/*"],
+
+      "RnModuleSpotifyClient/*": ["apps/RnModuleSpotifyClient/src/*"],
     }
   }
 }

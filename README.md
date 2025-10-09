@@ -332,6 +332,11 @@ Commands:
 - SVG not found when importing from `dist`
   - Expose `src` for RN (the `react-native` field) or copy assets at build time.
 
+- react-native-app-auth: Cannot read property 'authorize' of null / Bridgeless mode is enabled
+  - This library is not yet compatible with Bridgeless/New Architecture in this setup. Fix:
+    - Android: edit apps/RnSample/android/gradle.properties and set `newArchEnabled=false`, then clean/build.
+    - Re-run the app after a clean build. If you need New Architecture for other modules, consider migrating to a TurboModule-compatible auth flow.
+
 ---
 
 ## License

@@ -12,6 +12,8 @@
     { "path": "./packages/core-domain-ts" },
     { "path": "./packages/core-dto-ts" },
     { "path": "./packages/test-utils-ts" },
-    { "path": "./apps/RnSample" }
+    { "path": "./apps/RnSample" },
+    { "path": "./rn-modules/RnModuleSpotifyAuth" }
+//    { "path": "./rn-modules/RnModuleSpotifyClient" }
   ]
 }

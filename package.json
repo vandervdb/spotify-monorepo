@@ -6,7 +6,8 @@
     "ts-lib/*",
     "rn-lib",
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "rn-modules/RnModuleSpotifyClient"
   ],
   "scripts": {
     "bootstrap": "yarn install --mode update-lockfile && yarn install && yarn workspaces foreach -A -p -t run build",
@@ -60,6 +61,7 @@
     "@react-native/community-cli-plugin": "0.76.3",
     "@react-native/dev-middleware": "0.76.3",
     "@react-native-community/cli-*": "13.6.7",
+    "react-native-app-auth": "^8.0.3",
     "connect": "3.7.0"
   },
   "peerDependencies": {
