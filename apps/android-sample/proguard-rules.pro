@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Silence missing optional Spotify base annotations referenced in AAR
+-dontwarn com.spotify.base.annotations.**

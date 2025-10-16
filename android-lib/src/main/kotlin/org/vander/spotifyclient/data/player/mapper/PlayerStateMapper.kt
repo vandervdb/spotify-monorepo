@@ -10,6 +10,7 @@ fun PlayerState.toPlayerStateData(): PlayerStateData {
     return PlayerStateData(
         trackName = track?.name ?: "Unknown Track",
         artistName = track?.artist?.name ?: "Unknown Artist",
+        albumName = track?.album?.name ?: "Unknown Album",
         coverId = track.imageUri.toString().extractSpotifyCoverIdOrNull() ?: "",
         trackId = track.uri.toString().extractSpotifyTrackIdOrNull() ?: "",
         isPaused = isPaused,
@@ -21,6 +22,8 @@ fun PlayerState.toPlayerStateData(): PlayerStateData {
         seeking = false,
         skippingNext = playbackRestrictions?.canSkipNext == false,
         skippingPrevious = playbackRestrictions?.canSkipPrev == false,
+        positionMs = playbackPosition,
+        durationMs = track?.duration ?: 0
     )
 }
 

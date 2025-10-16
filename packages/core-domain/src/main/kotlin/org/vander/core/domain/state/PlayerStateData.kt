@@ -3,6 +3,7 @@ package org.vander.core.domain.state
 data class PlayerStateData(
     val trackName: String,
     val artistName: String,
+    val albumName: String,
     val coverId: String,
     val trackId: String,
     val isPaused: Boolean,
@@ -13,13 +14,18 @@ data class PlayerStateData(
     val repeating: Boolean,
     val seeking: Boolean,
     val skippingNext: Boolean,
-    val skippingPrevious: Boolean
+    val skippingPrevious: Boolean,
+    val positionMs: Long,
+    val durationMs: Long,
+
+
 ) {
     companion object {
         fun empty(): PlayerStateData {
             return PlayerStateData(
                 trackName = "",
                 artistName = "",
+                albumName = "",
                 coverId = "",
                 trackId = "",
                 isPaused = true,
@@ -30,7 +36,9 @@ data class PlayerStateData(
                 repeating = false,
                 seeking = false,
                 skippingNext = false,
-                skippingPrevious = false
+                skippingPrevious = false,
+                positionMs = 0,
+                durationMs = 0,
             )
         }
     }

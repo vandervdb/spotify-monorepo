@@ -60,9 +60,17 @@ dependencies {
 
     // --- Modules internes
     implementation(project(":android-lib"))
+
+    // --- Spotify SDK AARs (required at app level)
+    implementation(files("../../android-lib/libs/spotify-app-remote-release-0.8.0.aar"))
+    implementation(files("../../android-lib/libs/spotify-auth-release-2.1.0.aar"))
     implementation(project(":packages:fake"))
     implementation(project(":packages:core-ui"))
     implementation(project(":packages:core-domain"))
+
+    // --- Add required runtime deps for Spotify SDK mappers and logging
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.2")
+    implementation("org.slf4j:slf4j-android:1.7.36")
 
     // --- AndroidX - Core & Lifecycle (catalog)
     implementation(libs.androidx.core.ktx)

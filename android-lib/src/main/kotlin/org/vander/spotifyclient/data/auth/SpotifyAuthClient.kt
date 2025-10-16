@@ -10,8 +10,10 @@ import com.spotify.sdk.android.auth.AuthorizationClient.createLoginActivityInten
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import org.vander.spotifyclient.BuildConfig
+import org.vander.spotifyclient.bridge.AuthConfigK
 import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
 import org.vander.spotifyclient.utils.REDIRECT_URI
+import org.vander.spotifyclient.utils.SCOPE_STREAMING
 import org.vander.spotifyclient.utils.USER_LIBRARY_MODIFY
 import org.vander.spotifyclient.utils.USER_LIBRARY_READ
 import org.vander.spotifyclient.utils.USER_READ_CURRENTLY_PLAYING
@@ -36,15 +38,25 @@ class SpotifyAuthClient @Inject constructor() : ISpotifyAuthClient {
      * @param contextActivity The current [Activity] context.
      * @param launcher The [ActivityResultLauncher] used to launch the Spotify login activity.
      */
-    override fun authorize(contextActivity: Activity, launcher: ActivityResultLauncher<Intent>) {
-        val request = AuthorizationRequest.Builder(
-            BuildConfig.CLIENT_ID,
+    override fun authorize(contextActivity: Activity, launcher: ActivityResultLauncher<Intent>, config: AuthConfigK?) {
+        val request = config?.let {
+             AuthorizationRequest.Builder(
+                config.clientId,
+                AuthorizationResponse.Type.CODE,
+                config.redirectUrl,
+            ).apply {
+                setScopes(
+                    config.scopes
+                )
+                setShowDialog(config.showDialog)
+            }.build()
+        } ?: AuthorizationRequest.Builder(BuildConfig.CLIENT_ID,
             AuthorizationResponse.Type.CODE,
             REDIRECT_URI,
         ).apply {
             setScopes(
                 arrayOf(
-                    "streaming",
+                    SCOPE_STREAMING,
                     USER_READ_PRIVATE,
                     USER_READ_CURRENTLY_PLAYING,
                     USER_READ_PLAYBACK_STATE,

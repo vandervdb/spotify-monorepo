@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
+import kotlinx.coroutines.CoroutineDispatcher
 import org.vander.core.domain.auth.IAuthRepository
 import org.vander.core.domain.error.SessionError
 import org.vander.core.domain.state.SessionState
@@ -29,8 +30,6 @@ class SpotifySessionManagerImpl @Inject constructor(
         private const val TAG = "SpotifySessionManagerImpl"
     }
 
-    val dispatcher = Dispatchers.Main
-
     private val _sessionState = MutableStateFlow<SessionState>(SessionState.Idle)
     override val sessionState: StateFlow<SessionState> = _sessionState
 
@@ -47,23 +46,28 @@ class SpotifySessionManagerImpl @Inject constructor(
         Log.d(TAG, "Launching authorization flow...")
         try {
             launchAuthFlow?.let {
-                authClient.authorize(activity, it)
+                authClient.authorize(activity, it, null)
             } ?: run {
                 _sessionState.update {
                     SessionState.Failed(
-                        SessionError.UnknownError(Exception("Authorization flow not set"))
+                        SessionError.UnknownError(
+                            Exception("Authorization flow not set")
+                        )
                     )
                 }
             }
         } catch (e: Exception) {
-            _sessionState.update { SessionState.Failed(SessionError.UnknownError(e)) }
+            _sessionState.update {
+                SessionState.Failed(SessionError.UnknownError(e))
+            }
         }
     }
 
     override fun handleAuthResult(
         context: Context,
         result: ActivityResult,
-        coroutineScope: CoroutineScope
+        coroutineScope: CoroutineScope,
+        dispatcher: CoroutineDispatcher
     ) {
         authClient.handleSpotifyAuthResult(result) { authResult ->
             if (authResult.isSuccess) {
@@ -81,14 +85,16 @@ class SpotifySessionManagerImpl @Inject constructor(
                         }
                         .onSuccess {
                             Log.d(TAG, "Access token stored, Connecting to remote...")
-                            connectRemote(context, coroutineScope)
+                            connectRemote(context, coroutineScope, dispatcher)
 
                         }
                 }
             } else {
                 _sessionState.update {
                     SessionState.Failed(
-                        SessionError.AuthFailed(Exception("Authorization failed with unknown error"))
+                        SessionError.AuthFailed(
+                            Exception("Authorization failed with unknown error")
+                        )
                     )
                 }
             }
@@ -103,7 +109,8 @@ class SpotifySessionManagerImpl @Inject constructor(
 
     private fun connectRemote(
         context: Context,
-        coroutineScope: CoroutineScope
+        coroutineScope: CoroutineScope,
+        dispatcher: CoroutineDispatcher = Dispatchers.Main
     ) {
         _sessionState.update { SessionState.ConnectingRemote }
         coroutineScope.launch(dispatcher) {
@@ -115,7 +122,9 @@ class SpotifySessionManagerImpl @Inject constructor(
                 Log.e(TAG, "Failed to connect to remote", result.exceptionOrNull())
                 _sessionState.update {
                     SessionState.Failed(
-                        SessionError.RemoteConnectionFailed(result.exceptionOrNull())
+                        SessionError.RemoteConnectionFailed(
+                            result.exceptionOrNull()
+                        )
                     )
                 }
             }

@@ -1,10 +1,14 @@
 package org.vander.android.sample.navigation
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -15,6 +19,7 @@ import org.vander.android.sample.MainActivity
 import org.vander.android.sample.presentation.screen.HomeScreen
 import org.vander.android.sample.presentation.screen.SpotifyScreenWrapper
 import org.vander.android.sample.presentation.viewmodel.SpotifyViewModel
+
 
 @Composable
 fun AppNavHost(navController: NavHostController, innerPadding: PaddingValues) {
@@ -27,7 +32,11 @@ fun AppNavHost(navController: NavHostController, innerPadding: PaddingValues) {
         composable(NavItem.Home.route) { HomeScreen() }
         composable(NavItem.Spotify.route) {
             val viewModel = hiltViewModel<SpotifyViewModel>()
-            val activity = LocalContext.current as MainActivity
+            val context = LocalContext.current
+            val activity = remember(context) {
+                context.findActivity() as? MainActivity
+            }
+
             val launcher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.StartActivityForResult(),
                 onResult = { result ->
@@ -44,6 +53,12 @@ fun AppNavHost(navController: NavHostController, innerPadding: PaddingValues) {
     }
 }
 
-fun initSpotifySession() {
-
+// Fonction d'extension pour trouver l'activité de manière sûre
+private fun Context.findActivity(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    return null
 }

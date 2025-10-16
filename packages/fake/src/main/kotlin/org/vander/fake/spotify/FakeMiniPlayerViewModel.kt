@@ -16,6 +16,7 @@ class FakeMiniPlayerViewModel : IMiniPlayerViewModel {
             base = PlayerStateData(
                 trackName = "Zelda's Theme",
                 artistName = "Koji Kondo",
+                albumName = "Zelda",
                 coverId = "",
                 trackId = "",
                 isPaused = true,
@@ -26,7 +27,9 @@ class FakeMiniPlayerViewModel : IMiniPlayerViewModel {
                 repeating = true,
                 seeking = false,
                 skippingNext = false,
-                skippingPrevious = false
+                skippingPrevious = false,
+                positionMs = 1234567890L,
+                durationMs = 1234567890L
             ),
             isTrackSaved = false
         )

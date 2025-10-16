@@ -40,18 +40,21 @@ class SpotifyPlayerClient @Inject constructor(
     override val playerConnectionState: StateFlow<PlayerConnectionState> =
         _playerConnectionState.asStateFlow()
 
+    private val _lastState = MutableStateFlow(PlayerStateData.empty())
+    override val lastState: StateFlow<PlayerStateData> = _lastState.asStateFlow()
 
     override suspend fun subscribeToPlayerState(function: (PlayerStateData) -> Unit) {
-        playerApi?.let { it ->
-            it.subscribeToPlayerState().setEventCallback {
-                val track: Track = it.track
+        playerApi?.let { api ->
+            api.subscribeToPlayerState().setEventCallback { state ->
+                val track: Track = state.track
                 Log.d(
                     TAG,
                     "PlayerClient received new data: " + track.name + " by " + track.artist.name +
-                            "(paused: " + it.isPaused + " / coverUri: " + track.imageUri + ")"
+                            "(paused: " + state.isPaused + " / coverUri: " + track.imageUri + ")"
                 )
-                isPlaying = !it.isPaused
-                function(it.toPlayerStateData())
+                isPlaying = !state.isPaused
+                _lastState.value = state.toPlayerStateData()
+                function(state.toPlayerStateData())
             }
         } ?: run {
             Log.e(TAG, "spotifyPlayerApi is null")
@@ -81,24 +84,25 @@ class SpotifyPlayerClient @Inject constructor(
         playerApi?.skipPrevious()
     }
 
-    override fun seek(position: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun setVolume(volume: Int) {
-        TODO("Not yet implemented")
+    override fun seekTo(position: Long) {
+      playerApi?.seekTo(position)
     }
 
     override fun setShuffle(shuffle: Boolean) {
-        TODO("Not yet implemented")
+        playerApi?.setShuffle(shuffle)
     }
 
-    override fun setRepeat(repeat: Boolean) {
-        TODO("Not yet implemented")
+    override fun setRepeat(repeat: Int) {
+        playerApi?.setRepeat(repeat)
     }
 
     override fun isPlaying(): Boolean {
         return isPlaying
+    }
+
+    override fun unsubscribeFromPlayerState() {
+        playerApi?.subscribeToPlayerState()?.cancel()
+        appRemoteProvider.disconnect()
     }
 
 }

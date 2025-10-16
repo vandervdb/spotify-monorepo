@@ -8,6 +8,7 @@ android-targetSdk = "36"
 android-versionCode = "1"
 android-versionName = "1.0"
 
+fragmentKtx = "1.8.9"
 kotlin = "2.2.20"
 agp = "8.11.2"
 
@@ -50,6 +51,7 @@ mockito       = "5.20.0"
 # ---------- Libraries ----------
 [libraries]
 # Build-logic
+androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 kotlin-gradle-plugin  = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin",  version.ref = "kotlin" }
 android-gradle-plugin = { module = "com.android.tools.build:gradle",             version.ref = "agp" }
 

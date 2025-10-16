@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.fragment.ktx)
 
     // --- AndroidX Core
     implementation(libs.androidx.core.ktx)
@@ -99,9 +100,10 @@ dependencies {
     // si nécessaire :
     // kapt(libs.androidx.hilt.compiler)
 
-    // --- Spotify SDK (local AARs)
-    implementation(files("libs/spotify-app-remote-release-0.8.0.aar"))
-    implementation(files("libs/spotify-auth-release-2.1.0.aar"))
+    // --- Spotify SDK (provided by consumer apps)
+    // Use compileOnly here to avoid bundling local AARs into this AAR (AGP restriction)
+    compileOnly(files("libs/spotify-app-remote-release-0.8.0.aar"))
+    compileOnly(files("libs/spotify-auth-release-2.1.0.aar"))
 
     // --- AndroidX Utils
     implementation(libs.androidx.browser)

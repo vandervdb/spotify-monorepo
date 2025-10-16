@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
+import kotlinx.coroutines.CoroutineDispatcher
 import org.vander.core.domain.state.SessionState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 
 interface SpotifySessionManager {
@@ -17,7 +19,8 @@ interface SpotifySessionManager {
     fun handleAuthResult(
         context: Context,
         result: ActivityResult,
-        coroutineScope: CoroutineScope
+        coroutineScope: CoroutineScope,
+        dispatcher: CoroutineDispatcher = Dispatchers.Main
     )
 
     suspend fun shutDown()

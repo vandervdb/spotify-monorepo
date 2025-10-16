@@ -25,6 +25,9 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -44,6 +47,7 @@ include(":packages:core-domain")
 include(":packages:core-dto")
 include(":packages:core-ui")
 include(":packages:fake")
+//include(":rn-modules:RnModuleSpotifyClient:android")
 
 
 // Load credentials from spotify-secret.properties

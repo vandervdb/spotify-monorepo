@@ -126,6 +126,3 @@ tasks.register<CheckVersionHardcodedUsagesTask>("checkVersionHardcodedUsages") {
         }
     )
 }
-
-
-
