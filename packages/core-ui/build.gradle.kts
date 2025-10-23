@@ -25,12 +25,12 @@ android {
 
     buildFeatures {
         buildConfig = false
-         compose = false
+         compose = true
     }
 
-    // composeOptions {
-    //     kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
-    // }
+     composeOptions {
+         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+     }
 }
 
 kotlin {
@@ -46,5 +46,9 @@ dependencies {
 
     implementation(project(":packages:core-domain"))
 
-     implementation(libs.androidx.core.ktx)
+    // Compose runtime is required by the Compose compiler plugin
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.runtime)
+
+    implementation(libs.androidx.core.ktx)
 }
