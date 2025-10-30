@@ -3,6 +3,7 @@ package org.vander.spotifyclient.data.player.mapper
 import android.util.Log
 import com.spotify.protocol.types.PlayerState
 import org.vander.core.domain.state.PlayerStateData
+import org.vander.spotifyclient.bridge.PlayerStateDto
 
 fun PlayerState.toPlayerStateData(): PlayerStateData {
     val track = this.track

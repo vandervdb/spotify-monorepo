@@ -1,12 +1,12 @@
 package org.vander.core.domain.state
 
-data class PlayerState(
+data class DomainPlayerState(
     val base: PlayerStateData,
     val isTrackSaved: Boolean? = null,
 ) {
     companion object {
-        fun empty(): PlayerState {
-            return PlayerState(PlayerStateData.Companion.empty(), null)
+        fun empty(): DomainPlayerState {
+            return DomainPlayerState(PlayerStateData.Companion.empty(), null)
         }
     }
 }

@@ -1,27 +1,39 @@
 package org.vander.spotifyclient.bridge
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import androidx.activity.result.ActivityResult
+import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
+import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.PlayerStateData
-import org.vander.spotifyclient.bridge.util.ActivityResultFactory
-import org.vander.spotifyclient.domain.appremote.ISpotifyAppRemoteProvider
-import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
-import org.vander.spotifyclient.domain.player.ISpotifyPlayerClient
+import org.vander.core.domain.state.SessionState
+import org.vander.core.ui.state.UIQueueState
+import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
+import org.vander.spotifyclient.domain.usecase.SpotifyUseCase
 import javax.inject.Inject
-import kotlin.coroutines.resume
+import org.vander.spotifyclient.data.player.mapper.*
 
-class SpotifyBridge  @Inject constructor(
-    private val authClient: ISpotifyAuthClient,
-    private val playerClient: ISpotifyPlayerClient,
-    private val appRemoteProvider: ISpotifyAppRemoteProvider,
+class SpotifyBridge @Inject constructor(
+    private val sessionManager: SpotifySessionManager,
+    private val useCase: SpotifyUseCase,
+    private val appContext: Context,
 ) : SpotifyBridgeApi {
+
+
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + job)
+
+    private var authLauncher: ActivityResultLauncher<Intent>? = null
 
     private val lastState = MutableStateFlow(
         PlayerStateDto(
@@ -29,78 +41,71 @@ class SpotifyBridge  @Inject constructor(
             positionMs = 0,
             durationMs = 0,
             trackUri = null,
+            coverId = null,
             trackName = null,
             artistName = null,
             albumName = null,
         )
     )
 
+    override val sessionState: StateFlow<SessionState> = sessionManager.sessionState
+    override val domainPlayerState: StateFlow<DomainPlayerState> = useCase.domainPlayerState
+    override val uIQueueState: StateFlow<UIQueueState> = useCase.uIQueueState
+
     override val playerEvents: Flow<PlayerStateDto> = callbackFlow {
-        playerClient.subscribeToPlayerState { s ->
-            val dto = PlayerStateDto(
-                isPlaying = s.playing,
-                positionMs = s.positionMs,
-                durationMs = s.durationMs,
-                trackUri = s.trackId,
-                trackName = s.trackName,
-                artistName = s.artistName,
-                albumName = s.albumName,
-            )
+        domainPlayerState.collect { state ->
+            val dto = state.toPlayerStateDto()
             lastState.value = dto
             trySend(dto)
         }
-        awaitClose { playerClient.unsubscribeFromPlayerState() }
     }
 
-    override suspend fun authorize(
-        activity: Activity,
-        config: AuthConfigK
-    ): AuthorizeResultK {
-        return suspendCancellableCoroutine { cont ->
-            val launcher: ActivityResultLauncher<Intent> =
-                ActivityResultFactory.register(activity) { result: ActivityResult ->
-                    authClient.handleSpotifyAuthResult(result) { r ->
-                        r.onSuccess { value ->
-                            val type = if (value.length > 30)
-                                AuthorizeResultK.Type.Token else AuthorizeResultK.Type.Code
-                            cont.resume(AuthorizeResultK(type = type, value = value))
-                        }.onFailure { e ->
-                            cont.resume(AuthorizeResultK(
-                                type = AuthorizeResultK.Type.Error, error = e.message)
-                            )
-                        }
-                    }
-                }
-            authClient.authorize(activity, launcher, null)
+    override suspend fun startUp(activity: Activity) {
+        val componentActivity = activity as? ComponentActivity ?: error("Host activity must be a ComponentActivity")
+        if (authLauncher == null) {
+            authLauncher = componentActivity.activityResultRegistry.register(
+                "spotify-auth",
+                ActivityResultContracts.StartActivityForResult()
+            ) { result ->
+                sessionManager.handleAuthResult(appContext, result, scope)
+            }
         }
+        sessionManager.requestAuthorization(authLauncher!!)
+        sessionManager.launchAuthorizationFlow(activity)
+
     }
 
-    override suspend fun refreshToken(refreshToken: String): String {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun connect(activity: Activity, clientId: String, redirectUri: String) {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun disconnect() {
-        TODO("Not yet implemented")
+        sessionManager.shutDown()
     }
 
     override suspend fun playUri(uri: String) {
-        playerClient.play(uri)
+        useCase.playUri(uri)
     }
 
     override suspend fun pause() {
-        playerClient.pause()
+        useCase.pause()
     }
 
     override suspend fun resume() {
-        playerClient.resume()
+        useCase.resume()
     }
 
     override suspend fun seekTo(ms: Long) {
-        playerClient.seekTo(ms)
+        useCase.seekTo(ms)
+    }
+
+    override suspend fun skipNext() {
+        useCase.skipNext()
+    }
+
+    override suspend fun skipPrevious() {
+        useCase.skipPrevious()
+    }
+
+    override fun toggleSaveTrackState(trackId: String) {
+        useCase.toggleSaveTrackState(trackId)
     }
 
     override suspend fun getPlayerState(): PlayerStateData {
@@ -109,6 +114,12 @@ class SpotifyBridge  @Inject constructor(
 //        }
 //        return lastState.value
         TODO("Not yet implemented")
+    }
+
+    fun onDestroy() {
+        authLauncher?.unregister()
+        authLauncher = null
+        job.cancel()
     }
 
 }

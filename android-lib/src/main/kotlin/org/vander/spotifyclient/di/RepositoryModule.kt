@@ -4,16 +4,16 @@ import org.vander.core.domain.player.IPlayerStateRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.vander.spotifyclient.data.repository.DefaultPlayerStateRepository
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
     @Binds
-    @ViewModelScoped
+    @Singleton
     abstract fun bindPlayerStateRepository(
         impl: DefaultPlayerStateRepository
     ): IPlayerStateRepository

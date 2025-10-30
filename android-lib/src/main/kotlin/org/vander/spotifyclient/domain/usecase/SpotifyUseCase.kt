@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.activity.result.ActivityResult
 import org.vander.core.domain.data.CurrentlyPlaying
 import org.vander.core.domain.player.IPlayerStateRepository
-import org.vander.core.domain.state.PlayerState
+import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.PlayerStateData
 import org.vander.core.domain.state.SavedRemotelyChangedState
 import org.vander.core.domain.state.SessionState
@@ -44,9 +44,9 @@ class SpotifyUseCase @Inject constructor(
 
     private var activity: Activity? = null
 
-    private val _PlayerState =
-        MutableStateFlow<PlayerState>(PlayerState.empty())
-    val playerState: StateFlow<PlayerState> = _PlayerState.asStateFlow()
+    private val _Domain_playerState =
+        MutableStateFlow<DomainPlayerState>(DomainPlayerState.empty())
+    val domainPlayerState: StateFlow<DomainPlayerState> = _Domain_playerState.asStateFlow()
 
     val currentUserQueue: StateFlow<CurrentlyPlaying?> = remoteUseCase.currentUserQueue
 
@@ -64,7 +64,7 @@ class SpotifyUseCase @Inject constructor(
         coroutineScope {
             Log.d(TAG, "Starting up...")
             this@SpotifyUseCase.activity = activity
-            launch { updateSpotifyPlayerStateAndUIQueueState() } // TODO: Group in one call
+            launch { updateSpotifyPlayerStateAndUIQueueState() }
             launch { collectSessionState() }
             launch { observeSavedRemotelyChangedState() }
         }
@@ -78,18 +78,30 @@ class SpotifyUseCase @Inject constructor(
     }
 
     suspend fun togglePlayPause() {
-        _PlayerState.togglePause()
+        _Domain_playerState.togglePause()
         if (playerClient.isPlaying()) {
             playerClient.pause()
         } else {
             playerClient.resume()
         }
-        _PlayerState.togglePause()
+        _Domain_playerState.togglePause()
+    }
+
+    suspend fun pause(){
+        playerClient.pause()
+    }
+
+    suspend fun resume(){
+        playerClient.resume()
+    }
+
+    suspend fun seekTo(ms: Long){
+        playerClient.seekTo(ms)
     }
 
     fun toggleSaveTrackState(trackId: String) {
-        val newSaveState = _PlayerState.value.isTrackSaved == false
-        _PlayerState.setTrackSaved(newSaveState)
+        val newSaveState = _Domain_playerState.value.isTrackSaved == false
+        _Domain_playerState.setTrackSaved(newSaveState)
     }
 
     suspend fun skipNext() {
@@ -100,8 +112,8 @@ class SpotifyUseCase @Inject constructor(
         playerClient.skipPrevious()
     }
 
-    suspend fun playTrack(trackId: String) {
-        playerClient.play("spotify:track:$trackId")
+    suspend fun playUri(uri: String) {
+        playerClient.play("spotify:track:$uri")
     }
 
     private suspend fun collectSessionState() {
@@ -193,12 +205,12 @@ class SpotifyUseCase @Inject constructor(
         Log.d(TAG, "Updating Spotify player state: $playerStateData")
         var currentTrackId = playerStateData?.trackId ?: trackId!!
         val isSaved = libraryRepository.isTrackSaved(currentTrackId).getOrDefault(false)
-        val currentPlayerState = _PlayerState.value
+        val currentPlayerState = _Domain_playerState.value
         Log.d(TAG, "(Spotify player state: $currentPlayerState)")
-        _PlayerState.update { currentPlayerState.copyWithSaved(isSaved) }
+        _Domain_playerState.update { currentPlayerState.copyWithSaved(isSaved) }
 
         if (playerStateData != null) {
-            _PlayerState.update { _PlayerState.value.copyWithBase(playerStateData) }
+            _Domain_playerState.update { _Domain_playerState.value.copyWithBase(playerStateData) }
         }
 
     }

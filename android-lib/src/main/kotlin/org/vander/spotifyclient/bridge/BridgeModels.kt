@@ -40,6 +40,7 @@ data class PlayerStateDto(
     val positionMs: Long,
     val durationMs: Long,
     val trackUri: String? = null,
+    val coverId: String? = null,
     val trackName: String? = null,
     val artistName: String? = null,
     val albumName: String? = null,

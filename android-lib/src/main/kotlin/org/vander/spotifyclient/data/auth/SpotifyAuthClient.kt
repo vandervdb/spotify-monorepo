@@ -79,35 +79,34 @@ class SpotifyAuthClient @Inject constructor() : ISpotifyAuthClient {
         return if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
             if (data == null) {
-                Log.e(TAG, "Aucune donnée reçue dans le résultat d'activité")
-                onResult(Result.failure<String>(Exception("Aucune donnée reçue")))
+                Log.e(TAG, "No data received in activity result")
+                onResult(Result.failure<String>(Exception("No data received")))
             }
             val token = data?.getStringExtra("token")
-            Log.d(TAG, "Résultat OK")
+            Log.d(TAG, "Result OK")
             val response = AuthorizationClient.getResponse(result.resultCode, data)
             when (response.type) {
                 AuthorizationResponse.Type.TOKEN -> {
-                    Log.d(TAG, "Access Token reçu: ${response.accessToken}")
+                    Log.d(TAG, "Access Token received: ${response.accessToken}")
                     onResult(Result.success(response.accessToken))
                 }
                 AuthorizationResponse.Type.CODE -> {
-                    Log.d(TAG, "Code d'autorisation reçu: ${response.code}")
+                    Log.d(TAG, "Authorization code received: ${response.code}")
                     onResult(Result.success(response.code))
                 }
                 AuthorizationResponse.Type.ERROR -> {
-                    Log.e(TAG, "Erreur Spotify Auth: ${response.error}")
+                    Log.e(TAG, "Spotify Auth Error: ${response.error}")
                     onResult(Result.failure(Exception("Spotify Auth Error: ${response.error}")))
                 }
                 else -> {
-                    Log.e(TAG, "Type de réponse inattendu: ${response.type}")
+                    Log.e(TAG, "Unexpected response type: ${response.type}")
                     onResult(Result.failure(Exception("Unexpected response type: ${response.type}")))
                 }
             }
 
         } else {
-            Log.e(TAG, "Erreur lors de la connexion à Spotify, code résultat: ${result.resultCode}")
+            Log.e(TAG, "Error connecting to Spotify, result code: ${result.resultCode}")
             onResult(Result.failure<String>(Exception(result.resultCode.toString())))
         }
     }
 }
-

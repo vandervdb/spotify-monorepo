@@ -7,7 +7,7 @@ import androidx.activity.result.ActivityResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import org.vander.core.domain.data.SpotifyPlaylistsResponse
-import org.vander.core.domain.state.PlayerState
+import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.ui.presentation.viewmodel.IMiniPlayerViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,8 +30,8 @@ open class SpotifyViewModel @Inject constructor(
         private const val TAG = "SpotifyViewModel"
     }
 
-    override val playerState: StateFlow<PlayerState> =
-        spotifyUseCase.playerState
+    override val domainPlayerState: StateFlow<DomainPlayerState> =
+        spotifyUseCase.domainPlayerState
 
     override val sessionState = sessionManager.sessionState
 
@@ -55,7 +55,7 @@ open class SpotifyViewModel @Inject constructor(
     }
 
     override fun toggleSaveTrack(trackId: String) {
-        val isSaved = playerState.value.isTrackSaved
+        val isSaved = domainPlayerState.value.isTrackSaved
         val action = if (isSaved == true) ::removeTrackFromSaved else ::saveTrack
         Log.d(TAG, "toggleSaveTrack: $isSaved")
         action(trackId)
@@ -81,7 +81,7 @@ open class SpotifyViewModel @Inject constructor(
 
     override fun playTrack(trackId: String) {
         viewModelScope.launch {
-            spotifyUseCase.playTrack(trackId)
+            spotifyUseCase.playUri(trackId)
         }
     }
 

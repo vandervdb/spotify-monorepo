@@ -50,7 +50,7 @@ import org.vander.android.sample.presentation.components.preview.PreviewMiniPlay
 @Composable
 fun MiniPlayer(viewModel: IMiniPlayerViewModel) {
     val sessionState by viewModel.sessionState.collectAsState()
-    val playerState by viewModel.playerState.collectAsState()
+    val playerState by viewModel.domainPlayerState.collectAsState()
     val uIQueueState by viewModel.uIQueueState.collectAsState()
 
     if (sessionState is SessionState.Ready) {
@@ -214,7 +214,7 @@ fun MiniPlayerWithPainter(
     coverPainter: Painter
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
-    val playerState by viewModel.playerState.collectAsState()
+    val playerState by viewModel.domainPlayerState.collectAsState()
     val uIQueueState by viewModel.uIQueueState.collectAsState()
 
     if (sessionState is SessionState.Ready) {

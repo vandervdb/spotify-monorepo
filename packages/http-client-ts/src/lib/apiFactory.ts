@@ -54,13 +54,13 @@ export function createGetApi<T>(
           data: e.response?.data,
           cause: e,
         };
-        log.error('Erreur Axios: ', e);
+        log.error('Axios error: ', e);
         return err(httpErr);
       }
-      log.error('Erreur inconnue: ', e);
+      log.error('Unknown error: ', e);
       return err<HttpError>({
         kind: 'http get',
-        message: 'Erreur inconnue',
+        message: 'Unknown error',
         cause: e,
       });
     }
@@ -91,13 +91,13 @@ export function createPostApi<T>(
           data: e.response?.data,
           cause: e,
         };
-        log.error('Erreur Axios: ', e);
+        log.error('Axios error: ', e);
         return err(httpErr);
       }
-      log.error('Erreur inconnue: ', e);
+      log.error('Unknown error: ', e);
       return err<HttpError>({
         kind: 'http post',
-        message: 'Erreur inconnue',
+        message: 'Unknown error',
         cause: e,
       });
     }
@@ -128,13 +128,13 @@ export function createPutApi<T>(
           data: e.response?.data,
           cause: e,
         };
-        log.error('Erreur Axios: ', e);
+        log.error('Axios error: ', e);
         return err(httpErr);
       }
-      log.error('Erreur inconnue: ', e);
+      log.error('Unknown error: ', e);
       return err<HttpError>({
         kind: 'http put',
-        message: 'Erreur inconnue',
+        message: 'Unknown error',
         cause: e,
       });
     }
@@ -165,13 +165,13 @@ export function createDeleteApi<T>(
           data: e.response?.data,
           cause: e,
         };
-        log.error('Erreur Axios: ', e);
+        log.error('Axios error: ', e);
         return err(httpErr);
       }
-      log.error('Erreur inconnue: ', e);
+      log.error('Unknown error: ', e);
       return err<HttpError>({
         kind: 'http delete',
-        message: 'Erreur inconnue',
+        message: 'Unknown error',
         cause: e,
       });
     }

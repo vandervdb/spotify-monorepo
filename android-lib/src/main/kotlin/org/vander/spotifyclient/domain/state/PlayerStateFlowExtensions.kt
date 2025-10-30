@@ -1,6 +1,6 @@
 package org.vander.spotifyclient.domain.state
 
-import org.vander.core.domain.state.PlayerState
+import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.copyWithBase
 import org.vander.core.domain.state.copyWithSaved
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * @param transform a function that takes the current state of the [MutableStateFlow]
  *                  and returns the new state.
  */
-inline fun MutableStateFlow<PlayerState>.update(
-    transform: (PlayerState) -> PlayerState
+inline fun MutableStateFlow<DomainPlayerState>.update(
+    transform: (DomainPlayerState) -> DomainPlayerState
 ) {
     value = transform(value)
 }
@@ -36,9 +36,9 @@ inline fun MutableStateFlow<PlayerState>.update(
  * @param predicate A function that determines whether the update should occur based on the current value.
  * @param transform A function that transforms the current value into the new value if the predicate is true.
  */
-inline fun MutableStateFlow<PlayerState>.updateIf(
-    predicate: (PlayerState) -> Boolean,
-    transform: (PlayerState) -> PlayerState
+inline fun MutableStateFlow<DomainPlayerState>.updateIf(
+    predicate: (DomainPlayerState) -> Boolean,
+    transform: (DomainPlayerState) -> DomainPlayerState
 ) {
     val current = value
     if (predicate(current)) {
@@ -46,18 +46,18 @@ inline fun MutableStateFlow<PlayerState>.updateIf(
     }
 }
 
-fun MutableStateFlow<PlayerState>.togglePause() {
+fun MutableStateFlow<DomainPlayerState>.togglePause() {
     update {
         val newBase = it.base.copy(isPaused = !it.base.isPaused)
         it.copyWithBase(newBase)
     }
 }
 
-fun MutableStateFlow<PlayerState>.setTrackSaved(isSaved: Boolean) {
+fun MutableStateFlow<DomainPlayerState>.setTrackSaved(isSaved: Boolean) {
     update { it.copyWithSaved(isSaved) }
 }
 
-fun MutableStateFlow<PlayerState>.setTrack(trackId: String) {
+fun MutableStateFlow<DomainPlayerState>.setTrack(trackId: String) {
     update {
         val newBase = it.base.copy(trackId = trackId)
         it.copyWithBase(newBase)
@@ -65,6 +65,6 @@ fun MutableStateFlow<PlayerState>.setTrack(trackId: String) {
 }
 
 
-fun MutableStateFlow<PlayerState>.reset() {
-    value = PlayerState.empty()
+fun MutableStateFlow<DomainPlayerState>.reset() {
+    value = DomainPlayerState.empty()
 }

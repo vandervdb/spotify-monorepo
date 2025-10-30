@@ -45,10 +45,10 @@ const attachBearer = async (
     }
     if (typeof config.headers.set === 'function') {
       config.headers.set('Authorization', `Bearer ${token}`);
-      log.debug('→ Bearer token attaché');
+      log.debug('→ Bearer token attached');
     } else {
       config.headers['Authorization'] = `Bearer ${token}`;
-      log.debug('→ Pas de Bearer token. Requette brute');
+      log.debug('→ No Bearer token. Raw request');
     }
   }
   return config;
@@ -60,7 +60,7 @@ const handle401 = async (error: AxiosError, authService: AuthService) => {
     return Promise.reject(error);
   }
   if (error.response?.status === 401 && !originalRequest._retry) {
-    log.warn('401 intercepté. Tentative de refresh...');
+    log.warn('401 intercepted. Attempting refresh...');
     originalRequest._retry = true;
     try {
       await authService.getToken();
@@ -72,7 +72,7 @@ const handle401 = async (error: AxiosError, authService: AuthService) => {
         );
       }
     } catch (refreshError) {
-      log.debug('Erreur lors du refresh du token', refreshError);
+      log.debug('Error refreshing token', refreshError);
       throw refreshError;
     }
   }

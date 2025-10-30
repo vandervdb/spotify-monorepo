@@ -1,7 +1,7 @@
 package org.vander.core.ui.presentation.viewmodel
 
 import android.app.Activity
-import org.vander.core.domain.state.PlayerState
+import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.SessionState
 import org.vander.core.ui.state.UIQueueState
 import kotlinx.coroutines.flow.StateFlow
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface IMiniPlayerViewModel {
     val sessionState: StateFlow<SessionState>
     val uIQueueState: StateFlow<UIQueueState>
-    val playerState: StateFlow<PlayerState>
+    val domainPlayerState: StateFlow<DomainPlayerState>
     fun startUp(activity: Activity)
     fun togglePlayPause()
     fun skipNext()
