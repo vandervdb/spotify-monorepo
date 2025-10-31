@@ -6,16 +6,16 @@ import android.content.Intent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import kotlinx.coroutines.CoroutineDispatcher
-import org.vander.core.domain.state.SessionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
+import org.vander.core.domain.state.SessionState
+import org.vander.spotifyclient.bridge.AuthConfigK
 
 interface SpotifySessionManager {
     val sessionState: StateFlow<SessionState>
 
     fun requestAuthorization(launchAuth: ActivityResultLauncher<Intent>)
-    fun launchAuthorizationFlow(activity: Activity)
     fun handleAuthResult(
         context: Context,
         result: ActivityResult,
@@ -24,4 +24,5 @@ interface SpotifySessionManager {
     )
 
     suspend fun shutDown()
+    fun launchAuthorizationFlow(activity: Activity, config: AuthConfigK? = null)
 }

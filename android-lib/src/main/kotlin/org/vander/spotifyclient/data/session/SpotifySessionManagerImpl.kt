@@ -7,15 +7,16 @@ import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import kotlinx.coroutines.CoroutineDispatcher
-import org.vander.core.domain.auth.IAuthRepository
-import org.vander.core.domain.error.SessionError
-import org.vander.core.domain.state.SessionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.vander.core.domain.auth.IAuthRepository
+import org.vander.core.domain.error.SessionError
+import org.vander.core.domain.state.SessionState
+import org.vander.spotifyclient.bridge.AuthConfigK
 import org.vander.spotifyclient.domain.appremote.ISpotifyAppRemoteProvider
 import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
 import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
@@ -42,7 +43,7 @@ class SpotifySessionManagerImpl @Inject constructor(
         _sessionState.update { SessionState.Authorizing }
     }
 
-    override fun launchAuthorizationFlow(activity: Activity) {
+    override fun launchAuthorizationFlow(activity: Activity, config: AuthConfigK?) {
         Log.d(TAG, "Launching authorization flow...")
         try {
             launchAuthFlow?.let {

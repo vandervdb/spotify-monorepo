@@ -4,9 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
-import androidx.fragment.app.commit
 import androidx.fragment.app.FragmentActivity
-import java.util.UUID
+import androidx.fragment.app.commit
+import java.util.*
 
 object ActivityResultFactory {
     fun register(
@@ -14,7 +14,7 @@ object ActivityResultFactory {
         callback: (ActivityResult) -> Unit
     ): ActivityResultLauncher<Intent> {
         val fa = activity as? FragmentActivity
-            ?: error("Activity must extend FragmentActivity (ReactActivity le fait)")
+            ?: error("Activity must extend FragmentActivity")
 
         val tag = "ActivityResultHolderFragment_${UUID.randomUUID()}"
         val fm = fa.supportFragmentManager
