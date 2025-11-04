@@ -6,7 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
 import org.vander.android.sample.presentation.App
 import org.vander.android.sample.theme.AndroidAppTheme
-import org.vander.spotifyclient.SpotifyAuthorizationActivity
+import org.vander.spotifyclient.utils.SpotifyAuthorizationActivity
 
 @AndroidEntryPoint
 class MainActivity : SpotifyAuthorizationActivity() {

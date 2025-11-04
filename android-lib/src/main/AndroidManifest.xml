@@ -1,19 +1,20 @@
 <manifest package="org.vander.spotifyclient"
           xmlns:android="http://schemas.android.com/apk/res/android">
+
     <application>
-    <activity
-            android:name=".SpotifyAuthorizationActivity"
-            android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW"/>
+        <activity
+                android:name=".utils.SpotifyAuthorizationActivity"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
 
-            <category android:name="android.intent.category.DEFAULT"/>
-            <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
 
-            <data
-                android:host="\${redirectHostName}"
-                android:scheme="\${redirectSchemeName}"/>
-        </intent-filter>
-    </activity>
-</application>
+                <data
+                        android:host="\${redirectHostName}"
+                        android:scheme="\${redirectSchemeName}"/>
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>
