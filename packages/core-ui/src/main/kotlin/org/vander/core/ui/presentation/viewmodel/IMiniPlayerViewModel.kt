@@ -1,10 +1,10 @@
 package org.vander.core.ui.presentation.viewmodel
 
 import android.app.Activity
+import kotlinx.coroutines.flow.StateFlow
 import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.SessionState
 import org.vander.core.ui.state.UIQueueState
-import kotlinx.coroutines.flow.StateFlow
 
 interface IMiniPlayerViewModel {
     val sessionState: StateFlow<SessionState>
@@ -17,4 +17,5 @@ interface IMiniPlayerViewModel {
     fun playTrack(trackId: String)
     fun checkIfTrackSaved(trackId: String)
     fun toggleSaveTrack(trackId: String)
+    fun seekTo(position: Long)
 }

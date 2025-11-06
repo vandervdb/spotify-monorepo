@@ -46,6 +46,7 @@ androidx-junit = "1.2.1"
 espresso      = "3.6.1"
 mockk         = "1.13.10"
 mockito       = "5.12.0"
+uiGraphics = "1.9.4"
 
 # ---------- Libraries ----------
 [libraries]
@@ -109,6 +110,7 @@ compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 mockk                  = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockito                = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 
 # ---------- Plugins ----------
 [plugins]

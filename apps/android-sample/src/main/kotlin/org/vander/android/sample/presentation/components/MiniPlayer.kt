@@ -1,16 +1,8 @@
 package org.vander.android.sample.presentation.components
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
@@ -20,32 +12,29 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.vander.core.domain.state.SessionState
-import org.vander.core.domain.state.coverId
-import org.vander.core.domain.state.isPaused
-import org.vander.core.domain.state.trackId
-import org.vander.core.ui.domain.UIQueueItem
-import org.vander.core.ui.presentation.viewmodel.IMiniPlayerViewModel
 import kotlinx.coroutines.delay
 import org.vander.android.sample.presentation.components.preview.PreviewMiniPlayerWithLocalCover
+import org.vander.core.domain.state.*
+import org.vander.core.ui.domain.UIQueueItem
+import org.vander.core.ui.presentation.viewmodel.IMiniPlayerViewModel
+
+data class TrackParams(
+    val tracksQueue: List<UIQueueItem>,
+    val trackId: String = "",
+    val isSaved: Boolean = false,
+    val isPaused: Boolean,
+    val positionMS: Long,
+    val durationMS: Long,
+)
 
 @Composable
 fun MiniPlayer(viewModel: IMiniPlayerViewModel) {
@@ -58,10 +47,14 @@ fun MiniPlayer(viewModel: IMiniPlayerViewModel) {
         Log.d("MiniPlayer", "Player state: $playerState")
         Log.d("MiniPlayer", "Queue state: $uIQueueState")
         MiniPlayerContent(
-            tracksQueue = uIQueueState.items,
-            trackId = playerState.trackId,
-            isSaved = playerState.isTrackSaved == true,
-            isPaused = playerState.isPaused,
+            trackParams = TrackParams(
+                tracksQueue = uIQueueState.items,
+                trackId = playerState.trackId,
+                isSaved = playerState.isTrackSaved == true,
+                isPaused = playerState.isPaused,
+                positionMS = playerState.positionMs,
+                durationMS = playerState.durationMs
+            ),
             saveTrack = {
                 Log.d("MiniPlayer", "Saving track: $it")
                 viewModel.toggleSaveTrack(it)
@@ -75,6 +68,7 @@ fun MiniPlayer(viewModel: IMiniPlayerViewModel) {
                 viewModel.skipPrevious()
             },
             onPlayPause = { viewModel.togglePlayPause() },
+            onSeekTo = { targetMs -> viewModel.seekTo(targetMs) },
             cover = {
                 SpotifyTrackCover(
                     imageUri = playerState.coverId,
@@ -87,20 +81,18 @@ fun MiniPlayer(viewModel: IMiniPlayerViewModel) {
 
 @Composable
 private fun MiniPlayerContent(
-    tracksQueue: List<UIQueueItem>,
-    trackId: String = "",
-    isSaved: Boolean = false,
-    isPaused: Boolean,
+    trackParams: TrackParams,
     onPlayPause: () -> Unit,
     saveTrack: (String) -> Unit,
     skipNext: () -> Unit,
     skipPrevious: () -> Unit,
+    onSeekTo: (Long) -> Unit,
     cover: @Composable () -> Unit
 ) {
 
-    val pagerState = rememberPagerState(pageCount = { tracksQueue.size })
-    val currentTrackId = trackId
-    val currentTrackIndex = tracksQueue.indexOfFirst { it.trackId == currentTrackId }
+    val pagerState = rememberPagerState(pageCount = { trackParams.tracksQueue.size })
+    val currentTrackId = trackParams.trackId
+    val currentTrackIndex = trackParams.tracksQueue.indexOfFirst { it.trackId == currentTrackId }
 
     var miniplayerSize by remember { mutableIntStateOf(0) }
 
@@ -108,7 +100,7 @@ private fun MiniPlayerContent(
     var suppressSwipeCallback by remember { mutableStateOf(false) }
 
     LaunchedEffect(currentTrackId) {
-        val index = tracksQueue.indexOfFirst { it.trackId == currentTrackId }
+        val index = trackParams.tracksQueue.indexOfFirst { it.trackId == currentTrackId }
         if (index >= 0 && index != pagerState.currentPage) {
             suppressSwipeCallback = true
             pagerState.animateScrollToPage(index)
@@ -119,10 +111,10 @@ private fun MiniPlayerContent(
     Log.d("MiniPlayer", "MiniPlayer size: $miniplayerSize")
     LaunchedEffect(pagerState.currentPage) {
         if (!suppressSwipeCallback) {
-            val newTrackId = tracksQueue.getOrNull(pagerState.currentPage)?.trackId
+            val newTrackId = trackParams.tracksQueue.getOrNull(pagerState.currentPage)?.trackId
             if (newTrackId != null && newTrackId != currentTrackId) {
                 Log.d("MiniPlayer", "Swiped to trackId=$newTrackId")
-                val newTrackIndex = tracksQueue.indexOfFirst { it.trackId == newTrackId }
+                val newTrackIndex = trackParams.tracksQueue.indexOfFirst { it.trackId == newTrackId }
                 if (currentTrackIndex > newTrackIndex) {
                     skipPrevious()
                     skipPrevious()
@@ -138,37 +130,67 @@ private fun MiniPlayerContent(
         tonalElevation = 4.dp,
         color = MaterialTheme.colorScheme.surface,
         modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
+            .fillMaxWidth(),
+
         ) {
-            cover()
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                cover()
 
-            Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
 
-            Box(modifier = Modifier.weight(1f)) {
-                TracksQueue(pagerState, tracksQueue)
+                Box(modifier = Modifier.weight(1f)) {
+                    TracksQueue(pagerState, trackParams.tracksQueue)
+                }
+
+                IconButton(onClick = { saveTrack(trackParams.trackId) }) {
+                    Icon(
+                        imageVector = if (trackParams.isSaved) Icons.Default.CheckCircle else Icons.Default.AddCircle,
+                        contentDescription = if (trackParams.isSaved) "Remove from saved library" else "Save to library"
+                    )
+                }
+
+                IconButton(onClick = onPlayPause) {
+                    Icon(
+                        imageVector = if (trackParams.isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+                        contentDescription = if (trackParams.isPaused) "Plat" else "Pause"
+                    )
+                }
             }
 
-            IconButton(onClick = { saveTrack(trackId) }) {
-                Icon(
-                    imageVector = if (isSaved) Icons.Default.CheckCircle else Icons.Default.AddCircle,
-                    contentDescription = if (isSaved) "Remove from saved library" else "Save to library"
-                )
+            val progress = run {
+                val dur = trackParams.durationMS
+                val pos = trackParams.positionMS
+                if (dur > 0L) (pos.toFloat() / dur.toFloat()).coerceIn(0f, 1f) else 0f
             }
+            var barWidthPx by remember { mutableFloatStateOf(0F) }
 
-            IconButton(onClick = onPlayPause) {
-                Icon(
-                    imageVector = if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
-                    contentDescription = if (isPaused) "Plat" else "Pause"
-                )
-            }
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+                    .onGloballyPositioned { coords ->
+                        barWidthPx = coords.size.width.toFloat()
+                    }
+                    .pointerInput(trackParams.durationMS) {
+                        detectTapGestures { offset ->
+                            val dur = trackParams.durationMS
+                            if (dur <= 0L || barWidthPx <= 0f) return@detectTapGestures
+                            val fraction = (offset.x / barWidthPx).coerceIn(0f, 1f)
+                            val targetMs = (dur * fraction).toLong()
+                            onSeekTo(targetMs)
+                        }
+                    },
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            )
         }
     }
 }
@@ -219,10 +241,14 @@ fun MiniPlayerWithPainter(
 
     if (sessionState is SessionState.Ready) {
         MiniPlayerContent(
-            tracksQueue = uIQueueState.items,
-            trackId = playerState.trackId,
-            isSaved = playerState.isTrackSaved == true,
-            isPaused = playerState.isPaused,
+            trackParams = TrackParams(
+                tracksQueue = uIQueueState.items,
+                trackId = playerState.trackId,
+                isSaved = playerState.isTrackSaved == true,
+                isPaused = playerState.isPaused,
+                positionMS = playerState.positionMs,
+                durationMS = playerState.durationMs
+            ),
             saveTrack = {
                 Log.d("MiniPlayer", "Saving track: $it")
                 viewModel.toggleSaveTrack(it)
@@ -236,6 +262,7 @@ fun MiniPlayerWithPainter(
                 viewModel.skipPrevious()
             },
             onPlayPause = { viewModel.togglePlayPause() },
+            onSeekTo = { targetMs -> viewModel.seekTo(targetMs) },
             cover = {
                 SpotifyTrackCover(
                     painter = coverPainter,

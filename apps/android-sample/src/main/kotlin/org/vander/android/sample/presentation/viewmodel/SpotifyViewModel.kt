@@ -6,14 +6,14 @@ import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import org.vander.core.domain.data.SpotifyPlaylistsResponse
-import org.vander.core.domain.state.DomainPlayerState
-import org.vander.core.ui.presentation.viewmodel.IMiniPlayerViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.vander.core.domain.data.SpotifyPlaylistsResponse
+import org.vander.core.domain.state.DomainPlayerState
+import org.vander.core.ui.presentation.viewmodel.IMiniPlayerViewModel
 import org.vander.spotifyclient.domain.repository.SpotifyLibraryRepository
 import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 import org.vander.spotifyclient.domain.usecase.SpotifyUseCase
@@ -82,6 +82,12 @@ open class SpotifyViewModel @Inject constructor(
     override fun playTrack(trackId: String) {
         viewModelScope.launch {
             spotifyUseCase.playUri(trackId)
+        }
+    }
+
+    override fun seekTo(position: Long) {
+        viewModelScope.launch {
+            spotifyUseCase.seekTo(position)
         }
     }
 

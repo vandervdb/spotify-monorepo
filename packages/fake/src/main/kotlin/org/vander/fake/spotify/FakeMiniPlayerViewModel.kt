@@ -64,4 +64,8 @@ class FakeMiniPlayerViewModel : IMiniPlayerViewModel {
     override fun toggleSaveTrack(trackId: String) {
         // Nothing to do
     }
+
+    override fun seekTo(position: Long) {
+        // Nothing to do
+    }
 }
