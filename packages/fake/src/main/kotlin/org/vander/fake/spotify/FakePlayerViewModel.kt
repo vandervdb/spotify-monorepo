@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.PlayerStateData
 import org.vander.core.domain.state.SessionState
-import org.vander.core.ui.presentation.viewmodel.IMiniPlayerViewModel
+import org.vander.core.ui.presentation.viewmodel.IPlayerViewModel
 import org.vander.core.ui.state.UIQueueState
 
-class FakeMiniPlayerViewModel : IMiniPlayerViewModel {
+class FakePlayerViewModel : IPlayerViewModel {
     override val sessionState = MutableStateFlow<SessionState>(SessionState.Ready)
     override val uIQueueState = MutableStateFlow<UIQueueState>(UIQueueState.Companion.empty())
     override val domainPlayerState = MutableStateFlow<DomainPlayerState>(

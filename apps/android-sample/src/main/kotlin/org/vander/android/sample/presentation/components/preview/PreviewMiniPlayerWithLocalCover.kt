@@ -4,14 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import org.vander.fake.spotify.FakeMiniPlayerViewModel
 import org.vander.android.sample.R
 import org.vander.android.sample.presentation.components.MiniPlayerWithPainter
+import org.vander.fake.spotify.FakePlayerViewModel
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewMiniPlayerWithLocalCover() {
-    val fakeViewModel = remember { FakeMiniPlayerViewModel() }
+    val fakeViewModel = remember { FakePlayerViewModel() }
 
     MiniPlayerWithPainter(
         viewModel = fakeViewModel,

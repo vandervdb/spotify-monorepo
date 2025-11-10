@@ -7,42 +7,37 @@ import androidx.activity.result.ActivityResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.vander.core.domain.data.SpotifyPlaylistsResponse
 import org.vander.core.domain.state.DomainPlayerState
-import org.vander.core.ui.presentation.viewmodel.IMiniPlayerViewModel
+import org.vander.core.ui.presentation.viewmodel.IPlayerViewModel
 import org.vander.spotifyclient.domain.repository.SpotifyLibraryRepository
+import org.vander.spotifyclient.domain.usecase.PlayerUseCase
 import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
-import org.vander.spotifyclient.domain.usecase.SpotifyUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-open class SpotifyViewModel @Inject constructor(
-    private val spotifyUseCase: SpotifyUseCase,
-    private val spotifyLibraryRepository: SpotifyLibraryRepository,
-    private val sessionManager: SpotifySessionManager
-) : ViewModel(), IMiniPlayerViewModel {
+open class PlayerViewModel @Inject constructor(
+    private val playerUseCase: PlayerUseCase,
 
-    companion object {
-        private const val TAG = "SpotifyViewModel"
+    private val spotifyLibraryRepository: SpotifyLibraryRepository,
+    sessionManager: SpotifySessionManager
+) : ViewModel(), IPlayerViewModel {
+
+    companion object Companion {
+        private const val TAG = "PlayerViewModel"
     }
 
     override val domainPlayerState: StateFlow<DomainPlayerState> =
-        spotifyUseCase.domainPlayerState
+        playerUseCase.domainPlayerState
 
     override val sessionState = sessionManager.sessionState
 
-    override val uIQueueState = spotifyUseCase.uIQueueState
-
-    private val _playlists = MutableStateFlow<Result<SpotifyPlaylistsResponse>?>(null)
-    val playlists: StateFlow<Result<SpotifyPlaylistsResponse>?> = _playlists.asStateFlow()
+    override val uIQueueState = playerUseCase.uIQueueState
 
     override fun startUp(activity: Activity) {
         viewModelScope.launch {
-            spotifyUseCase.startUp(activity)
+            playerUseCase.startUp(activity)
         }
     }
 
@@ -63,38 +58,38 @@ open class SpotifyViewModel @Inject constructor(
 
     override fun togglePlayPause() {
         viewModelScope.launch {
-            spotifyUseCase.togglePlayPause()
+            playerUseCase.togglePlayPause()
         }
     }
 
     override fun skipNext() {
         viewModelScope.launch {
-            spotifyUseCase.skipNext()
+            playerUseCase.skipNext()
         }
     }
 
     override fun skipPrevious() {
         viewModelScope.launch {
-            spotifyUseCase.skipPrevious()
+            playerUseCase.skipPrevious()
         }
     }
 
     override fun playTrack(trackId: String) {
         viewModelScope.launch {
-            spotifyUseCase.playUri(trackId)
+            playerUseCase.playUri(trackId)
         }
     }
 
     override fun seekTo(position: Long) {
         viewModelScope.launch {
-            spotifyUseCase.seekTo(position)
+            playerUseCase.seekTo(position)
         }
     }
 
     fun saveTrack(trackId: String) {
         viewModelScope.launch {
             spotifyLibraryRepository.saveTrack(trackId).onSuccess {
-                spotifyUseCase.toggleSaveTrackState(trackId)
+                playerUseCase.toggleSaveTrackState(trackId)
             }
                 .onFailure {
                     Log.e(TAG, "Error saving track", it)
@@ -105,7 +100,7 @@ open class SpotifyViewModel @Inject constructor(
     fun removeTrackFromSaved(trackId: String) {
         viewModelScope.launch {
             spotifyLibraryRepository.removeTrack(trackId).onSuccess {
-                spotifyUseCase.toggleSaveTrackState(trackId)
+                playerUseCase.toggleSaveTrackState(trackId)
             }
                 .onFailure {
                     Log.e(TAG, "Error removing track", it)
@@ -114,7 +109,7 @@ open class SpotifyViewModel @Inject constructor(
     }
 
     fun handleAuthResult(context: Context, result: ActivityResult) {
-        spotifyUseCase.handleAuthResult(context, result, viewModelScope)
+        playerUseCase.handleAuthResult(context, result, viewModelScope)
     }
 
 

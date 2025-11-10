@@ -25,7 +25,7 @@ import kotlinx.coroutines.delay
 import org.vander.android.sample.presentation.components.preview.PreviewMiniPlayerWithLocalCover
 import org.vander.core.domain.state.*
 import org.vander.core.ui.domain.UIQueueItem
-import org.vander.core.ui.presentation.viewmodel.IMiniPlayerViewModel
+import org.vander.core.ui.presentation.viewmodel.IPlayerViewModel
 
 data class TrackParams(
     val tracksQueue: List<UIQueueItem>,
@@ -37,7 +37,7 @@ data class TrackParams(
 )
 
 @Composable
-fun MiniPlayer(viewModel: IMiniPlayerViewModel) {
+fun MiniPlayer(viewModel: IPlayerViewModel) {
     val sessionState by viewModel.sessionState.collectAsState()
     val playerState by viewModel.domainPlayerState.collectAsState()
     val uIQueueState by viewModel.uIQueueState.collectAsState()
@@ -232,7 +232,7 @@ private fun TrackItem(trackName: String, artistName: String) {
 
 @Composable
 fun MiniPlayerWithPainter(
-    viewModel: IMiniPlayerViewModel,
+    viewModel: IPlayerViewModel,
     coverPainter: Painter
 ) {
     val sessionState by viewModel.sessionState.collectAsState()

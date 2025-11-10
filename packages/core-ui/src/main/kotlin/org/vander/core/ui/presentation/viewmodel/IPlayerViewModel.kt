@@ -6,7 +6,7 @@ import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.SessionState
 import org.vander.core.ui.state.UIQueueState
 
-interface IMiniPlayerViewModel {
+interface IPlayerViewModel {
     val sessionState: StateFlow<SessionState>
     val uIQueueState: StateFlow<UIQueueState>
     val domainPlayerState: StateFlow<DomainPlayerState>

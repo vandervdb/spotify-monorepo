@@ -1,10 +1,10 @@
 package org.vander.spotifyclient.data.repository
 
 
-import org.vander.core.domain.data.SpotifyPlaylistsResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import org.vander.core.domain.data.PlaylistCollection
 import org.vander.spotifyclient.data.playlist.mapper.toDomain
 import org.vander.spotifyclient.domain.datasource.IRemotePlaylistDataSource
 import org.vander.spotifyclient.domain.repository.SpotifyPlaylistRepository
@@ -14,10 +14,10 @@ class SpotifyPlaylistRepositoryImpl @Inject constructor(
     private val api: IRemotePlaylistDataSource
 ) : SpotifyPlaylistRepository {
 
-    private val _playlists = MutableStateFlow<SpotifyPlaylistsResponse?>(null)
-    override val playlists: StateFlow<SpotifyPlaylistsResponse?> = _playlists
+    private val _playlists = MutableStateFlow<PlaylistCollection?>(null)
+    override val playlists: StateFlow<PlaylistCollection?> = _playlists
 
-    override suspend fun getUserPlaylists(): Result<SpotifyPlaylistsResponse> {
+    override suspend fun getUserPlaylists(): Result<PlaylistCollection> {
         return try {
             val dto = api.fetchUserPlaylists().getOrThrow()
             val result = dto.toDomain()

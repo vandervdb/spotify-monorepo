@@ -1,12 +1,12 @@
 package org.vander.spotifyclient.di
 
-import org.vander.core.domain.auth.IAuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import org.vander.core.domain.auth.IAuthRepository
 import org.vander.spotifyclient.data.remote.datasource.AuthRemoteDataSource
-import org.vander.spotifyclient.data.repository.AutRepository
+import org.vander.spotifyclient.data.repository.AuthRepository
 import org.vander.spotifyclient.domain.auth.IDataStoreManager
 import javax.inject.Singleton
 
@@ -20,6 +20,6 @@ object AuthProvidesModule {
         authRemoteDataSource: AuthRemoteDataSource,
         dataStoreManager: IDataStoreManager
     ): IAuthRepository {
-        return AutRepository(authRemoteDataSource, dataStoreManager)
+        return AuthRepository(authRemoteDataSource, dataStoreManager)
     }
 }

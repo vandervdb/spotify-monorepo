@@ -18,7 +18,8 @@ import androidx.navigation.compose.composable
 import org.vander.android.sample.MainActivity
 import org.vander.android.sample.presentation.screen.HomeScreen
 import org.vander.android.sample.presentation.screen.SpotifyScreenWrapper
-import org.vander.android.sample.presentation.viewmodel.SpotifyViewModel
+import org.vander.android.sample.presentation.viewmodel.PlayListViewModel
+import org.vander.android.sample.presentation.viewmodel.PlayerViewModel
 
 
 @Composable
@@ -31,7 +32,8 @@ fun AppNavHost(navController: NavHostController, innerPadding: PaddingValues) {
     ) {
         composable(NavItem.Home.route) { HomeScreen() }
         composable(NavItem.Spotify.route) {
-            val viewModel = hiltViewModel<SpotifyViewModel>()
+            val playerViewModel = hiltViewModel<PlayerViewModel>()
+            val playlistViewModel = hiltViewModel<PlayListViewModel>()
             val context = LocalContext.current
             val activity = remember(context) {
                 context.findActivity() as? MainActivity
@@ -41,13 +43,14 @@ fun AppNavHost(navController: NavHostController, innerPadding: PaddingValues) {
                 contract = ActivityResultContracts.StartActivityForResult(),
                 onResult = { result ->
                     activity?.let {
-                        viewModel.handleAuthResult(it, result)
+                        playerViewModel.handleAuthResult(it, result)
                     }
                 }
             )
             SpotifyScreenWrapper(
                 navController = navController,
-                spotifyViewModel = viewModel,
+                playerViewModel = playerViewModel,
+                playlistViewModel = playlistViewModel
             )
         }
     }

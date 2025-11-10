@@ -4,32 +4,22 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import org.vander.core.domain.data.CurrentlyPlaying
-import org.vander.core.domain.player.IPlayerStateRepository
-import org.vander.core.domain.state.DomainPlayerState
-import org.vander.core.domain.state.PlayerStateData
-import org.vander.core.domain.state.SavedRemotelyChangedState
-import org.vander.core.domain.state.SessionState
-import org.vander.core.domain.state.copyWithBase
-import org.vander.core.domain.state.copyWithSaved
-import org.vander.core.ui.domain.UIQueueItem
-import org.vander.core.ui.state.UIQueueState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.vander.core.domain.data.CurrentlyPlaying
+import org.vander.core.domain.player.IPlayerStateRepository
+import org.vander.core.domain.state.*
+import org.vander.core.ui.domain.UIQueueItem
+import org.vander.core.ui.state.UIQueueState
 import org.vander.spotifyclient.domain.player.ISpotifyPlayerClient
 import org.vander.spotifyclient.domain.repository.SpotifyLibraryRepository
 import org.vander.spotifyclient.domain.state.setTrackSaved
 import org.vander.spotifyclient.domain.state.togglePause
-
 import javax.inject.Inject
 
-class SpotifyUseCase @Inject constructor(
+class PlayerUseCase @Inject constructor(
     val sessionUseCase: SpotifySessionManager,
     val remoteUseCase: SpotifyRemoteUseCase,
     val playerStateRepository: IPlayerStateRepository,
@@ -38,15 +28,15 @@ class SpotifyUseCase @Inject constructor(
     val playerClient: ISpotifyPlayerClient,
 ) {
 
-    companion object {
-        private const val TAG = "SpotifyUseCase"
+    companion object Companion {
+        private const val TAG = "PlayerUseCase"
     }
 
     private var activity: Activity? = null
 
-    private val _Domain_playerState =
-        MutableStateFlow<DomainPlayerState>(DomainPlayerState.empty())
-    val domainPlayerState: StateFlow<DomainPlayerState> = _Domain_playerState.asStateFlow()
+    private val _domainPlayerState =
+        MutableStateFlow(DomainPlayerState.empty())
+    val domainPlayerState: StateFlow<DomainPlayerState> = _domainPlayerState.asStateFlow()
 
     val currentUserQueue: StateFlow<CurrentlyPlaying?> = remoteUseCase.currentUserQueue
 
@@ -63,7 +53,7 @@ class SpotifyUseCase @Inject constructor(
     suspend fun startUp(activity: Activity) =
         coroutineScope {
             Log.d(TAG, "Starting up...")
-            this@SpotifyUseCase.activity = activity
+            this@PlayerUseCase.activity = activity
             launch { updateSpotifyPlayerStateAndUIQueueState() }
             launch { collectSessionState() }
             launch { observeSavedRemotelyChangedState() }
@@ -78,13 +68,13 @@ class SpotifyUseCase @Inject constructor(
     }
 
     suspend fun togglePlayPause() {
-        _Domain_playerState.togglePause()
+        _domainPlayerState.togglePause()
         if (playerClient.isPlaying()) {
             playerClient.pause()
         } else {
             playerClient.resume()
         }
-        _Domain_playerState.togglePause()
+        _domainPlayerState.togglePause()
     }
 
     suspend fun pause(){
@@ -100,8 +90,8 @@ class SpotifyUseCase @Inject constructor(
     }
 
     fun toggleSaveTrackState(trackId: String) {
-        val newSaveState = _Domain_playerState.value.isTrackSaved == false
-        _Domain_playerState.setTrackSaved(newSaveState)
+        val newSaveState = _domainPlayerState.value.isTrackSaved == false
+        _domainPlayerState.setTrackSaved(newSaveState)
     }
 
     suspend fun skipNext() {
@@ -203,14 +193,14 @@ class SpotifyUseCase @Inject constructor(
         trackId: String? = null
     ) {
         Log.d(TAG, "Updating Spotify player state: $playerStateData")
-        var currentTrackId = playerStateData?.trackId ?: trackId!!
+        val currentTrackId = playerStateData?.trackId ?: trackId!!
         val isSaved = libraryRepository.isTrackSaved(currentTrackId).getOrDefault(false)
-        val currentPlayerState = _Domain_playerState.value
+        val currentPlayerState = _domainPlayerState.value
         Log.d(TAG, "(Spotify player state: $currentPlayerState)")
-        _Domain_playerState.update { currentPlayerState.copyWithSaved(isSaved) }
+        _domainPlayerState.update { currentPlayerState.copyWithSaved(isSaved) }
 
         if (playerStateData != null) {
-            _Domain_playerState.update { _Domain_playerState.value.copyWithBase(playerStateData) }
+            _domainPlayerState.update { _domainPlayerState.value.copyWithBase(playerStateData) }
         }
 
     }

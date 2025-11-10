@@ -3,7 +3,7 @@ package org.vander.android.sample.presentation.screen
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.LocalActivity
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -12,33 +12,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.vander.core.domain.state.SessionState
-import org.vander.core.ui.presentation.viewmodel.IMiniPlayerViewModel
 import org.vander.android.sample.presentation.components.MiniPlayer
+import org.vander.android.sample.presentation.components.PlaylistComponent
+import org.vander.core.domain.state.SessionState
+import org.vander.core.ui.presentation.viewmodel.IPlayerViewModel
+import org.vander.core.ui.presentation.viewmodel.IPlaylistViewModel
+import org.vander.fake.spotify.FakePlayerViewModel
+import org.vander.fake.spotify.FakePlaylistViewModel
 
 
 @Composable
 fun SpotifyScreen(
-    viewModel: IMiniPlayerViewModel,
-    modifier: Modifier
+    playerViewModel: IPlayerViewModel,
+    playlistViewModel: IPlaylistViewModel,
+    modifier: Modifier = Modifier,
+    launchStartup: Boolean = true
 ) {
 
     val tag = "SpotifyScreen"
-    val sessionState by viewModel.sessionState.collectAsState()
-    val uIQueueState by viewModel.uIQueueState.collectAsState()
-    val activity = LocalActivity.current
+    val sessionState by playerViewModel.sessionState.collectAsState()
+    val uIQueueState by playerViewModel.uIQueueState.collectAsState()
 
-
-    LaunchedEffect(key1 = activity) {
-        viewModel.startUp(Activity())
+    if (launchStartup) {
+        val activity = LocalActivity.current
+        LaunchedEffect(key1 = activity) {
+            playerViewModel.startUp(Activity())
+            playlistViewModel.refresh()
+        }
     }
 
-    Box(
+    Column(
         modifier = modifier.padding(32.dp),
-        contentAlignment = Alignment.Center
     ) {
         Log.d(tag, "Session state: $sessionState")
         when (sessionState) {
@@ -57,7 +64,8 @@ fun SpotifyScreen(
 
             is SessionState.Ready -> {
                 Text("✅ Connecté à Spotify Remote !")
-                MiniPlayer(viewModel)
+                PlaylistComponent(playlistViewModel)
+                MiniPlayer(playerViewModel)
             }
 
             is SessionState.Failed -> {
@@ -74,4 +82,21 @@ fun SpotifyScreen(
 
 // TODO add button to relaunch authorization flow
 
+}
+
+
+@Preview(showBackground = true, name = "SpotifyScreen Preview")
+@Composable
+fun SpotifyScreenPreview() {
+    // Use a fake ViewModel so the preview doesn't depend on runtime services
+    val fakePlayerViewModel = FakePlayerViewModel()
+    val fakePlaylistViewModel = FakePlaylistViewModel()
+    org.vander.android.sample.theme.AndroidAppTheme {
+        SpotifyScreen(
+            playerViewModel = fakePlayerViewModel,
+            playlistViewModel = fakePlaylistViewModel,
+            modifier = Modifier,
+            launchStartup = false // Avoid accessing Activity in preview
+        )
+    }
 }

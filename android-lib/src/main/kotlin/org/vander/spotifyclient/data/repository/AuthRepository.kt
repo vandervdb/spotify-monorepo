@@ -6,12 +6,12 @@ import org.vander.spotifyclient.data.remote.datasource.AuthRemoteDataSource
 import org.vander.spotifyclient.domain.auth.IDataStoreManager
 import javax.inject.Inject
 
-class AutRepository @Inject constructor(
+class AuthRepository @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val dataStoreManager: IDataStoreManager
 ) : IAuthRepository {
 
-    companion object {
+    companion object Companion {
         private const val TAG = "AuthRepository"
     }
 

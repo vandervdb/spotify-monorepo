@@ -8,14 +8,14 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import org.vander.spotifyclient.bridge.SpotifyBridge
 import org.vander.spotifyclient.bridge.SpotifyBridgeApi
+import org.vander.spotifyclient.domain.usecase.PlayerUseCase
 import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
-import org.vander.spotifyclient.domain.usecase.SpotifyUseCase
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface SpotifyEntryPoint {
     fun spotifySessionManager(): SpotifySessionManager
-    fun spotifyUseCase(): SpotifyUseCase
+    fun spotifyUseCase(): PlayerUseCase
 }
 
 fun obtainBridgeFromHilt(context: Context): SpotifyBridgeApi {

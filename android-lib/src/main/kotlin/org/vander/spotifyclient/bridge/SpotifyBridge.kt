@@ -19,13 +19,13 @@ import org.vander.core.domain.state.SessionState
 import org.vander.core.ui.state.UIQueueState
 import org.vander.spotifyclient.bridge.util.ActivityResultFactory
 import org.vander.spotifyclient.data.player.mapper.toPlayerStateDto
+import org.vander.spotifyclient.domain.usecase.PlayerUseCase
 import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
-import org.vander.spotifyclient.domain.usecase.SpotifyUseCase
 import javax.inject.Inject
 
 class SpotifyBridge @Inject constructor(
     private val sessionManager: SpotifySessionManager,
-    private val useCase: SpotifyUseCase,
+    private val useCase: PlayerUseCase,
     private val appContext: Context,
 ) : SpotifyBridgeApi {
 

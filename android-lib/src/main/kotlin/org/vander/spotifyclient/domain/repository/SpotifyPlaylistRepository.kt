@@ -1,9 +1,9 @@
 package org.vander.spotifyclient.domain.repository
 
-import org.vander.core.domain.data.SpotifyPlaylistsResponse
 import kotlinx.coroutines.flow.StateFlow
+import org.vander.core.domain.data.PlaylistCollection
 
 interface SpotifyPlaylistRepository {
-    val playlists: StateFlow<SpotifyPlaylistsResponse?>
-    suspend fun getUserPlaylists(): Result<SpotifyPlaylistsResponse>
+    val playlists: StateFlow<PlaylistCollection?>
+    suspend fun getUserPlaylists(): Result<PlaylistCollection>
 }

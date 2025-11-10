@@ -16,8 +16,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import org.vander.androidapp.data.util.SPOTIFY_COVER_UI
 import org.vander.android.sample.R
+import org.vander.androidapp.data.util.SPOTIFY_COVER_UI
 
 @Composable
 fun SpotifyTrackCover(
@@ -49,6 +49,6 @@ fun SpotifyTrackCover(
 @Composable
 fun SpotifyTrackCoverPreview() {
     val painter = painterResource(id = R.drawable.mr_scurff_test_cover)
-    var modifier = Modifier.size(48.dp)
+    val modifier = Modifier.size(48.dp)
     SpotifyTrackCover(imageUri = null, painter = painter, modifier)
 }
