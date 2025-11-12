@@ -16,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -122,16 +123,15 @@ private fun MiniPlayerContent(
 
     Surface(
         tonalElevation = 4.dp,
-        color = MaterialTheme.colorScheme.surface,
+        color = Color.Transparent,
         modifier = Modifier
             .padding(0.dp, 0.dp, 0.dp, 1.dp)
-            .fillMaxWidth(),
-
+            .fillMaxWidth()
         ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(0.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
@@ -170,7 +170,7 @@ private fun MiniPlayerContent(
                 progress = { progress },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(vertical = 4.dp)
                     .onGloballyPositioned { coords ->
                         barWidthPx = coords.size.width.toFloat()
                     }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Audiotrack
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,14 +24,18 @@ import org.vander.core.domain.data.Playlist
 import org.vander.core.ui.presentation.viewmodel.IPlaylistViewModel
 
 @Composable
-fun PlaylistComponent(viewModel: IPlaylistViewModel) {
+fun PlaylistComponent(
+    viewModel: IPlaylistViewModel,
+    modifier: Modifier = Modifier,
+) {
     val playlistCollection by viewModel.playlists.collectAsState()
 
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(80.dp),
-        contentPadding = PaddingValues(3.dp),
+        columns = GridCells.Adaptive(60.dp),
+        contentPadding = PaddingValues(0.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier.fillMaxSize()
     ) {
         items(
             items = playlistCollection.items,
@@ -53,7 +58,7 @@ fun PlaylistCoverItem(playlist: Playlist) {
     )
     val modifier = Modifier
         .fillMaxWidth()
-        .aspectRatio(1.3f)
+        .aspectRatio(1.2f)
         .pointerInput(id) {
             detectTapGestures { _ ->
                 run {
@@ -74,6 +79,7 @@ fun PlaylistCoverItem(playlist: Playlist) {
         Text(
             text = name,
             maxLines = 2,
+            fontSize = MaterialTheme.typography.bodySmall.fontSize,
             overflow = TextOverflow.Ellipsis
         )
     }

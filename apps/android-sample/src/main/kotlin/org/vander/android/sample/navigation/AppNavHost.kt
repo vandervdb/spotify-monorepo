@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.vander.android.sample.presentation.screen.HomeScreen
-import org.vander.android.sample.presentation.screen.SpotifyScreenWrapper
+import org.vander.android.sample.presentation.screen.SpotifyScreen
 import org.vander.android.sample.presentation.viewmodel.PlayListViewModel
 import org.vander.android.sample.presentation.viewmodel.PlayerViewModel
 
@@ -36,11 +36,12 @@ fun AppNavHost(
             val playlistViewModel = hiltViewModel<PlayListViewModel>()
             val context = LocalContext.current
 
-            SpotifyScreenWrapper(
-                navController = navController,
-                setTopBar,
+            SpotifyScreen(
                 playerViewModel = playerViewModel,
-                playlistViewModel = playlistViewModel
+                playlistViewModel = playlistViewModel,
+                setTopBar,
+                launchStartup = true,
+                navController = navController
             )
         }
     }
