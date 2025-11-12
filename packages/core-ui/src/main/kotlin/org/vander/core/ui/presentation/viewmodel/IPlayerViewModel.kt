@@ -1,6 +1,5 @@
 package org.vander.core.ui.presentation.viewmodel
 
-import android.app.Activity
 import kotlinx.coroutines.flow.StateFlow
 import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.SessionState
@@ -10,7 +9,7 @@ interface IPlayerViewModel {
     val sessionState: StateFlow<SessionState>
     val uIQueueState: StateFlow<UIQueueState>
     val domainPlayerState: StateFlow<DomainPlayerState>
-    fun startUp(activity: Activity)
+    fun startUp()
     fun togglePlayPause()
     fun skipNext()
     fun skipPrevious()

@@ -1,6 +1,5 @@
 package org.vander.fake.spotify
 
-import android.app.Activity
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.PlayerStateData
@@ -36,7 +35,7 @@ class FakePlayerViewModel : IPlayerViewModel {
     )
 
 
-    override fun startUp(activity: Activity) {
+    override fun startUp() {
         TODO("Not yet implemented")
     }
 

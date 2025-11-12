@@ -38,11 +38,9 @@ data class TrackParams(
 
 @Composable
 fun MiniPlayer(viewModel: IPlayerViewModel) {
-    val sessionState by viewModel.sessionState.collectAsState()
     val playerState by viewModel.domainPlayerState.collectAsState()
     val uIQueueState by viewModel.uIQueueState.collectAsState()
 
-    if (sessionState is SessionState.Ready) {
         Log.d("MiniPlayer", "Session is ready")
         Log.d("MiniPlayer", "Player state: $playerState")
         Log.d("MiniPlayer", "Queue state: $uIQueueState")
@@ -76,7 +74,6 @@ fun MiniPlayer(viewModel: IPlayerViewModel) {
                 )
             }
         )
-    }
 }
 
 @Composable
@@ -94,8 +91,6 @@ private fun MiniPlayerContent(
     val currentTrackId = trackParams.trackId
     val currentTrackIndex = trackParams.tracksQueue.indexOfFirst { it.trackId == currentTrackId }
 
-    var miniplayerSize by remember { mutableIntStateOf(0) }
-
     /* Workaround to prevent the swipe gesture callback (playTrack(newTrackId)) to be triggered */
     var suppressSwipeCallback by remember { mutableStateOf(false) }
 
@@ -108,7 +103,6 @@ private fun MiniPlayerContent(
             suppressSwipeCallback = false
         }
     }
-    Log.d("MiniPlayer", "MiniPlayer size: $miniplayerSize")
     LaunchedEffect(pagerState.currentPage) {
         if (!suppressSwipeCallback) {
             val newTrackId = trackParams.tracksQueue.getOrNull(pagerState.currentPage)?.trackId
@@ -130,6 +124,7 @@ private fun MiniPlayerContent(
         tonalElevation = 4.dp,
         color = MaterialTheme.colorScheme.surface,
         modifier = Modifier
+            .padding(0.dp, 0.dp, 0.dp, 1.dp)
             .fillMaxWidth(),
 
         ) {
@@ -145,7 +140,7 @@ private fun MiniPlayerContent(
 
                 Spacer(modifier = Modifier.padding(horizontal = 8.dp))
 
-                Box(modifier = Modifier.weight(1f)) {
+                Box(modifier = Modifier.weight(3f)) {
                     TracksQueue(pagerState, trackParams.tracksQueue)
                 }
 
@@ -214,7 +209,7 @@ private fun TracksQueue(pagerState: PagerState, tracksQueue: List<UIQueueItem>) 
 @Composable
 private fun TrackItem(trackName: String, artistName: String) {
     Column(
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier.padding(0.dp),
         verticalArrangement = Arrangement.Center
     ) {
         MarqueeTextInfinite(

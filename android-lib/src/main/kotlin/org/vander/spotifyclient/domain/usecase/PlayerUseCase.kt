@@ -1,6 +1,5 @@
 package org.vander.spotifyclient.domain.usecase
 
-import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.activity.result.ActivityResult
@@ -32,8 +31,6 @@ class PlayerUseCase @Inject constructor(
         private const val TAG = "PlayerUseCase"
     }
 
-    private var activity: Activity? = null
-
     private val _domainPlayerState =
         MutableStateFlow(DomainPlayerState.empty())
     val domainPlayerState: StateFlow<DomainPlayerState> = _domainPlayerState.asStateFlow()
@@ -50,10 +47,9 @@ class PlayerUseCase @Inject constructor(
     private var hasReceivedUpdatedQueue = false
 
 
-    suspend fun startUp(activity: Activity) =
+    suspend fun startUp() =
         coroutineScope {
             Log.d(TAG, "Starting up...")
-            this@PlayerUseCase.activity = activity
             launch { updateSpotifyPlayerStateAndUIQueueState() }
             launch { collectSessionState() }
             launch { observeSavedRemotelyChangedState() }

@@ -1,9 +1,6 @@
 package org.vander.android.sample.presentation.viewmodel
 
-import android.app.Activity
-import android.content.Context
 import android.util.Log
-import androidx.activity.result.ActivityResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,9 +32,9 @@ open class PlayerViewModel @Inject constructor(
 
     override val uIQueueState = playerUseCase.uIQueueState
 
-    override fun startUp(activity: Activity) {
+    override fun startUp() {
         viewModelScope.launch {
-            playerUseCase.startUp(activity)
+            playerUseCase.startUp()
         }
     }
 
@@ -107,10 +104,5 @@ open class PlayerViewModel @Inject constructor(
                 }
         }
     }
-
-    fun handleAuthResult(context: Context, result: ActivityResult) {
-        playerUseCase.handleAuthResult(context, result, viewModelScope)
-    }
-
 
 }

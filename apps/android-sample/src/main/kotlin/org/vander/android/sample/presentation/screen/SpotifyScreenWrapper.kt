@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -17,36 +18,27 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.vander.android.sample.R
+import org.vander.android.sample.presentation.components.MiniPlayer
 import org.vander.android.sample.theme.SpotifyGreen
 import org.vander.core.ui.presentation.viewmodel.IPlayerViewModel
 import org.vander.core.ui.presentation.viewmodel.IPlaylistViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpotifyScreenWrapper(
     navController: NavController,
+    setTopBar: (@Composable () -> Unit) -> Unit,
     playerViewModel: IPlayerViewModel,
     playlistViewModel: IPlaylistViewModel,
     launchStartup: Boolean = true,
 ) {
+    // Set the Spotify top bar when this wrapper becomes active
+    LaunchedEffect(Unit) {
+        setTopBar { SpotifyTopBar() }
+    }
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Image(
-                        painter = painterResource(id = R.drawable.spotify_full_logo_black),
-                        contentDescription = "Spotify Logo",
-                        modifier = Modifier
-                            .height(32.dp),
-                        contentScale = ContentScale.Fit
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = SpotifyGreen,
-                    titleContentColor = Color.Black
-                )
-            )
-        }
+        bottomBar = { MiniPlayer(playerViewModel) }
     ) { innerPadding ->
         SpotifyScreen(
             playerViewModel = playerViewModel,
@@ -55,6 +47,26 @@ fun SpotifyScreenWrapper(
             launchStartup = launchStartup
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SpotifyTopBar() {
+    CenterAlignedTopAppBar(
+        title = {
+            Image(
+                painter = painterResource(id = R.drawable.spotify_full_logo_black),
+                contentDescription = "Spotify Logo",
+                modifier = Modifier
+                    .height(32.dp),
+                contentScale = ContentScale.Fit
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = SpotifyGreen,
+            titleContentColor = Color.Black
+        )
+    )
 }
 
 @Preview(showBackground = true, name = "SpotifyScreenWrapper Preview")
@@ -66,6 +78,7 @@ fun SpotifyScreenWrapperPreview() {
     org.vander.android.sample.theme.AndroidAppTheme {
         SpotifyScreenWrapper(
             navController = navController,
+            setTopBar = { _ -> },
             playerViewModel = fakePlayerViewModel,
             playlistViewModel = fakePlaylistViewModel,
             launchStartup = false

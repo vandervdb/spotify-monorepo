@@ -1,6 +1,5 @@
 package org.vander.android.sample.presentation.screen
 
-import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.vander.android.sample.presentation.components.MiniPlayer
 import org.vander.android.sample.presentation.components.PlaylistComponent
 import org.vander.core.domain.state.SessionState
 import org.vander.core.ui.presentation.viewmodel.IPlayerViewModel
@@ -39,7 +37,7 @@ fun SpotifyScreen(
     if (launchStartup) {
         val activity = LocalActivity.current
         LaunchedEffect(key1 = activity) {
-            playerViewModel.startUp(Activity())
+            playerViewModel.startUp()
             playlistViewModel.refresh()
         }
     }
@@ -65,7 +63,6 @@ fun SpotifyScreen(
             is SessionState.Ready -> {
                 Text("✅ Connecté à Spotify Remote !")
                 PlaylistComponent(playlistViewModel)
-                MiniPlayer(playerViewModel)
             }
 
             is SessionState.Failed -> {
@@ -79,8 +76,6 @@ fun SpotifyScreen(
         }
 
     }
-
-// TODO add button to relaunch authorization flow
 
 }
 

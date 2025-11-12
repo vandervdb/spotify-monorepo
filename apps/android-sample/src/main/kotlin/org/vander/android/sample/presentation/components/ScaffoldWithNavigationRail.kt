@@ -2,14 +2,8 @@ package org.vander.android.sample.presentation.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -23,13 +17,28 @@ import org.vander.android.sample.navigation.NavItem
 fun ScaffoldWithNavigationRail() {
     val navController = rememberNavController()
 
-    Scaffold { innerPadding ->
+    var topBarContent by remember { mutableStateOf<@Composable () -> Unit>({}) }
+    val setTopBar: (@Composable () -> Unit) -> Unit = { newTopBar ->
+        topBarContent = newTopBar
+    }
 
+    // Defensive: clear top bar when Home is the active route (covers restored state cases)
+    val navBackEntryTopBar by navController.currentBackStackEntryAsState()
+    val currentRouteForTopBar = navBackEntryTopBar?.destination?.route
+    LaunchedEffect(currentRouteForTopBar) {
+        if (currentRouteForTopBar == NavItem.Home.route) {
+            setTopBar { }
+        }
+    }
+
+    Scaffold(
+        topBar = { topBarContent() }
+    ) { innerPadding ->
         Row(
             modifier = Modifier.padding(innerPadding)
         ) {
             NavigationRailWithNav(navController = navController)
-            AppNavHost(navController, innerPadding)
+            AppNavHost(navController, innerPadding, setTopBar)
         }
     }
 }
