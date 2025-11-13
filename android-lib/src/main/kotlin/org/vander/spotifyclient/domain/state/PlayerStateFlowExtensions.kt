@@ -1,9 +1,7 @@
 package org.vander.spotifyclient.domain.state
 
-import org.vander.core.domain.state.DomainPlayerState
-import org.vander.core.domain.state.copyWithBase
-import org.vander.core.domain.state.copyWithSaved
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.vander.core.domain.state.DomainPlayerState
 
 /**
  * Atomically updates the state of this [MutableStateFlow] with the result of applying
@@ -49,18 +47,18 @@ inline fun MutableStateFlow<DomainPlayerState>.updateIf(
 fun MutableStateFlow<DomainPlayerState>.togglePause() {
     update {
         val newBase = it.base.copy(isPaused = !it.base.isPaused)
-        it.copyWithBase(newBase)
+        it.copy(base = newBase)
     }
 }
 
 fun MutableStateFlow<DomainPlayerState>.setTrackSaved(isSaved: Boolean) {
-    update { it.copyWithSaved(isSaved) }
+    update { it.copy(isTrackSaved = isSaved) }
 }
 
 fun MutableStateFlow<DomainPlayerState>.setTrack(trackId: String) {
     update {
         val newBase = it.base.copy(trackId = trackId)
-        it.copyWithBase(newBase)
+        it.copy(base = newBase)
     }
 }
 

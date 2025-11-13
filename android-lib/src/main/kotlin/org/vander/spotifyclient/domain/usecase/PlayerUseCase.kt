@@ -9,7 +9,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.vander.core.domain.data.CurrentlyPlaying
 import org.vander.core.domain.player.IPlayerStateRepository
-import org.vander.core.domain.state.*
+import org.vander.core.domain.state.DomainPlayerState
+import org.vander.core.domain.state.PlayerStateData
+import org.vander.core.domain.state.SavedRemotelyChangedState
+import org.vander.core.domain.state.SessionState
 import org.vander.core.ui.domain.UIQueueItem
 import org.vander.core.ui.state.UIQueueState
 import org.vander.spotifyclient.domain.player.ISpotifyPlayerClient
@@ -193,10 +196,10 @@ class PlayerUseCase @Inject constructor(
         val isSaved = libraryRepository.isTrackSaved(currentTrackId).getOrDefault(false)
         val currentPlayerState = _domainPlayerState.value
         Log.d(TAG, "(Spotify player state: $currentPlayerState)")
-        _domainPlayerState.update { currentPlayerState.copyWithSaved(isSaved) }
+        _domainPlayerState.update { currentPlayerState.copy(isTrackSaved = isSaved) }
 
         if (playerStateData != null) {
-            _domainPlayerState.update { _domainPlayerState.value.copyWithBase(playerStateData) }
+            _domainPlayerState.update { _domainPlayerState.value.copy(base = playerStateData) }
         }
 
     }

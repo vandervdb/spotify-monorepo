@@ -24,9 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.vander.android.sample.presentation.components.preview.PreviewMiniPlayerWithLocalCover
-import org.vander.core.domain.state.*
+import org.vander.core.domain.state.SessionState
 import org.vander.core.ui.domain.UIQueueItem
-import org.vander.core.ui.presentation.viewmodel.IPlayerViewModel
+import org.vander.core.ui.presentation.viewmodel.PlayerViewModel
+
 
 data class TrackParams(
     val tracksQueue: List<UIQueueItem>,
@@ -38,21 +39,22 @@ data class TrackParams(
 )
 
 @Composable
-fun MiniPlayer(viewModel: IPlayerViewModel) {
+fun MiniPlayer(viewModel: PlayerViewModel) {
     val playerState by viewModel.domainPlayerState.collectAsState()
     val uIQueueState by viewModel.uIQueueState.collectAsState()
 
-        Log.d("MiniPlayer", "Session is ready")
-        Log.d("MiniPlayer", "Player state: $playerState")
-        Log.d("MiniPlayer", "Queue state: $uIQueueState")
+    Log.d("MiniPlayer", "Session is ready")
+    Log.d("MiniPlayer", "Player state: $playerState")
+    Log.d("MiniPlayer", "Queue state: $uIQueueState")
+    if (uIQueueState.items.isNotEmpty()) {
         MiniPlayerContent(
             trackParams = TrackParams(
                 tracksQueue = uIQueueState.items,
-                trackId = playerState.trackId,
+                trackId = playerState.base.trackId,
                 isSaved = playerState.isTrackSaved == true,
-                isPaused = playerState.isPaused,
-                positionMS = playerState.positionMs,
-                durationMS = playerState.durationMs
+                isPaused = playerState.base.isPaused,
+                positionMS = playerState.base.positionMs,
+                durationMS = playerState.base.durationMs
             ),
             saveTrack = {
                 Log.d("MiniPlayer", "Saving track: $it")
@@ -70,11 +72,12 @@ fun MiniPlayer(viewModel: IPlayerViewModel) {
             onSeekTo = { targetMs -> viewModel.seekTo(targetMs) },
             cover = {
                 SpotifyTrackCover(
-                    imageUri = playerState.coverId,
+                    imageUri = playerState.base.coverId,
                     modifier = Modifier.size(48.dp)
                 )
             }
         )
+    }
 }
 
 @Composable
@@ -127,7 +130,7 @@ private fun MiniPlayerContent(
         modifier = Modifier
             .padding(0.dp, 0.dp, 0.dp, 1.dp)
             .fillMaxWidth()
-        ) {
+    ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
@@ -227,7 +230,7 @@ private fun TrackItem(trackName: String, artistName: String) {
 
 @Composable
 fun MiniPlayerWithPainter(
-    viewModel: IPlayerViewModel,
+    viewModel: PlayerViewModel,
     coverPainter: Painter
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
@@ -238,11 +241,11 @@ fun MiniPlayerWithPainter(
         MiniPlayerContent(
             trackParams = TrackParams(
                 tracksQueue = uIQueueState.items,
-                trackId = playerState.trackId,
+                trackId = playerState.base.trackId,
                 isSaved = playerState.isTrackSaved == true,
-                isPaused = playerState.isPaused,
-                positionMS = playerState.positionMs,
-                durationMS = playerState.durationMs
+                isPaused = playerState.base.isPaused,
+                positionMS = playerState.base.positionMs,
+                durationMS = playerState.base.durationMs
             ),
             saveTrack = {
                 Log.d("MiniPlayer", "Saving track: $it")

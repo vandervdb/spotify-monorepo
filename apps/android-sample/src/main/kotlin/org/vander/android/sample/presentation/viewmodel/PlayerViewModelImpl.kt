@@ -7,22 +7,22 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.vander.core.domain.state.DomainPlayerState
-import org.vander.core.ui.presentation.viewmodel.IPlayerViewModel
+import org.vander.core.ui.presentation.viewmodel.PlayerViewModel
 import org.vander.spotifyclient.domain.repository.SpotifyLibraryRepository
 import org.vander.spotifyclient.domain.usecase.PlayerUseCase
 import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 import javax.inject.Inject
 
 @HiltViewModel
-open class PlayerViewModel @Inject constructor(
+open class PlayerViewModelImpl @Inject constructor(
     private val playerUseCase: PlayerUseCase,
 
     private val spotifyLibraryRepository: SpotifyLibraryRepository,
     sessionManager: SpotifySessionManager
-) : ViewModel(), IPlayerViewModel {
+) : ViewModel(), PlayerViewModel {
 
     companion object Companion {
-        private const val TAG = "PlayerViewModel"
+        private const val TAG = "PlayerViewModelImpl"
     }
 
     override val domainPlayerState: StateFlow<DomainPlayerState> =

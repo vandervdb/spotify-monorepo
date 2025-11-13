@@ -21,11 +21,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import org.vander.core.domain.data.Playlist
-import org.vander.core.ui.presentation.viewmodel.IPlaylistViewModel
+import org.vander.core.ui.presentation.viewmodel.PlaylistViewModel
 
 @Composable
 fun PlaylistComponent(
-    viewModel: IPlaylistViewModel,
+    viewModel: PlaylistViewModel,
     modifier: Modifier = Modifier,
 ) {
     val playlistCollection by viewModel.playlists.collectAsState()

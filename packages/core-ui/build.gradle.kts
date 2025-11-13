@@ -44,7 +44,7 @@ kotlin {
 dependencies {
     api(libs.kotlinx.coroutines.core)
 
-    implementation(project(":packages:core-domain"))
+    api(project(":packages:core-domain"))
 
     // Compose runtime is required by the Compose compiler plugin
     implementation(platform(libs.compose.bom))

@@ -3,6 +3,7 @@ package org.vander.spotifyclient.data.repository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.vander.core.domain.data.PlaylistCollection
 import org.vander.spotifyclient.data.playlist.mapper.toDomain
@@ -15,7 +16,7 @@ class SpotifyPlaylistRepositoryImpl @Inject constructor(
 ) : SpotifyPlaylistRepository {
 
     private val _playlists = MutableStateFlow<PlaylistCollection?>(null)
-    override val playlists: StateFlow<PlaylistCollection?> = _playlists
+    override val playlists: StateFlow<PlaylistCollection?> = _playlists.asStateFlow()
 
     override suspend fun getUserPlaylists(): Result<PlaylistCollection> {
         return try {

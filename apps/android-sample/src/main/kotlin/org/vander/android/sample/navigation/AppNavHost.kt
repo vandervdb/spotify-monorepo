@@ -14,8 +14,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.vander.android.sample.presentation.screen.HomeScreen
 import org.vander.android.sample.presentation.screen.SpotifyScreen
-import org.vander.android.sample.presentation.viewmodel.PlayListViewModel
-import org.vander.android.sample.presentation.viewmodel.PlayerViewModel
+import org.vander.android.sample.presentation.viewmodel.PlayListViewModelImpl
+import org.vander.android.sample.presentation.viewmodel.PlayerViewModelImpl
+import org.vander.android.sample.presentation.viewmodel.UserViewModelImpl
 
 
 @Composable
@@ -32,13 +33,15 @@ fun AppNavHost(
     ) {
         composable(NavItem.Home.route) { HomeScreen(setTopBar) }
         composable(NavItem.Spotify.route) {
-            val playerViewModel = hiltViewModel<PlayerViewModel>()
-            val playlistViewModel = hiltViewModel<PlayListViewModel>()
+            val playerViewModel = hiltViewModel<PlayerViewModelImpl>()
+            val playlistViewModel = hiltViewModel<PlayListViewModelImpl>()
+            val userViewModel = hiltViewModel<UserViewModelImpl>()
             val context = LocalContext.current
 
             SpotifyScreen(
                 playerViewModel = playerViewModel,
                 playlistViewModel = playlistViewModel,
+                userViewModel = userViewModel,
                 setTopBar,
                 launchStartup = true,
                 navController = navController

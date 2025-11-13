@@ -1,28 +1,25 @@
 package org.vander.spotifyclient.data.remote.datasource
 
 import android.util.Log
-import org.vander.core.domain.auth.ITokenProvider
-import io.ktor.client.HttpClient
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.headers
-import io.ktor.client.request.put
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpHeaders
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.serialization.json.Json
+import org.vander.core.domain.auth.ITokenProvider
 import org.vander.spotifyclient.domain.datasource.IRemoteLibraryDataSource
 import javax.inject.Inject
 import javax.inject.Named
 
 class RemoteLibraryDataSource @Inject constructor(
-    @Named("SpotifyRemoteLibraryHttpClient") private val httpClient: HttpClient,
+    @Named("auth_api_v1_client") private val httpClient: HttpClient,
     private val tokenProvider: ITokenProvider
 ) : IRemoteLibraryDataSource {
 
     override suspend fun fetchIsTrackSaved(trackId: String): Result<Boolean> {
         return try {
             val token = tokenProvider.getAccessToken().orEmpty()
-            val response = httpClient.get("tracks/contains") {
+            val response = httpClient.get("me/tracks/contains") {
                 url { parameters.append("ids", trackId) }
                 headers { append(HttpHeaders.Authorization, "Bearer $token") }
             }
@@ -39,7 +36,7 @@ class RemoteLibraryDataSource @Inject constructor(
 
     override suspend fun saveTrack(trackId: String): Result<Unit> = try {
         val token = tokenProvider.getAccessToken().orEmpty()
-        httpClient.put("tracks") {
+        httpClient.put("me/tracks") {
             url { parameters.append("ids", trackId) }
             headers { append(HttpHeaders.Authorization, "Bearer $token") }
         }
@@ -51,7 +48,7 @@ class RemoteLibraryDataSource @Inject constructor(
 
     override suspend fun removeTrack(trackId: String): Result<Unit> = try {
         val token = tokenProvider.getAccessToken().orEmpty()
-        httpClient.delete("tracks") {
+        httpClient.delete("me/tracks") {
             url { parameters.append("ids", trackId) }
             headers { append(HttpHeaders.Authorization, "Bearer $token") }
         }

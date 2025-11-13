@@ -16,7 +16,7 @@ class PlaylistUseCase @Inject constructor(
         private const val TAG = "PlaylistUseCase"
     }
 
-    val _playlists = MutableStateFlow<PlaylistCollection>(PlaylistCollection.empty())
+    private val _playlists = MutableStateFlow(PlaylistCollection.empty())
     val playlists: StateFlow<PlaylistCollection> = _playlists.asStateFlow()
 
     suspend fun getAndUpdatePlaylistsFlow() {

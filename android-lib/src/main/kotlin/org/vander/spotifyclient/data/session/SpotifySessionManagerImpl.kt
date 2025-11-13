@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.vander.core.domain.auth.IAuthRepository
@@ -32,7 +33,7 @@ class SpotifySessionManagerImpl @Inject constructor(
     }
 
     private val _sessionState = MutableStateFlow<SessionState>(SessionState.Idle)
-    override val sessionState: StateFlow<SessionState> = _sessionState
+    override val sessionState: StateFlow<SessionState> = _sessionState.asStateFlow()
 
     private var launchAuthFlow: ActivityResultLauncher<Intent>? = null
 

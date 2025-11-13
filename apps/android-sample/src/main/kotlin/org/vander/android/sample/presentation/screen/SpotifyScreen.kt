@@ -14,7 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -22,17 +25,21 @@ import org.vander.android.sample.R
 import org.vander.android.sample.presentation.components.MiniPlayer
 import org.vander.android.sample.presentation.components.PlaylistComponent
 import org.vander.android.sample.theme.SpotifyGreen
+import org.vander.core.domain.data.User
 import org.vander.core.domain.state.SessionState
-import org.vander.core.ui.presentation.viewmodel.IPlayerViewModel
-import org.vander.core.ui.presentation.viewmodel.IPlaylistViewModel
+import org.vander.core.ui.presentation.viewmodel.PlayerViewModel
+import org.vander.core.ui.presentation.viewmodel.PlaylistViewModel
+import org.vander.core.ui.presentation.viewmodel.UserViewModel
 import org.vander.fake.spotify.FakePlayerViewModel
 import org.vander.fake.spotify.FakePlaylistViewModel
+import org.vander.fake.spotify.FakeUserViewModel
 
 
 @Composable
 fun SpotifyScreen(
-    playerViewModel: IPlayerViewModel,
-    playlistViewModel: IPlaylistViewModel,
+    playerViewModel: PlayerViewModel,
+    playlistViewModel: PlaylistViewModel,
+    userViewModel: UserViewModel,
     setTopBar: (@Composable () -> Unit) -> Unit,
     launchStartup: Boolean = true,
     navController: NavController? = null,
@@ -41,6 +48,7 @@ fun SpotifyScreen(
     val tag = "SpotifyScreen"
     val sessionState by playerViewModel.sessionState.collectAsState()
     val uIQueueState by playerViewModel.uIQueueState.collectAsState()
+    val user by userViewModel.currentUser.collectAsState(User.empty)
 
     if (launchStartup) {
         val activity = LocalActivity.current
@@ -49,8 +57,13 @@ fun SpotifyScreen(
             playlistViewModel.refresh()
         }
     }
+
+    LaunchedEffect(user) {
+        userViewModel.refresh()
+    }
+
     LaunchedEffect(Unit) {
-        setTopBar { SpotifyTopBar() }
+        setTopBar { SpotifyTopBar(user?.name) }
     }
 
     Column(
@@ -102,16 +115,37 @@ fun SpotifyScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SpotifyTopBar() {
+fun SpotifyTopBar(displayName: String?) {
     CenterAlignedTopAppBar(
         title = {
-            Image(
-                painter = painterResource(id = R.drawable.spotify_full_logo_black),
-                contentDescription = "Spotify Logo",
-                modifier = Modifier
-                    .height(32.dp),
-                contentScale = ContentScale.Fit
-            )
+            Column {
+                Image(
+                    painter = painterResource(id = R.drawable.spotify_full_logo_black),
+                    contentDescription = "Spotify Logo",
+                    modifier = Modifier
+                        .height(32.dp),
+                    contentScale = ContentScale.Fit
+                )
+                Row(modifier = Modifier.padding(start = 32.dp)) {
+                    Text(
+                        text = "by ",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontStyle = FontStyle.Italic,
+                            fontSize = MaterialTheme.typography.bodySmall.fontSize
+                        ),
+                        color = Color.Black,
+
+                        )
+                    Text(
+                        text = displayName.takeUnless { it.isNullOrBlank() } ?: "You",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = SpotifyGreen,
@@ -125,10 +159,12 @@ fun SpotifyTopBar() {
 fun SpotifyScreenPreview() {
     val fakePlayerViewModel = FakePlayerViewModel()
     val fakePlaylistViewModel = FakePlaylistViewModel()
+    val fakeUserViewModel = FakeUserViewModel()
     org.vander.android.sample.theme.AndroidAppTheme {
         SpotifyScreen(
             playerViewModel = fakePlayerViewModel,
             playlistViewModel = fakePlaylistViewModel,
+            userViewModel = fakeUserViewModel,
             setTopBar = { },
             launchStartup = false // Avoid accessing Activity in preview
         )

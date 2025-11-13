@@ -1,14 +1,14 @@
 package org.vander.spotifyclient.di
 
-import org.vander.core.domain.auth.ITokenProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.*
+import io.ktor.client.plugins.logging.*
+import org.vander.core.domain.auth.ITokenProvider
 import org.vander.spotifyclient.network.KtorClientConfig
-import org.vander.spotifyclient.utils.HTTPS_API_SPOTIFY_COM_V_1_ME
+import org.vander.spotifyclient.utils.HTTPS_API_SPOTIFY_COM_V_1
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -18,88 +18,43 @@ object KtorClientConfigModule {
 
     @Provides
     @Singleton
-    @Named("SpotifyRemoteHttpClientConfig")
-    fun provideSpotifyRemoteHttpClientConfig(): KtorClientConfig {
+    @Named("public_api_v1")
+    fun providePublicApiV1Config(): KtorClientConfig {
         return KtorClientConfig(
-            baseUrl = HTTPS_API_SPOTIFY_COM_V_1_ME,
-            enableAuthPlugin = true,
-            logLevel = LogLevel.HEADERS
+            baseUrl = HTTPS_API_SPOTIFY_COM_V_1,
+            enableAuthPlugin = false,
+            logLevel = LogLevel.INFO
         )
     }
 
     @Provides
     @Singleton
-    @Named("SpotifyRemotePlaylistHttpClientConfig")
-    fun provideSpotifyRemotePlaylistHttpClientConfig(): KtorClientConfig {
+    @Named("auth_api_v1")
+    fun provideAuthApiV1Config(): KtorClientConfig {
         return KtorClientConfig(
-            baseUrl = HTTPS_API_SPOTIFY_COM_V_1_ME,
+            baseUrl = HTTPS_API_SPOTIFY_COM_V_1,
             enableAuthPlugin = true,
-            logLevel = LogLevel.HEADERS
-        )
-    }
-
-
-    @Provides
-    @Singleton
-    @Named("SpotifyRemoteQueueHttpClientConfig")
-    fun provideSpotifyRemoteQueueHttpClientConfig(): KtorClientConfig {
-        return KtorClientConfig(
-            baseUrl = HTTPS_API_SPOTIFY_COM_V_1_ME,
-            enableAuthPlugin = true,
-            logLevel = LogLevel.HEADERS
+            logLevel = LogLevel.INFO
         )
     }
 
     @Provides
     @Singleton
-    @Named("SpotifyRemoteLibraryHttpClientConfig")
-    fun provideSpotifyRemoteLibraryHttpClientConfig(): KtorClientConfig {
-        return KtorClientConfig(
-            baseUrl = HTTPS_API_SPOTIFY_COM_V_1_ME,
-            enableAuthPlugin = true,
-            logLevel = LogLevel.HEADERS
-        )
-    }
-
-    @Provides
-    @Singleton
-    @Named("SpotifyRemoteHttpClient")
-    fun provideSpotifyRemoteHttpClient(
+    @Named("public_api_v1_client")
+    fun providePublicApiV1Client(
         tokenProvider: ITokenProvider,
-        @Named("SpotifyRemoteHttpClientConfig") config: KtorClientConfig
+        @Named("public_api_v1") config: KtorClientConfig
     ): HttpClient {
         return NetworkModule.provideKtorClient(tokenProvider, config)
     }
 
     @Provides
     @Singleton
-    @Named("SpotifyRemotePlaylistHttpClient")
-    fun provideSpotifyRemotePlaylistHttpClient(
+    @Named("auth_api_v1_client")
+    fun provideAuthApiV1Client(
         tokenProvider: ITokenProvider,
-        @Named("SpotifyRemotePlaylistHttpClientConfig") config: KtorClientConfig
+        @Named("auth_api_v1") config: KtorClientConfig
     ): HttpClient {
         return NetworkModule.provideKtorClient(tokenProvider, config)
     }
-
-    @Provides
-    @Singleton
-    @Named("SpotifyRemoteQueueHttpClient")
-    fun provideSpotifyRemoteQueueHttpClient(
-        tokenProvider: ITokenProvider,
-        @Named("SpotifyRemoteQueueHttpClientConfig") config: KtorClientConfig
-    ): HttpClient {
-        return NetworkModule.provideKtorClient(tokenProvider, config)
-    }
-
-    @Provides
-    @Singleton
-    @Named("SpotifyRemoteLibraryHttpClient")
-    fun provideSpotifyRemoteLibraryHttpClient(
-        tokenProvider: ITokenProvider,
-        @Named("SpotifyRemoteLibraryHttpClientConfig") config: KtorClientConfig
-    ): HttpClient {
-        return NetworkModule.provideKtorClient(tokenProvider, config)
-    }
-
-
 }
