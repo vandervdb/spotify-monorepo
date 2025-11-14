@@ -4,10 +4,12 @@ import io.ktor.client.statement.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import org.vander.core.dto.ErrorResponseDto
+import org.vander.core.logger.Logger
+import org.vander.core.logger.NoOpLogger
 
 suspend inline fun <reified T> HttpResponse.parseSpotifyResult(
     tag: String = "SpotifyApi",
-    logger: org.vander.core.logger.Logger
+    logger: Logger
 ): Result<T> {
     val rawBody = this.bodyAsText()
     val json = Json { ignoreUnknownKeys = true }
@@ -28,4 +30,11 @@ suspend inline fun <reified T> HttpResponse.parseSpotifyResult(
         logger.e(tag, "JSON parsing error", e)
         Result.failure(e)
     }
+}
+
+suspend inline fun <reified T> HttpResponse.parseSpotifyResult(
+    tag: String = "SpotifyApi"
+): Result<T> {
+    val defaultLogger: Logger = NoOpLogger()
+    return this.parseSpotifyResult<T>(tag, defaultLogger)
 }

@@ -1,6 +1,5 @@
 package org.vander.android.sample.presentation.screen
 
-import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -74,18 +73,18 @@ fun SpotifyScreen(
             .fillMaxSize()
             .padding(horizontal = 32.dp, vertical = 10.dp),
     ) {
-        Log.d(tag, "Session state: $sessionState")
+        logger.d(tag, "Session state: $sessionState")
         when (sessionState) {
             is SessionState.Idle -> {
-                Log.d(tag, "Idle...")
+                logger.d(tag, "Idle...")
             }
 
             is SessionState.Authorizing -> {
-                Log.d(tag, "Authorizing...")
+                logger.d(tag, "Authorizing...")
             }
 
             is SessionState.ConnectingRemote -> {
-                Log.d(tag, "Connecting to remote...")
+                logger.d(tag, "Connecting to remote...")
                 CircularProgressIndicator()
             }
 

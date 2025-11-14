@@ -50,7 +50,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
 
-    implementation("co.touchlab:kermit:2.0.4")
+    api("co.touchlab:kermit:2.0.4")
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

@@ -1,7 +1,6 @@
 package org.vander.spotifyclient.data.remote.datasource
 
 
-import android.util.Log
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -9,6 +8,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import org.vander.core.dto.TokenResponseDto
+import org.vander.core.logger.Logger
 import org.vander.spotifyclient.BuildConfig.CLIENT_ID
 import org.vander.spotifyclient.BuildConfig.CLIENT_SECRET
 import org.vander.spotifyclient.domain.auth.IAuthRemoteDatasource
@@ -19,7 +19,8 @@ import javax.inject.Named
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 class AuthRemoteDataSource @Inject constructor(
-    @param:Named("AuthHttpClient") val httpClient: HttpClient
+    @param:Named("AuthHttpClient") val httpClient: HttpClient,
+    private val logger: Logger
 ) : IAuthRemoteDatasource {
     @OptIn(ExperimentalEncodingApi::class)
     override suspend fun fetchAccessToken(code: String): Result<TokenResponseDto> {
@@ -41,13 +42,13 @@ class AuthRemoteDataSource @Inject constructor(
             }
 
             val rawBody = response.bodyAsText()
-            Log.d("AuthRemoteDataSource", "Raw body: $rawBody")
+            logger.d("AuthRemoteDataSource", "Raw body: $rawBody")
             val json = Json { ignoreUnknownKeys = true }
 
             return response.parseSpotifyResult<TokenResponseDto>("AuthRemoteDataSource")
 
         } catch (e: Exception) {
-            Log.e("AuthRemoteDataSource", "Error fetching token", e)
+            logger.e("AuthRemoteDataSource", "Error fetching token", e)
             Result.failure(e)
         }
     }

@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
+import org.vander.core.logger.Logger
 import org.vander.spotifyclient.data.appremote.SpotifyAppRemoteProvider
 import org.vander.spotifyclient.data.player.SpotifyPlayerClient
 import org.vander.spotifyclient.domain.player.ISpotifyPlayerClient
@@ -26,8 +26,9 @@ abstract class PlayerModule {
         @Singleton
         fun provideSpotifyPlayerClient(
             appRemoteProvider: SpotifyAppRemoteProvider,
+            logger: Logger
         ): SpotifyPlayerClient {
-            return SpotifyPlayerClient(appRemoteProvider)
+            return SpotifyPlayerClient(appRemoteProvider, logger)
         }
     }
 }

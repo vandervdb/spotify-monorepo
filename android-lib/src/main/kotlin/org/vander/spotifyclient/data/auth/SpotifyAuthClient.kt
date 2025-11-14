@@ -2,26 +2,22 @@ package org.vander.spotifyclient.data.auth
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationClient.createLoginActivityIntent
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
+import org.vander.core.logger.Logger
 import org.vander.spotifyclient.BuildConfig
 import org.vander.spotifyclient.bridge.AuthConfigK
 import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
-import org.vander.spotifyclient.utils.REDIRECT_URI
-import org.vander.spotifyclient.utils.SCOPE_STREAMING
-import org.vander.spotifyclient.utils.USER_LIBRARY_MODIFY
-import org.vander.spotifyclient.utils.USER_LIBRARY_READ
-import org.vander.spotifyclient.utils.USER_READ_CURRENTLY_PLAYING
-import org.vander.spotifyclient.utils.USER_READ_PLAYBACK_STATE
-import org.vander.spotifyclient.utils.USER_READ_PRIVATE
+import org.vander.spotifyclient.utils.*
 import javax.inject.Inject
 
-class SpotifyAuthClient @Inject constructor() : ISpotifyAuthClient {
+class SpotifyAuthClient @Inject constructor(
+    private val logger: Logger
+) : ISpotifyAuthClient {
     companion object {
         private const val TAG = "SpotifyClient"
     }
@@ -74,38 +70,38 @@ class SpotifyAuthClient @Inject constructor() : ISpotifyAuthClient {
         result: ActivityResult,
         onResult: (Result<String>) -> Unit
     ) {
-        Log.d(TAG, "handleSpotifyAuthResult: $result")
+        logger.d(TAG, "handleSpotifyAuthResult: $result")
 
         return if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
             if (data == null) {
-                Log.e(TAG, "No data received in activity result")
+                logger.e(TAG, "No data received in activity result")
                 onResult(Result.failure<String>(Exception("No data received")))
             }
             val token = data?.getStringExtra("token")
-            Log.d(TAG, "Result OK")
+            logger.d(TAG, "Result OK")
             val response = AuthorizationClient.getResponse(result.resultCode, data)
             when (response.type) {
                 AuthorizationResponse.Type.TOKEN -> {
-                    Log.d(TAG, "Access Token received: ${response.accessToken}")
+                    logger.d(TAG, "Access Token received: ${response.accessToken}")
                     onResult(Result.success(response.accessToken))
                 }
                 AuthorizationResponse.Type.CODE -> {
-                    Log.d(TAG, "Authorization code received: ${response.code}")
+                    logger.d(TAG, "Authorization code received: ${response.code}")
                     onResult(Result.success(response.code))
                 }
                 AuthorizationResponse.Type.ERROR -> {
-                    Log.e(TAG, "Spotify Auth Error: ${response.error}")
+                    logger.e(TAG, "Spotify Auth Error: ${response.error}")
                     onResult(Result.failure(Exception("Spotify Auth Error: ${response.error}")))
                 }
                 else -> {
-                    Log.e(TAG, "Unexpected response type: ${response.type}")
+                    logger.e(TAG, "Unexpected response type: ${response.type}")
                     onResult(Result.failure(Exception("Unexpected response type: ${response.type}")))
                 }
             }
 
         } else {
-            Log.e(TAG, "Error connecting to Spotify, result code: ${result.resultCode}")
+            logger.e(TAG, "Error connecting to Spotify, result code: ${result.resultCode}")
             onResult(Result.failure<String>(Exception(result.resultCode.toString())))
         }
     }

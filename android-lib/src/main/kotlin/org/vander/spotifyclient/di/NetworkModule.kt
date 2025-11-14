@@ -1,22 +1,22 @@
 package org.vander.spotifyclient.di
 
-import android.util.Log
-import org.vander.core.domain.auth.ITokenProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import org.vander.core.domain.auth.ITokenProvider
+import org.vander.core.logger.Logger
 import org.vander.spotifyclient.network.AuthHeaderPlugin
 import org.vander.spotifyclient.network.KtorClientConfig
 import javax.inject.Singleton
+import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -26,7 +26,8 @@ object NetworkModule {
     @Singleton
     fun provideKtorClient(
         tokenProvider: ITokenProvider,
-        config: KtorClientConfig
+        config: KtorClientConfig,
+        outputLogger: Logger
     ): HttpClient {
         return HttpClient(OkHttp) {
             install(ContentNegotiation) {
@@ -44,12 +45,12 @@ object NetworkModule {
             }
 
             install(Logging) {
-                logger = object : Logger {
+                logger = object : KtorLogger {
                     override fun log(message: String) {
-                        Log.d("KtorLogger", message)
+                        outputLogger.d("KtorLogger", message)
                     }
                 }
-                Log.d("KtorLogger", "Ktor logger installed")
+                outputLogger.d("KtorLogger", "Ktor logger installed")
                 level = config.logLevel
             }
 
