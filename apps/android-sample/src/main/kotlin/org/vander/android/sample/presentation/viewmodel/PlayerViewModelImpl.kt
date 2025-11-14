@@ -1,12 +1,12 @@
 package org.vander.android.sample.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.vander.core.domain.state.DomainPlayerState
+import org.vander.core.logger.Logger
 import org.vander.core.ui.presentation.viewmodel.PlayerViewModel
 import org.vander.spotifyclient.domain.repository.SpotifyLibraryRepository
 import org.vander.spotifyclient.domain.usecase.PlayerUseCase
@@ -16,14 +16,11 @@ import javax.inject.Inject
 @HiltViewModel
 open class PlayerViewModelImpl @Inject constructor(
     private val playerUseCase: PlayerUseCase,
-
     private val spotifyLibraryRepository: SpotifyLibraryRepository,
-    sessionManager: SpotifySessionManager
+    sessionManager: SpotifySessionManager,
+    var logger: Logger
 ) : ViewModel(), PlayerViewModel {
 
-    companion object Companion {
-        private const val TAG = "PlayerViewModelImpl"
-    }
 
     override val domainPlayerState: StateFlow<DomainPlayerState> =
         playerUseCase.domainPlayerState
@@ -49,7 +46,7 @@ open class PlayerViewModelImpl @Inject constructor(
     override fun toggleSaveTrack(trackId: String) {
         val isSaved = domainPlayerState.value.isTrackSaved
         val action = if (isSaved == true) ::removeTrackFromSaved else ::saveTrack
-        Log.d(TAG, "toggleSaveTrack: $isSaved")
+        logger.d(TAG, "toggleSaveTrack: $isSaved")
         action(trackId)
     }
 
@@ -89,7 +86,7 @@ open class PlayerViewModelImpl @Inject constructor(
                 playerUseCase.toggleSaveTrackState(trackId)
             }
                 .onFailure {
-                    Log.e(TAG, "Error saving track", it)
+                    logger.e(TAG, "Error saving track", it)
                 }
         }
     }
@@ -100,9 +97,13 @@ open class PlayerViewModelImpl @Inject constructor(
                 playerUseCase.toggleSaveTrackState(trackId)
             }
                 .onFailure {
-                    Log.e(TAG, "Error removing track", it)
+                    logger.e(TAG, "Error removing track", it)
                 }
         }
+    }
+
+    companion object Companion {
+        private const val TAG = "PlayerViewModelImpl"
     }
 
 }

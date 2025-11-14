@@ -17,6 +17,8 @@ import org.vander.android.sample.presentation.screen.SpotifyScreen
 import org.vander.android.sample.presentation.viewmodel.PlayListViewModelImpl
 import org.vander.android.sample.presentation.viewmodel.PlayerViewModelImpl
 import org.vander.android.sample.presentation.viewmodel.UserViewModelImpl
+import org.vander.core.logger.KermitLoggerImpl
+import org.vander.core.logger.Logger
 
 
 @Composable
@@ -36,6 +38,7 @@ fun AppNavHost(
             val playerViewModel = hiltViewModel<PlayerViewModelImpl>()
             val playlistViewModel = hiltViewModel<PlayListViewModelImpl>()
             val userViewModel = hiltViewModel<UserViewModelImpl>()
+            val logger: Logger = KermitLoggerImpl("SpotifyApp")
             val context = LocalContext.current
 
             SpotifyScreen(
@@ -44,6 +47,7 @@ fun AppNavHost(
                 userViewModel = userViewModel,
                 setTopBar,
                 launchStartup = true,
+                logger,
                 navController = navController
             )
         }

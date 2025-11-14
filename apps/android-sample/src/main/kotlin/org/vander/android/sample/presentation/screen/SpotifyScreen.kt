@@ -27,6 +27,8 @@ import org.vander.android.sample.presentation.components.PlaylistComponent
 import org.vander.android.sample.theme.SpotifyGreen
 import org.vander.core.domain.data.User
 import org.vander.core.domain.state.SessionState
+import org.vander.core.logger.Logger
+import org.vander.core.logger.test.FakeLogger
 import org.vander.core.ui.presentation.viewmodel.PlayerViewModel
 import org.vander.core.ui.presentation.viewmodel.PlaylistViewModel
 import org.vander.core.ui.presentation.viewmodel.UserViewModel
@@ -42,7 +44,8 @@ fun SpotifyScreen(
     userViewModel: UserViewModel,
     setTopBar: (@Composable () -> Unit) -> Unit,
     launchStartup: Boolean = true,
-    navController: NavController? = null,
+    logger: Logger,
+    navController: NavController? = null
 ) {
 
     val tag = "SpotifyScreen"
@@ -160,13 +163,15 @@ fun SpotifyScreenPreview() {
     val fakePlayerViewModel = FakePlayerViewModel()
     val fakePlaylistViewModel = FakePlaylistViewModel()
     val fakeUserViewModel = FakeUserViewModel()
+    val logger: Logger = FakeLogger()
     org.vander.android.sample.theme.AndroidAppTheme {
         SpotifyScreen(
             playerViewModel = fakePlayerViewModel,
             playlistViewModel = fakePlaylistViewModel,
             userViewModel = fakeUserViewModel,
             setTopBar = { },
-            launchStartup = false // Avoid accessing Activity in preview
+            launchStartup = false, // Avoid accessing Activity in preview
+            logger,
         )
     }
 }

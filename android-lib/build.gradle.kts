@@ -39,6 +39,10 @@ android {
         }
     }
 
+    defaultConfig {
+        testInstrumentationRunner = "com.google.dagger.hilt.android.testing.HiltTestRunner"
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -64,6 +68,7 @@ dependencies {
 
     // --- Projects
     implementation(project(":packages:core-domain"))
+    implementation(project(":packages:core-logger"))
     implementation(project(":packages:core-dto"))
     implementation(project(":packages:core-ui"))
 
@@ -134,5 +139,13 @@ dependencies {
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)
+
+    // Hilt (androidTest)
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.compiler)
+
+    //  Hilt pour IUnit tests
+    testImplementation(libs.hilt.android.testing)
+    kaptTest(libs.hilt.compiler)
 
 }

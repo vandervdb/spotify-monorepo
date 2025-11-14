@@ -1,14 +1,13 @@
 package org.vander.spotifyclient.utils
 
-import android.util.Log
 import io.ktor.client.statement.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import org.vander.core.dto.ErrorResponseDto
 
-//TODO: fix sonarcube
 suspend inline fun <reified T> HttpResponse.parseSpotifyResult(
-    tag: String = "SpotifyApi"
+    tag: String = "SpotifyApi",
+    logger: org.vander.core.logger.Logger
 ): Result<T> {
     val rawBody = this.bodyAsText()
     val json = Json { ignoreUnknownKeys = true }
@@ -18,15 +17,15 @@ suspend inline fun <reified T> HttpResponse.parseSpotifyResult(
 
         if ("error" in root) {
             val errorDto = json.decodeFromString<ErrorResponseDto>(rawBody)
-            Log.e(tag, "Spotify error ${errorDto.error.status} : ${errorDto.error.message}")
+            logger.e(tag, "Spotify error ${errorDto.error.status} : ${errorDto.error.message}")
             Result.failure(Exception("Spotify error ${errorDto.error.status}: ${errorDto.error.message}"))
         } else {
-            Log.d(tag, "Spotify response: $rawBody")
+            logger.d(tag, "Spotify response: $rawBody")
             val result = json.decodeFromString<T>(rawBody)
             Result.success(result)
         }
     } catch (e: Exception) {
-        Log.e(tag, "JSON parsing error", e)
+        logger.e(tag, "JSON parsing error", e)
         Result.failure(e)
     }
 }
