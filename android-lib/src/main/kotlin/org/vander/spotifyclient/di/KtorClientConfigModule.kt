@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import io.ktor.client.plugins.logging.*
 import org.vander.core.domain.auth.ITokenProvider
+import org.vander.core.logger.Logger
 import org.vander.spotifyclient.network.KtorClientConfig
 import org.vander.spotifyclient.utils.HTTPS_API_SPOTIFY_COM_V_1
 import javax.inject.Named
@@ -43,9 +44,10 @@ object KtorClientConfigModule {
     @Named("public_api_v1_client")
     fun providePublicApiV1Client(
         tokenProvider: ITokenProvider,
+        logger: Logger,
         @Named("public_api_v1") config: KtorClientConfig
     ): HttpClient {
-        return NetworkModule.provideKtorClient(tokenProvider, config)
+        return NetworkModule.provideKtorClient(tokenProvider, config, logger)
     }
 
     @Provides
@@ -53,8 +55,9 @@ object KtorClientConfigModule {
     @Named("auth_api_v1_client")
     fun provideAuthApiV1Client(
         tokenProvider: ITokenProvider,
+        logger: Logger,
         @Named("auth_api_v1") config: KtorClientConfig
     ): HttpClient {
-        return NetworkModule.provideKtorClient(tokenProvider, config)
+        return NetworkModule.provideKtorClient(tokenProvider, config, logger)
     }
 }

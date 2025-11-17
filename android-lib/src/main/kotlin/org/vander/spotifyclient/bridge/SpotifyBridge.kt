@@ -54,7 +54,7 @@ class SpotifyBridge @Inject constructor(
 
     override val playerEvents: Flow<PlayerStateDto> = callbackFlow {
         domainPlayerState.collect { state ->
-            val dto = state.toPlayerStateDto()
+            val dto = state.toPlayerStateDto(null)
             lastState.value = dto
             trySend(dto)
         }

@@ -1,6 +1,5 @@
 package org.vander.android.sample.presentation.components
 
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.vander.android.sample.presentation.components.preview.PreviewMiniPlayerWithLocalCover
 import org.vander.core.domain.state.SessionState
+import org.vander.core.logger.Logger
 import org.vander.core.ui.domain.UIQueueItem
 import org.vander.core.ui.presentation.viewmodel.PlayerViewModel
 
@@ -39,13 +39,13 @@ data class TrackParams(
 )
 
 @Composable
-fun MiniPlayer(viewModel: PlayerViewModel) {
+fun MiniPlayer(viewModel: PlayerViewModel, logger: Logger) {
     val playerState by viewModel.domainPlayerState.collectAsState()
     val uIQueueState by viewModel.uIQueueState.collectAsState()
 
-    Log.d("MiniPlayer", "Session is ready")
-    Log.d("MiniPlayer", "Player state: $playerState")
-    Log.d("MiniPlayer", "Queue state: $uIQueueState")
+    logger.d("MiniPlayer", "Session is ready")
+    logger.d("MiniPlayer", "Player state: $playerState")
+    logger.d("MiniPlayer", "Queue state: $uIQueueState")
     if (uIQueueState.items.isNotEmpty()) {
         MiniPlayerContent(
             trackParams = TrackParams(
@@ -57,15 +57,15 @@ fun MiniPlayer(viewModel: PlayerViewModel) {
                 durationMS = playerState.base.durationMs
             ),
             saveTrack = {
-                Log.d("MiniPlayer", "Saving track: $it")
+                logger.d("MiniPlayer", "Saving track: $it")
                 viewModel.toggleSaveTrack(it)
             },
             skipNext = {
-                Log.d("MiniPlayer", "Skipping next track")
+                logger.d("MiniPlayer", "Skipping next track")
                 viewModel.skipNext()
             },
             skipPrevious = {
-                Log.d("MiniPlayer", "Skipping previous track")
+                logger.d("MiniPlayer", "Skipping previous track")
                 viewModel.skipPrevious()
             },
             onPlayPause = { viewModel.togglePlayPause() },
@@ -75,7 +75,8 @@ fun MiniPlayer(viewModel: PlayerViewModel) {
                     imageUri = playerState.base.coverId,
                     modifier = Modifier.size(48.dp)
                 )
-            }
+            },
+            logger = logger
         )
     }
 }
@@ -88,7 +89,8 @@ private fun MiniPlayerContent(
     skipNext: () -> Unit,
     skipPrevious: () -> Unit,
     onSeekTo: (Long) -> Unit,
-    cover: @Composable () -> Unit
+    cover: @Composable () -> Unit,
+    logger: Logger
 ) {
 
     val pagerState = rememberPagerState(pageCount = { trackParams.tracksQueue.size })
@@ -111,7 +113,7 @@ private fun MiniPlayerContent(
         if (!suppressSwipeCallback) {
             val newTrackId = trackParams.tracksQueue.getOrNull(pagerState.currentPage)?.trackId
             if (newTrackId != null && newTrackId != currentTrackId) {
-                Log.d("MiniPlayer", "Swiped to trackId=$newTrackId")
+                logger.d("MiniPlayer", "Swiped to trackId=$newTrackId")
                 val newTrackIndex = trackParams.tracksQueue.indexOfFirst { it.trackId == newTrackId }
                 if (currentTrackIndex > newTrackIndex) {
                     skipPrevious()
@@ -231,7 +233,8 @@ private fun TrackItem(trackName: String, artistName: String) {
 @Composable
 fun MiniPlayerWithPainter(
     viewModel: PlayerViewModel,
-    coverPainter: Painter
+    coverPainter: Painter,
+    logger: Logger
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
     val playerState by viewModel.domainPlayerState.collectAsState()
@@ -248,15 +251,15 @@ fun MiniPlayerWithPainter(
                 durationMS = playerState.base.durationMs
             ),
             saveTrack = {
-                Log.d("MiniPlayer", "Saving track: $it")
+                logger.d("MiniPlayer", "Saving track: $it")
                 viewModel.toggleSaveTrack(it)
             },
             skipNext = {
-                Log.d("MiniPlayer", "Skipping next track")
+                logger.d("MiniPlayer", "Skipping next track")
                 viewModel.skipNext()
             },
             skipPrevious = {
-                Log.d("MiniPlayer", "Skipping previous track")
+                logger.d("MiniPlayer", "Skipping previous track")
                 viewModel.skipPrevious()
             },
             onPlayPause = { viewModel.togglePlayPause() },
@@ -266,7 +269,8 @@ fun MiniPlayerWithPainter(
                     painter = coverPainter,
                     modifier = Modifier.size(48.dp)
                 )
-            }
+            },
+            logger = logger
         )
     }
 }
