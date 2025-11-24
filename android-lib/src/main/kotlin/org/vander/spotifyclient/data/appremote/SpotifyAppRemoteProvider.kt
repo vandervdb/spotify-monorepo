@@ -1,18 +1,16 @@
 package org.vander.spotifyclient.data.appremote
 
 import android.content.Context
-import android.util.Log
-import com.spotify.android.appremote.api.ConnectionParams
-import com.spotify.android.appremote.api.Connector
-import com.spotify.android.appremote.api.SpotifyAppRemote
-import org.vander.core.domain.state.RemoteClientState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.suspendCancellableCoroutine
+import org.vander.core.domain.state.RemoteClientState
+import org.vander.core.logger.Logger
 import org.vander.spotifyclient.BuildConfig
-import org.vander.spotifyclient.domain.appremote.ISpotifyAppRemoteProvider
+import org.vander.spotifyclient.domain.appremote.AppRemoteProvider
+import org.vander.spotifyclient.domain.appremote.RemoteConnector
 import org.vander.spotifyclient.utils.REDIRECT_URI
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,7 +26,10 @@ import javax.inject.Singleton
  * throughout the application's lifecycle.
  */
 @Singleton
-class SpotifyAppRemoteProvider @Inject constructor() : ISpotifyAppRemoteProvider {
+class SpotifyAppRemoteProvider @Inject constructor(
+    private val connector: RemoteConnector,
+    private val logger: Logger
+) : AppRemoteProvider {
     companion object {
         private const val TAG = "SpotifyAppRemoteProvider"
     }
@@ -38,42 +39,56 @@ class SpotifyAppRemoteProvider @Inject constructor() : ISpotifyAppRemoteProvider
     override val remoteState: StateFlow<RemoteClientState> = _remoteState.asStateFlow()
 
 
-    private var spotifyAppRemote: SpotifyAppRemote? = null
+    private var remoteHandle: Any? = null
 
     override suspend fun connect(context: Context): Result<Unit> {
         _remoteState.update { RemoteClientState.Connecting }
 
         return suspendCancellableCoroutine { continuation ->
-            val connectionParams = ConnectionParams.Builder(BuildConfig.CLIENT_ID)
-                .setRedirectUri(REDIRECT_URI)
-                .showAuthView(false)
-                .build()
 
-            SpotifyAppRemote.connect(
+            connector.connect(
                 context,
-                connectionParams,
-                object : Connector.ConnectionListener {
-                    override fun onConnected(remote: SpotifyAppRemote) {
-                        Log.d(TAG, "Connected to remote")
-                        spotifyAppRemote = remote
+                BuildConfig.CLIENT_ID,
+                REDIRECT_URI,
+                false,
+                object : RemoteConnector.RemoteListener {
+                    override fun onConnected(remote: Any) {
+                        logger.d(TAG, "Connected to remote")
+                        // Store the raw handle without forcing the SpotifyAppRemote type.
+                        // This keeps tests (which use a plain Any) safe and still allows
+                        // production code to retrieve the typed handle via get().
+                        remoteHandle = remote
                         _remoteState.update { RemoteClientState.Connected }
                         continuation.resumeWith(Result.success(Result.success(Unit)))
                     }
 
                     override fun onFailure(error: Throwable) {
                         _remoteState.update { RemoteClientState.Failed(error as Exception) }
-                        Log.e(TAG, "SpotifyAppRemote connection failed", error)
+                        logger.e(TAG, "SpotifyAppRemote connection failed", error)
                         continuation.resumeWith(Result.success(Result.failure(error)))
                     }
-                })
+                }
+            )
         }
     }
 
-    override fun get(): SpotifyAppRemote? = spotifyAppRemote
+    override fun get(): com.spotify.android.appremote.api.SpotifyAppRemote? =
+        (remoteHandle as? com.spotify.android.appremote.api.SpotifyAppRemote)
+
+    override fun getRemoteHandle(): Any? = remoteHandle
 
     override fun disconnect() {
-        spotifyAppRemote?.let { SpotifyAppRemote.disconnect(it) }
-        spotifyAppRemote = null
+        remoteHandle?.let { handle ->
+            try {
+                connector.disconnect(handle)
+                _remoteState.update { RemoteClientState.NotConnected }
+            } catch (t: Throwable) {
+                logger.e(TAG, "Connector disconnect failed", t)
+                _remoteState.update { RemoteClientState.Failed(t as Exception) }
+            }
+        }
+
+        remoteHandle = null
         _remoteState.update { RemoteClientState.NotConnected }
     }
 

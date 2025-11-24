@@ -25,6 +25,14 @@ class KermitLoggerImpl(
     }
 
     override fun e(tag: String, message: String, throwable: Throwable?) {
-        logger.withTag(tag).e(throwable) { message }
+        if (throwable != null) logger.withTag(tag).e(throwable) { message } else
+            logger.withTag(tag).e { message }
+    }
+}
+
+
+class KermitLoggerInitializer : LoggerInitializer {
+    override fun init(isDebug: Boolean) {
+        // DoNothing
     }
 }

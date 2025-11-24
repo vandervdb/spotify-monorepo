@@ -18,14 +18,14 @@ import org.vander.core.domain.auth.IAuthRepository
 import org.vander.core.domain.error.SessionError
 import org.vander.core.domain.state.SessionState
 import org.vander.spotifyclient.bridge.AuthConfigK
-import org.vander.spotifyclient.domain.appremote.ISpotifyAppRemoteProvider
+import org.vander.spotifyclient.domain.appremote.AppRemoteProvider
 import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
 import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 import javax.inject.Inject
 
 class SpotifySessionManagerImpl @Inject constructor(
     private val authClient: ISpotifyAuthClient,
-    private val remoteProvider: ISpotifyAppRemoteProvider,
+    private val remoteProvider: AppRemoteProvider,
     private val authRepository: IAuthRepository,
 ) : SpotifySessionManager {
     companion object {

@@ -1,8 +1,3 @@
-import org.gradle.api.DefaultTask
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.*
-
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -11,6 +6,17 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.kotlin.jvm) apply false
 }
+
+subprojects {
+    configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains.kotlin:kotlin-stdlib:1.9.25")
+            force("org.jetbrains.kotlin:kotlin-stdlib-common:1.9.25")
+        }
+    }
+}
+
+
 
 abstract class CheckCatalogConsistencyTask : DefaultTask() {
 

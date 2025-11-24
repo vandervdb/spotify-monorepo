@@ -1,21 +1,17 @@
 package org.vander.spotifyclient.di
 
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import org.vander.spotifyclient.data.appremote.SpotifyAppRemoteProvider
-import org.vander.spotifyclient.domain.appremote.ISpotifyAppRemoteProvider
+import org.vander.spotifyclient.data.appremote.SpotifyRemoteConnector
+import org.vander.spotifyclient.domain.appremote.RemoteConnector
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RemoteModule {
-
-    @Binds
+object RemoteModule {
+    @Provides
     @Singleton
-    abstract fun bindSpotifyRemoteClient(
-        spotifyAppRemoteProvider: SpotifyAppRemoteProvider
-    ): ISpotifyAppRemoteProvider
-
+    fun provideSpotifyRemoteConnector(): RemoteConnector = SpotifyRemoteConnector()
 }

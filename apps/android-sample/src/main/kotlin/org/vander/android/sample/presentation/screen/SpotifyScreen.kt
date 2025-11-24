@@ -98,7 +98,7 @@ fun SpotifyScreen(
                 Spacer(modifier = Modifier.padding(vertical = 8.dp))
                 PlaylistComponent(playlistViewModel, Modifier.weight(1f))
                 Spacer(modifier = Modifier.padding(vertical = 8.dp))
-                MiniPlayer(playerViewModel)
+                MiniPlayer(playerViewModel, logger)
             }
 
             is SessionState.Failed -> {

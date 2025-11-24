@@ -15,11 +15,20 @@ import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
 import org.vander.spotifyclient.utils.*
 import javax.inject.Inject
 
-class SpotifyAuthClient @Inject constructor(
+open class SpotifyAuthClient @Inject constructor(
     private val logger: Logger
 ) : ISpotifyAuthClient {
     companion object {
         private const val TAG = "SpotifyClient"
+    }
+
+    // Internal representation to ease testing without Spotify SDK objects
+    protected data class ParsedAuth(
+        val type: Type,
+        val value: String? = null,
+        val error: String? = null
+    ) {
+        enum class Type { TOKEN, CODE, ERROR, OTHER }
     }
 
     /**
@@ -77,32 +86,46 @@ class SpotifyAuthClient @Inject constructor(
             if (data == null) {
                 logger.e(TAG, "No data received in activity result")
                 onResult(Result.failure<String>(Exception("No data received")))
+                return
             }
-            val token = data?.getStringExtra("token")
             logger.d(TAG, "Result OK")
-            val response = AuthorizationClient.getResponse(result.resultCode, data)
-            when (response.type) {
-                AuthorizationResponse.Type.TOKEN -> {
-                    logger.d(TAG, "Access Token received: ${response.accessToken}")
-                    onResult(Result.success(response.accessToken))
+            val parsed = parseAuthResponse(result.resultCode, data)
+            when (parsed.type) {
+                ParsedAuth.Type.TOKEN -> {
+                    logger.d(TAG, "Access Token received: ${parsed.value}")
+                    onResult(Result.success(parsed.value ?: ""))
                 }
-                AuthorizationResponse.Type.CODE -> {
-                    logger.d(TAG, "Authorization code received: ${response.code}")
-                    onResult(Result.success(response.code))
+
+                ParsedAuth.Type.CODE -> {
+                    logger.d(TAG, "Authorization code received: ${parsed.value}")
+                    onResult(Result.success(parsed.value ?: ""))
                 }
-                AuthorizationResponse.Type.ERROR -> {
-                    logger.e(TAG, "Spotify Auth Error: ${response.error}")
-                    onResult(Result.failure(Exception("Spotify Auth Error: ${response.error}")))
+
+                ParsedAuth.Type.ERROR -> {
+                    logger.e(TAG, "Spotify Auth Error: ${parsed.error}")
+                    onResult(Result.failure(Exception("Spotify Auth Error: ${parsed.error}")))
                 }
-                else -> {
-                    logger.e(TAG, "Unexpected response type: ${response.type}")
-                    onResult(Result.failure(Exception("Unexpected response type: ${response.type}")))
+
+                ParsedAuth.Type.OTHER -> {
+                    logger.e(TAG, "Unexpected response type")
+                    onResult(Result.failure(Exception("Unexpected response type")))
                 }
             }
 
         } else {
             logger.e(TAG, "Error connecting to Spotify, result code: ${result.resultCode}")
             onResult(Result.failure<String>(Exception(result.resultCode.toString())))
+        }
+    }
+
+    // Extracted to make the class testable without instantiating Spotify SDK responses
+    protected open fun parseAuthResponse(resultCode: Int, data: Intent): ParsedAuth {
+        val response = AuthorizationClient.getResponse(resultCode, data)
+        return when (response.type) {
+            AuthorizationResponse.Type.TOKEN -> ParsedAuth(ParsedAuth.Type.TOKEN, value = response.accessToken)
+            AuthorizationResponse.Type.CODE -> ParsedAuth(ParsedAuth.Type.CODE, value = response.code)
+            AuthorizationResponse.Type.ERROR -> ParsedAuth(ParsedAuth.Type.ERROR, error = response.error)
+            else -> ParsedAuth(ParsedAuth.Type.OTHER)
         }
     }
 }

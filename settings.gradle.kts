@@ -33,6 +33,8 @@ dependencyResolutionManagement {
     }
 }
 
+
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "spotify-monorepo"
