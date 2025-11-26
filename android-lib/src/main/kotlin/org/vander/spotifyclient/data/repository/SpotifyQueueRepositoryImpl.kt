@@ -11,20 +11,20 @@ import org.vander.spotifyclient.domain.repository.SpotifyQueueRepository
 import javax.inject.Inject
 
 class SpotifyQueueRepositoryImpl
-@Inject
-constructor(
-    private val api: IRemoteQueueDataSource,
-) : SpotifyQueueRepository {
-    private val _currentQueue = MutableStateFlow<CurrentlyPlaying?>(null)
-    override val currentQueue: StateFlow<CurrentlyPlaying?> = _currentQueue.asStateFlow()
+    @Inject
+    constructor(
+        private val api: IRemoteQueueDataSource,
+    ) : SpotifyQueueRepository {
+        private val _currentQueue = MutableStateFlow<CurrentlyPlaying?>(null)
+        override val currentQueue: StateFlow<CurrentlyPlaying?> = _currentQueue.asStateFlow()
 
-    override suspend fun getUserQueue(): Result<CurrentlyPlaying> =
-        try {
-            val dto = api.fetchUserQueue().getOrThrow()
-            val result = dto.toDomain()
-            _currentQueue.update { result }
-            Result.success(result)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        override suspend fun getUserQueue(): Result<CurrentlyPlaying> =
+            try {
+                val dto = api.fetchUserQueue().getOrThrow()
+                val result = dto.toDomain()
+                _currentQueue.update { result }
+                Result.success(result)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
     }

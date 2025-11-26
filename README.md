@@ -1,29 +1,66 @@
 # 🎧 spotify-monorepo
 
 <p align="center">
-  <strong>Yarn 4 monorepo for React Native and Native Android</strong><br />
+  <strong>Yarn 4 / Gradle 8 monorepo for React Native and Native Android</strong><br />
   <em>TypeScript, Gradle multi-module, shared packages, and native integrations.</em>
 </p>
 
 <p align="center">
-  <img alt="tech" src="https://img.shields.io/badge/tech-react_native-blue?style=flat-square" />
-  <img alt="android" src="https://img.shields.io/badge/android-✓-3DDC84?style=flat-square" />
-  <img alt="kotlin" src="https://img.shields.io/badge/kotlin-2.x-7F52FF?style=flat-square" />
-  <img alt="gradle" src="https://img.shields.io/badge/gradle-8.x-02303A?style=flat-square" />
-  <img alt="compose" src="https://img.shields.io/badge/Jetpack%20Compose-enabled-3DDC84?style=flat-square" />
-  <img alt="license" src="https://img.shields.io/badge/license-MIT-green?style=flat-square" />
+  <!-- Android -->
+<img alt="Android" src="https://img.shields.io/badge/Android-3DDC84?logo=android&logoColor=white&style=for-the-badge" />
+
+  <!-- Kotlin -->
+<img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.x-7F52FF?logo=kotlin&logoColor=white&style=for-the-badge" />
+
+  <!-- Jetpack Compose -->
+<img alt="Compose" src="https://img.shields.io/badge/Jetpack%20Compose-Enabled-4285F4?logo=jetpackcompose&logoColor=white&style=for-the-badge" />
+
+  <!-- React Native -->
+<img alt="React Native" src="https://img.shields.io/badge/React%20Native-TurboModules%20Ready-61DAFB?logo=react&logoColor=white&style=for-the-badge" />
+
+  <!-- Gradle -->
+<img alt="Gradle" src="https://img.shields.io/badge/Gradle-8.x-02303A?logo=gradle&logoColor=white&style=for-the-badge" />
+
+  <!-- Architecture -->
+<img alt="Architecture" src="https://img.shields.io/badge/Architecture-Clean%20%7C%20MVVM%20%7C%20Multi--Module-6E7FF3?style=for-the-badge" />
+
+  <!-- License -->
+<img alt="License" src="https://img.shields.io/badge/License-MIT-brightgreen?style=for-the-badge" />
 </p>
+
 
 
 ---
 
 ## Overview
 
-This repository is a Yarn 4 and Gradle mono-repository whose goal is to host everything needed to build:
-- a React Native application that uses a TurboModule, with both its Android and iOS implementations developed in this monorepo, and
-- a fully native Android application written in Kotlin using Jetpack Compose, DI, etc.
+### ❓ Why this monorepo?
 
-It provides a modular TypeScript workspace for shared code, and a Gradle multi-module build for Android.
+Because building a modern mobile application that interacts with Spotify in real time requires clear boundaries, predictable state management, and scalable architecture.
+This monorepo exists to explore how to structure a single shared ecosystem that can power:
+
+- a native Android app,
+
+- a React Native application through TurboModules (JSI),
+
+- and eventually iOS, with shared domain logic and architecture.
+
+It serves as a technical playground to answer key engineering questions:
+
+- How do we keep business logic consistent across platforms?
+
+- How should domain, data, and UI layers communicate efficiently?
+
+- How do we maintain real-time player synchronization (state, queue, saved tracks)?
+
+- How do we enforce code quality in a multi-module environment?
+
+- How can the Android base layer safely expose APIs to React Native and later iOS?
+
+What does a production-grade, cross-platform architecture look like?
+
+In short:
+👉 This monorepo is a strategic foundation, designed to experiment, validate, and iterate on the architectural patterns needed to support a complex, cross-platform mobile ecosystem powered by Spotify’s APIs.
 
 ## Tech stack & entry points
 
@@ -65,8 +102,8 @@ spotify-monorepo/
 │  ├─ keychain-service-ts/         # Keychain / SecureStorage access
 │  └─ test-utils-ts/               # Test utilities
 ├─ rn-lib/                         # Internal RN library (exposed via alias)
-├─ rn-modules/                     # React Native modules / TurboModules 
-├─ ts-lib/                         # TypeScript-only libraries 
+├─ rn-modules/                     # React Native modules / TurboModules
+├─ ts-lib/                         # TypeScript-only libraries
 ├─ android-lib/                    # Native Android/Kotlin library module
 ├─ tools/                          # Repo scripts/tools
 ├─ gradle/                         # Gradle wrapper and convention files

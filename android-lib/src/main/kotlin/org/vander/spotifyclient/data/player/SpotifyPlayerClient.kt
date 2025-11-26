@@ -24,84 +24,84 @@ import javax.inject.Inject
  * @property logger A [Logger] instance for logging debug messages.
  */
 class SpotifyPlayerClient
-@Inject
-constructor(
-    private val appRemoteProvider: AppRemoteProvider,
-    private val logger: Logger,
-) : PlayerClient {
-    companion object {
-        const val TAG = "SpotifyPlayerClient"
-    }
+    @Inject
+    constructor(
+        private val appRemoteProvider: AppRemoteProvider,
+        private val logger: Logger,
+    ) : PlayerClient {
+        companion object {
+            const val TAG = "SpotifyPlayerClient"
+        }
 
-    private var isPlaying = false
-    private val playerApi: PlayerApi?
-        get() = appRemoteProvider.get()?.playerApi
+        private var isPlaying = false
+        private val playerApi: PlayerApi?
+            get() = appRemoteProvider.get()?.playerApi
 
-    private val _playerConnectionState =
-        MutableStateFlow<PlayerConnectionState>(PlayerConnectionState.NotConnected)
-    override val playerConnectionState: StateFlow<PlayerConnectionState> =
-        _playerConnectionState.asStateFlow()
+        private val _playerConnectionState =
+            MutableStateFlow<PlayerConnectionState>(PlayerConnectionState.NotConnected)
+        override val playerConnectionState: StateFlow<PlayerConnectionState> =
+            _playerConnectionState.asStateFlow()
 
-    private val _lastState = MutableStateFlow(PlayerStateData.empty())
-    override val lastState: StateFlow<PlayerStateData> = _lastState.asStateFlow()
+        private val _lastState = MutableStateFlow(PlayerStateData.empty())
+        override val lastState: StateFlow<PlayerStateData> = _lastState.asStateFlow()
 
-    override suspend fun subscribeToPlayerState(function: (PlayerStateData) -> Unit) {
-        playerApi?.let { api ->
-            api.subscribeToPlayerState().setEventCallback { state ->
-                val track: Track = state.track
-                logger.d(
-                    TAG,
-                    "PlayerClient received new data: " + track.name + " by " + track.artist.name +
+        override suspend fun subscribeToPlayerState(function: (PlayerStateData) -> Unit) {
+            playerApi?.let { api ->
+                api.subscribeToPlayerState().setEventCallback { state ->
+                    val track: Track = state.track
+                    logger.d(
+                        TAG,
+                        "PlayerClient received new data: " + track.name + " by " + track.artist.name +
                             "(paused: " + state.isPaused + " / coverUri: " + track.imageUri + ")",
-                )
-                isPlaying = !state.isPaused
-                _lastState.value = state.toPlayerStateData(logger)
-                function(state.toPlayerStateData(logger))
+                    )
+                    isPlaying = !state.isPaused
+                    _lastState.value = state.toPlayerStateData(logger)
+                    function(state.toPlayerStateData(logger))
+                }
+            } ?: run {
+                logger.e(TAG, "spotifyPlayerApi is null")
+                _playerConnectionState.update { PlayerConnectionState.NotConnected }
             }
-        } ?: run {
-            logger.e(TAG, "spotifyPlayerApi is null")
-            _playerConnectionState.update { PlayerConnectionState.NotConnected }
+        }
+
+        override suspend fun play(trackUri: String) {
+            logger.d(TAG, "play trackUri: $trackUri")
+            playerApi?.play(trackUri)
+        }
+
+        override suspend fun pause() {
+            playerApi?.pause()
+        }
+
+        override suspend fun resume() {
+            logger.d(TAG, "resume: ")
+            playerApi?.resume()
+        }
+
+        override suspend fun skipNext() {
+            playerApi?.skipNext()
+        }
+
+        override suspend fun skipPrevious() {
+            playerApi?.skipPrevious()
+        }
+
+        override fun seekTo(position: Long) {
+            playerApi?.seekTo(position)
+        }
+
+        override fun setShuffle(shuffle: Boolean) {
+            playerApi?.setShuffle(shuffle)
+        }
+
+        override fun setRepeat(repeat: Int) {
+            playerApi?.setRepeat(repeat)
+        }
+
+        override fun isPlaying(): Boolean = isPlaying
+
+        override fun unsubscribeFromPlayerState() {
+            playerApi?.subscribeToPlayerState()?.cancel()
+            appRemoteProvider.disconnect()
         }
     }
-
-    override suspend fun play(trackUri: String) {
-        logger.d(TAG, "play trackUri: $trackUri")
-        playerApi?.play(trackUri)
-    }
-
-    override suspend fun pause() {
-        playerApi?.pause()
-    }
-
-    override suspend fun resume() {
-        logger.d(TAG, "resume: ")
-        playerApi?.resume()
-    }
-
-    override suspend fun skipNext() {
-        playerApi?.skipNext()
-    }
-
-    override suspend fun skipPrevious() {
-        playerApi?.skipPrevious()
-    }
-
-    override fun seekTo(position: Long) {
-        playerApi?.seekTo(position)
-    }
-
-    override fun setShuffle(shuffle: Boolean) {
-        playerApi?.setShuffle(shuffle)
-    }
-
-    override fun setRepeat(repeat: Int) {
-        playerApi?.setRepeat(repeat)
-    }
-
-    override fun isPlaying(): Boolean = isPlaying
-
-    override fun unsubscribeFromPlayerState() {
-        playerApi?.subscribeToPlayerState()?.cancel()
-        appRemoteProvider.disconnect()
-    }
-}

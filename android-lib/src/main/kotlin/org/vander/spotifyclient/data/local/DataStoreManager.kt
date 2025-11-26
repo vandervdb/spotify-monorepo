@@ -18,53 +18,53 @@ private val Context.dataStore by preferencesDataStore(name = "spotify_prefs")
 
 @Singleton
 class DataStoreManager
-@Inject
-constructor(
-    @ApplicationContext private val context: Context,
-) : IDataStoreManager {
-    companion object {
-        private const val TAG = "DataStoreManager"
-        private const val DATASTORE_NAME = "spotify_prefs"
-        private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
-    }
+    @Inject
+    constructor(
+        @ApplicationContext private val context: Context,
+    ) : IDataStoreManager {
+        companion object {
+            private const val TAG = "DataStoreManager"
+            private const val DATASTORE_NAME = "spotify_prefs"
+            private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
+        }
 
-    private val Context.dataStore by preferencesDataStore(name = DATASTORE_NAME)
+        private val Context.dataStore by preferencesDataStore(name = DATASTORE_NAME)
 
-    override val accessTokenFlow: Flow<String?> =
-        context.dataStore.data
-            .map { preferences -> preferences[ACCESS_TOKEN_KEY] }
+        override val accessTokenFlow: Flow<String?> =
+            context.dataStore.data
+                .map { preferences -> preferences[ACCESS_TOKEN_KEY] }
 
-    override suspend fun saveAccessToken(token: String): Result<Unit> =
-        try {
-            context.dataStore.edit { preferences ->
-                Log.d(TAG, "Saving access token: $token")
-                preferences[ACCESS_TOKEN_KEY] = token
+        override suspend fun saveAccessToken(token: String): Result<Unit> =
+            try {
+                context.dataStore.edit { preferences ->
+                    Log.d(TAG, "Saving access token: $token")
+                    preferences[ACCESS_TOKEN_KEY] = token
+                }
+                Result.success(Unit)
+            } catch (e: IOException) {
+                Result.failure(e)
             }
-            Result.success(Unit)
-        } catch (e: IOException) {
-            Result.failure(e)
-        }
 
-    override suspend fun getAccessToken(): Result<String> =
-        try {
-            val token =
-                context.dataStore.data
-                    .map { preferences ->
-                        preferences[ACCESS_TOKEN_KEY] ?: ""
-                    }.first()
-            Result.success(token)
-        } catch (e: IOException) {
-            Result.failure(e)
-        }
-
-    override suspend fun clearAccessToken(): Result<Unit> =
-        try {
-            context.dataStore.edit { preferences ->
-                Log.d(TAG, "Clearing access token")
-                preferences.remove(ACCESS_TOKEN_KEY)
+        override suspend fun getAccessToken(): Result<String> =
+            try {
+                val token =
+                    context.dataStore.data
+                        .map { preferences ->
+                            preferences[ACCESS_TOKEN_KEY] ?: ""
+                        }.first()
+                Result.success(token)
+            } catch (e: IOException) {
+                Result.failure(e)
             }
-            Result.success(Unit)
-        } catch (e: IOException) {
-            Result.failure(e)
-        }
+
+        override suspend fun clearAccessToken(): Result<Unit> =
+            try {
+                context.dataStore.edit { preferences ->
+                    Log.d(TAG, "Clearing access token")
+                    preferences.remove(ACCESS_TOKEN_KEY)
+                }
+                Result.success(Unit)
+            } catch (e: IOException) {
+                Result.failure(e)
+            }
     }

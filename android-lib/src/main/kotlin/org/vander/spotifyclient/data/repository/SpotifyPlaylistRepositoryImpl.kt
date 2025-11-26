@@ -11,20 +11,20 @@ import org.vander.spotifyclient.domain.repository.SpotifyPlaylistRepository
 import javax.inject.Inject
 
 class SpotifyPlaylistRepositoryImpl
-@Inject
-constructor(
-    private val api: IRemotePlaylistDataSource,
-) : SpotifyPlaylistRepository {
-    private val _playlists = MutableStateFlow<PlaylistCollection?>(null)
-    override val playlists: StateFlow<PlaylistCollection?> = _playlists.asStateFlow()
+    @Inject
+    constructor(
+        private val api: IRemotePlaylistDataSource,
+    ) : SpotifyPlaylistRepository {
+        private val _playlists = MutableStateFlow<PlaylistCollection?>(null)
+        override val playlists: StateFlow<PlaylistCollection?> = _playlists.asStateFlow()
 
-    override suspend fun getUserPlaylists(): Result<PlaylistCollection> =
-        try {
-            val dto = api.fetchUserPlaylists().getOrThrow()
-            val result = dto.toDomain()
-            _playlists.update { result }
-            Result.success(result)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        override suspend fun getUserPlaylists(): Result<PlaylistCollection> =
+            try {
+                val dto = api.fetchUserPlaylists().getOrThrow()
+                val result = dto.toDomain()
+                _playlists.update { result }
+                Result.success(result)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
     }

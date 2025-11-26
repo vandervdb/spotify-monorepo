@@ -9,12 +9,12 @@ import javax.inject.Singleton
 
 @Singleton
 class DataStoreTokenProvider
-@Inject
-constructor(
-    val dataStoreManager: IDataStoreManager,
-) : ITokenProvider {
-    override val tokenFlow: Flow<String?>
-        get() = dataStoreManager.accessTokenFlow
+    @Inject
+    constructor(
+        val dataStoreManager: IDataStoreManager,
+    ) : ITokenProvider {
+        override val tokenFlow: Flow<String?>
+            get() = dataStoreManager.accessTokenFlow
 
-    override suspend fun getAccessToken(): String? = dataStoreManager.accessTokenFlow.firstOrNull()
-}
+        override suspend fun getAccessToken(): String? = dataStoreManager.accessTokenFlow.firstOrNull()
+    }

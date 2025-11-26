@@ -10,27 +10,27 @@ import org.vander.spotifyclient.domain.repository.SpotifyPlaylistRepository
 import javax.inject.Inject
 
 class PlaylistUseCase
-@Inject
-constructor(
-    val playlistRepository: SpotifyPlaylistRepository,
-) {
-    companion object Companion {
-        private const val TAG = "PlaylistUseCase"
-    }
+    @Inject
+    constructor(
+        val playlistRepository: SpotifyPlaylistRepository,
+    ) {
+        companion object Companion {
+            private const val TAG = "PlaylistUseCase"
+        }
 
-    private val _playlists = MutableStateFlow(PlaylistCollection.empty())
-    val playlists: StateFlow<PlaylistCollection> = _playlists.asStateFlow()
+        private val _playlists = MutableStateFlow(PlaylistCollection.empty())
+        val playlists: StateFlow<PlaylistCollection> = _playlists.asStateFlow()
 
-    suspend fun getAndUpdatePlaylistsFlow() {
-        playlistRepository.getUserPlaylists().fold(
-            onSuccess = { playlistCollection ->
-                Log.d(TAG, "Received user playlists: $playlistCollection")
-                _playlists.update { playlistCollection }
-            },
-            onFailure = {
-                _playlists.update { PlaylistCollection.empty() }
-                Log.e(TAG, "Error getting user playlists", it)
-            },
-        )
+        suspend fun getAndUpdatePlaylistsFlow() {
+            playlistRepository.getUserPlaylists().fold(
+                onSuccess = { playlistCollection ->
+                    Log.d(TAG, "Received user playlists: $playlistCollection")
+                    _playlists.update { playlistCollection }
+                },
+                onFailure = {
+                    _playlists.update { PlaylistCollection.empty() }
+                    Log.e(TAG, "Error getting user playlists", it)
+                },
+            )
+        }
     }
-}

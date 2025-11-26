@@ -10,16 +10,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 open class UserViewModelImpl
-@Inject
-constructor(
-    private val userRepository: UserRepository,
-) : ViewModel(),
-    UserViewModel {
-    override val currentUser = userRepository.currentUser()
+    @Inject
+    constructor(
+        private val userRepository: UserRepository,
+    ) : ViewModel(),
+        UserViewModel {
+        override val currentUser = userRepository.currentUser()
 
-    override fun refresh() {
-        viewModelScope.launch {
-            userRepository.fetchCurrentUser()
+        override fun refresh() {
+            viewModelScope.launch {
+                userRepository.fetchCurrentUser()
+            }
         }
     }
-}

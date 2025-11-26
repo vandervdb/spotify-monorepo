@@ -13,28 +13,28 @@ import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 class SpotifyUserRepository
-@Inject
-constructor(
-    private val api: IRemoteUserDataSource,
-) : UserRepository {
-    private val _currentUser = MutableStateFlow<User?>(null)
-    override val currentUser: Flow<User?> = _currentUser.asStateFlow()
+    @Inject
+    constructor(
+        private val api: IRemoteUserDataSource,
+    ) : UserRepository {
+        private val _currentUser = MutableStateFlow<User?>(null)
+        override val currentUser: Flow<User?> = _currentUser.asStateFlow()
 
-    override suspend fun fetchCurrentUser() {
-        try {
-            val dto = api.fetchUser().getOrThrow()
-            val user = dto.toDomain()
-            Log.d(TAG, "Received user: $user")
-            _currentUser.update { user }
-        } catch (ce: CancellationException) {
-            throw ce
-        } catch (t: Throwable) {
-            Log.e(TAG, "Error fetching user")
-            _currentUser.update { null }
+        override suspend fun fetchCurrentUser() {
+            try {
+                val dto = api.fetchUser().getOrThrow()
+                val user = dto.toDomain()
+                Log.d(TAG, "Received user: $user")
+                _currentUser.update { user }
+            } catch (ce: CancellationException) {
+                throw ce
+            } catch (t: Throwable) {
+                Log.e(TAG, "Error fetching user")
+                _currentUser.update { null }
+            }
+        }
+
+        private companion object {
+            const val TAG = "SpotifyUserRepository"
         }
     }
-
-    private companion object {
-        const val TAG = "SpotifyUserRepository"
-    }
-}

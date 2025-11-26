@@ -8,36 +8,36 @@ import org.vander.core.domain.auth.ITokenProvider
 import javax.inject.Inject
 
 class AuthHeaderPlugin
-@Inject
-constructor(
-    val tokenProvider: ITokenProvider,
-) {
-    companion object : HttpClientPlugin<Config, AuthHeaderPlugin> {
-        override val key: AttributeKey<AuthHeaderPlugin> = AttributeKey("AuthHeaderPlugin")
+    @Inject
+    constructor(
+        val tokenProvider: ITokenProvider,
+    ) {
+        companion object : HttpClientPlugin<Config, AuthHeaderPlugin> {
+            override val key: AttributeKey<AuthHeaderPlugin> = AttributeKey("AuthHeaderPlugin")
 
-        override fun prepare(block: Config.() -> Unit): AuthHeaderPlugin {
-            val config = Config().apply(block)
-            requireNotNull(config.tokenProvider) {
-                "AuthHeaderPlugin requires a non-null ITokenProvider"
-            }
-            return AuthHeaderPlugin(config.tokenProvider!!)
-        }
-
-        override fun install(
-            plugin: AuthHeaderPlugin,
-            scope: HttpClient,
-        ) {
-            scope.requestPipeline.intercept(HttpRequestPipeline.State) {
-                val token = plugin.tokenProvider.getAccessToken()
-                if (!token.isNullOrBlank()) {
-                    context.headers.append("Authorization", "Bearer $token")
+            override fun prepare(block: Config.() -> Unit): AuthHeaderPlugin {
+                val config = Config().apply(block)
+                requireNotNull(config.tokenProvider) {
+                    "AuthHeaderPlugin requires a non-null ITokenProvider"
                 }
-                proceed()
+                return AuthHeaderPlugin(config.tokenProvider!!)
+            }
+
+            override fun install(
+                plugin: AuthHeaderPlugin,
+                scope: HttpClient,
+            ) {
+                scope.requestPipeline.intercept(HttpRequestPipeline.State) {
+                    val token = plugin.tokenProvider.getAccessToken()
+                    if (!token.isNullOrBlank()) {
+                        context.headers.append("Authorization", "Bearer $token")
+                    }
+                    proceed()
+                }
             }
         }
-    }
 
-    class Config {
-        var tokenProvider: ITokenProvider? = null
+        class Config {
+            var tokenProvider: ITokenProvider? = null
+        }
     }
-}

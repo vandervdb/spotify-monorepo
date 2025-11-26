@@ -18,42 +18,42 @@ import javax.inject.Named
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 class AuthRemoteDataSource
-@Inject
-constructor(
-    @param:Named("AuthHttpClient") val httpClient: HttpClient,
-    private val logger: Logger,
-) : IAuthRemoteDatasource {
-    @OptIn(ExperimentalEncodingApi::class)
-    override suspend fun fetchAccessToken(code: String): Result<TokenResponseDto> {
-        return try {
-            val credentials = "$CLIENT_ID:$CLIENT_SECRET"
-            val encodedCredentials =
-                kotlin.io.encoding.Base64
-                    .encode(credentials.toByteArray())
-            val response =
-                httpClient.submitForm(
-                    url = "token",
-                    formParameters =
-                        Parameters.build {
-                            append("grant_type", "authorization_code")
-                            append("code", code)
-                            append("redirect_uri", REDIRECT_URI)
-                        },
-                ) {
-                    headers {
-                        append("Content-Type", "application/x-www-form-urlencoded")
-                        append("Authorization", "Basic $encodedCredentials")
+    @Inject
+    constructor(
+        @param:Named("AuthHttpClient") val httpClient: HttpClient,
+        private val logger: Logger,
+    ) : IAuthRemoteDatasource {
+        @OptIn(ExperimentalEncodingApi::class)
+        override suspend fun fetchAccessToken(code: String): Result<TokenResponseDto> {
+            return try {
+                val credentials = "$CLIENT_ID:$CLIENT_SECRET"
+                val encodedCredentials =
+                    kotlin.io.encoding.Base64
+                        .encode(credentials.toByteArray())
+                val response =
+                    httpClient.submitForm(
+                        url = "token",
+                        formParameters =
+                            Parameters.build {
+                                append("grant_type", "authorization_code")
+                                append("code", code)
+                                append("redirect_uri", REDIRECT_URI)
+                            },
+                    ) {
+                        headers {
+                            append("Content-Type", "application/x-www-form-urlencoded")
+                            append("Authorization", "Basic $encodedCredentials")
+                        }
                     }
-                }
 
-            val rawBody = response.bodyAsText()
-            logger.d("AuthRemoteDataSource", "Raw body: $rawBody")
-            val json = Json { ignoreUnknownKeys = true }
+                val rawBody = response.bodyAsText()
+                logger.d("AuthRemoteDataSource", "Raw body: $rawBody")
+                val json = Json { ignoreUnknownKeys = true }
 
-            return response.parseSpotifyResult<TokenResponseDto>("AuthRemoteDataSource")
-        } catch (e: Exception) {
-            logger.e("AuthRemoteDataSource", "Error fetching token", e)
-            Result.failure(e)
+                return response.parseSpotifyResult<TokenResponseDto>("AuthRemoteDataSource")
+            } catch (e: Exception) {
+                logger.e("AuthRemoteDataSource", "Error fetching token", e)
+                Result.failure(e)
+            }
         }
     }
-}

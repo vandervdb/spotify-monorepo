@@ -15,33 +15,33 @@ import javax.inject.Inject
 @RunWith(AndroidJUnit4::class)
 class SpotifyAuthClientTest {
     open class TestableSpotifyAuthClient
-    @Inject
-    constructor(
-        logger: Logger,
-    ) : SpotifyAuthClient(logger) {
-        private var nextParsed: ParsedAuth? = null
+        @Inject
+        constructor(
+            logger: Logger,
+        ) : SpotifyAuthClient(logger) {
+            private var nextParsed: ParsedAuth? = null
 
-        fun stubToken(value: String) {
-            nextParsed = ParsedAuth(ParsedAuth.Type.TOKEN, value = value)
+            fun stubToken(value: String) {
+                nextParsed = ParsedAuth(ParsedAuth.Type.TOKEN, value = value)
+            }
+
+            fun stubCode(value: String) {
+                nextParsed = ParsedAuth(ParsedAuth.Type.CODE, value = value)
+            }
+
+            fun stubError(error: String) {
+                nextParsed = ParsedAuth(ParsedAuth.Type.ERROR, error = error)
+            }
+
+            fun stubOther() {
+                nextParsed = ParsedAuth(ParsedAuth.Type.OTHER)
+            }
+
+            override fun parseAuthResponse(
+                resultCode: Int,
+                data: Intent,
+            ): ParsedAuth = nextParsed ?: super.parseAuthResponse(resultCode, data)
         }
-
-        fun stubCode(value: String) {
-            nextParsed = ParsedAuth(ParsedAuth.Type.CODE, value = value)
-        }
-
-        fun stubError(error: String) {
-            nextParsed = ParsedAuth(ParsedAuth.Type.ERROR, error = error)
-        }
-
-        fun stubOther() {
-            nextParsed = ParsedAuth(ParsedAuth.Type.OTHER)
-        }
-
-        override fun parseAuthResponse(
-            resultCode: Int,
-            data: Intent,
-        ): ParsedAuth = nextParsed ?: super.parseAuthResponse(resultCode, data)
-    }
 
     @Test
     fun handleSpotifyAuthResult_returns_success_for_TOKEN() {

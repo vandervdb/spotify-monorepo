@@ -24,117 +24,117 @@ import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 import javax.inject.Inject
 
 class SpotifySessionManagerImpl
-@Inject
-constructor(
-    private val authClient: ISpotifyAuthClient,
-    private val remoteProvider: AppRemoteProvider,
-    private val authRepository: IAuthRepository,
-) : SpotifySessionManager {
-    companion object {
-        private const val TAG = "SpotifySessionManagerImpl"
-    }
+    @Inject
+    constructor(
+        private val authClient: ISpotifyAuthClient,
+        private val remoteProvider: AppRemoteProvider,
+        private val authRepository: IAuthRepository,
+    ) : SpotifySessionManager {
+        companion object {
+            private const val TAG = "SpotifySessionManagerImpl"
+        }
 
-    private val _sessionState = MutableStateFlow<SessionState>(SessionState.Idle)
-    override val sessionState: StateFlow<SessionState> = _sessionState.asStateFlow()
+        private val _sessionState = MutableStateFlow<SessionState>(SessionState.Idle)
+        override val sessionState: StateFlow<SessionState> = _sessionState.asStateFlow()
 
-    private var launchAuthFlow: ActivityResultLauncher<Intent>? = null
+        private var launchAuthFlow: ActivityResultLauncher<Intent>? = null
 
-    override fun requestAuthorization(launchAuth: ActivityResultLauncher<Intent>) {
-        Log.d(TAG, "Requesting authorization...")
-        launchAuthFlow = launchAuth
-        _sessionState.update { SessionState.Authorizing }
-    }
+        override fun requestAuthorization(launchAuth: ActivityResultLauncher<Intent>) {
+            Log.d(TAG, "Requesting authorization...")
+            launchAuthFlow = launchAuth
+            _sessionState.update { SessionState.Authorizing }
+        }
 
-    override fun launchAuthorizationFlow(
-        activity: Activity,
-        config: AuthConfigK?,
-    ) {
-        Log.d(TAG, "Launching authorization flow...")
-        try {
-            launchAuthFlow?.let {
-                authClient.authorize(activity, it, null)
-            } ?: run {
+        override fun launchAuthorizationFlow(
+            activity: Activity,
+            config: AuthConfigK?,
+        ) {
+            Log.d(TAG, "Launching authorization flow...")
+            try {
+                launchAuthFlow?.let {
+                    authClient.authorize(activity, it, null)
+                } ?: run {
+                    _sessionState.update {
+                        SessionState.Failed(
+                            SessionError.UnknownError(
+                                Exception("Authorization flow not set"),
+                            ),
+                        )
+                    }
+                }
+            } catch (e: Exception) {
                 _sessionState.update {
-                    SessionState.Failed(
-                        SessionError.UnknownError(
-                            Exception("Authorization flow not set"),
-                        ),
-                    )
+                    SessionState.Failed(SessionError.UnknownError(e))
                 }
             }
-        } catch (e: Exception) {
-            _sessionState.update {
-                SessionState.Failed(SessionError.UnknownError(e))
-            }
         }
-    }
 
-    override fun handleAuthResult(
-        context: Context,
-        result: ActivityResult,
-        coroutineScope: CoroutineScope,
-        dispatcher: CoroutineDispatcher,
-    ) {
-        authClient.handleSpotifyAuthResult(result) { authResult ->
-            if (authResult.isSuccess) {
-                coroutineScope.launch {
-                    val authCode = authResult.getOrElse { "" }
-                    Log.d(TAG, "Launching auth token request...")
-                    fetchAndStoreAuthToken(authCode)
-                        .onFailure { error ->
-                            Log.e(TAG, "Error storing access token", error)
-                            _sessionState.update {
-                                SessionState.Failed(
-                                    SessionError.AuthFailed(error),
-                                )
+        override fun handleAuthResult(
+            context: Context,
+            result: ActivityResult,
+            coroutineScope: CoroutineScope,
+            dispatcher: CoroutineDispatcher,
+        ) {
+            authClient.handleSpotifyAuthResult(result) { authResult ->
+                if (authResult.isSuccess) {
+                    coroutineScope.launch {
+                        val authCode = authResult.getOrElse { "" }
+                        Log.d(TAG, "Launching auth token request...")
+                        fetchAndStoreAuthToken(authCode)
+                            .onFailure { error ->
+                                Log.e(TAG, "Error storing access token", error)
+                                _sessionState.update {
+                                    SessionState.Failed(
+                                        SessionError.AuthFailed(error),
+                                    )
+                                }
+                            }.onSuccess {
+                                Log.d(TAG, "Access token stored, Connecting to remote...")
+                                connectRemote(context, coroutineScope, dispatcher)
                             }
-                        }.onSuccess {
-                            Log.d(TAG, "Access token stored, Connecting to remote...")
-                            connectRemote(context, coroutineScope, dispatcher)
-                        }
-                }
-            } else {
-                _sessionState.update {
-                    SessionState.Failed(
-                        SessionError.AuthFailed(
-                            Exception("Authorization failed with unknown error"),
-                        ),
-                    )
+                    }
+                } else {
+                    _sessionState.update {
+                        SessionState.Failed(
+                            SessionError.AuthFailed(
+                                Exception("Authorization failed with unknown error"),
+                            ),
+                        )
+                    }
                 }
             }
         }
-    }
 
-    override suspend fun shutDown() {
-        remoteProvider.disconnect()
-        _sessionState.update { SessionState.Idle }
-        authRepository.clearAccessToken()
-    }
+        override suspend fun shutDown() {
+            remoteProvider.disconnect()
+            _sessionState.update { SessionState.Idle }
+            authRepository.clearAccessToken()
+        }
 
-    private fun connectRemote(
-        context: Context,
-        coroutineScope: CoroutineScope,
-        dispatcher: CoroutineDispatcher = Dispatchers.Main,
-    ) {
-        _sessionState.update { SessionState.ConnectingRemote }
-        coroutineScope.launch(dispatcher) {
-            val result = remoteProvider.connect(context)
-            if (result.isSuccess) {
-                Log.d(TAG, "SessionState.Ready")
-                _sessionState.update { SessionState.Ready }
-            } else {
-                Log.e(TAG, "Failed to connect to remote", result.exceptionOrNull())
-                _sessionState.update {
-                    SessionState.Failed(
-                        SessionError.RemoteConnectionFailed(
-                            result.exceptionOrNull(),
-                        ),
-                    )
+        private fun connectRemote(
+            context: Context,
+            coroutineScope: CoroutineScope,
+            dispatcher: CoroutineDispatcher = Dispatchers.Main,
+        ) {
+            _sessionState.update { SessionState.ConnectingRemote }
+            coroutineScope.launch(dispatcher) {
+                val result = remoteProvider.connect(context)
+                if (result.isSuccess) {
+                    Log.d(TAG, "SessionState.Ready")
+                    _sessionState.update { SessionState.Ready }
+                } else {
+                    Log.e(TAG, "Failed to connect to remote", result.exceptionOrNull())
+                    _sessionState.update {
+                        SessionState.Failed(
+                            SessionError.RemoteConnectionFailed(
+                                result.exceptionOrNull(),
+                            ),
+                        )
+                    }
                 }
             }
         }
-    }
 
-    private suspend fun fetchAndStoreAuthToken(authCode: String): Result<Unit> =
-        authRepository.storeAccessToken(authCode)
-}
+        private suspend fun fetchAndStoreAuthToken(authCode: String): Result<Unit> =
+            authRepository.storeAccessToken(authCode)
+    }

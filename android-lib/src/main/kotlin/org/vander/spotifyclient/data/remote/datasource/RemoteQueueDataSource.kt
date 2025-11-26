@@ -9,23 +9,23 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class RemoteQueueDataSource
-@Inject
-constructor(
-    @param:Named("auth_api_v1_client") private val httpClient: HttpClient,
-    private val tokenProvider: ITokenProvider,
-) : IRemoteQueueDataSource {
-    override suspend fun fetchUserQueue(): Result<CurrentlyPlayingWithQueueDto> {
-        val token = tokenProvider.getAccessToken() ?: ""
-        return try {
-            val response =
-                httpClient.get("me/player/queue") {
-                    headers {
-                        append(HttpHeaders.Authorization, "Bearer $token")
+    @Inject
+    constructor(
+        @param:Named("auth_api_v1_client") private val httpClient: HttpClient,
+        private val tokenProvider: ITokenProvider,
+    ) : IRemoteQueueDataSource {
+        override suspend fun fetchUserQueue(): Result<CurrentlyPlayingWithQueueDto> {
+            val token = tokenProvider.getAccessToken() ?: ""
+            return try {
+                val response =
+                    httpClient.get("me/player/queue") {
+                        headers {
+                            append(HttpHeaders.Authorization, "Bearer $token")
+                        }
                     }
-                }
-            return response.parseSpotifyResult<CurrentlyPlayingWithQueueDto>("SpotifyRemoteDataSource")
-        } catch (e: Exception) {
-            Result.failure(e)
+                return response.parseSpotifyResult<CurrentlyPlayingWithQueueDto>("SpotifyRemoteDataSource")
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
     }
-}

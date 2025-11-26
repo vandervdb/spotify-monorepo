@@ -209,8 +209,7 @@ private fun MiniPlayerContent(
                         .padding(vertical = 4.dp)
                         .onGloballyPositioned { coords ->
                             barWidthPx = coords.size.width.toFloat()
-                        }
-                        .pointerInput(trackParams.durationMS) {
+                        }.pointerInput(trackParams.durationMS) {
                             detectTapGestures { offset ->
                                 val dur = trackParams.durationMS
                                 if (dur <= 0L || barWidthPx <= 0f) return@detectTapGestures

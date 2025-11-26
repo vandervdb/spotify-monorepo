@@ -15,26 +15,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 open class PlayListViewModelImpl
-@Inject
-constructor(
-    private val useCase: PlaylistUseCase,
-) : ViewModel(),
-    PlaylistViewModel {
-    private val _playlists = MutableStateFlow(PlaylistCollection.empty())
-    override val playlists: StateFlow<PlaylistCollection> = _playlists.asStateFlow()
+    @Inject
+    constructor(
+        private val useCase: PlaylistUseCase,
+    ) : ViewModel(),
+        PlaylistViewModel {
+        private val _playlists = MutableStateFlow(PlaylistCollection.empty())
+        override val playlists: StateFlow<PlaylistCollection> = _playlists.asStateFlow()
 
-    override fun refresh() {
-        viewModelScope.launch {
-            useCase.getAndUpdatePlaylistsFlow()
-            collectPlayListState()
+        override fun refresh() {
+            viewModelScope.launch {
+                useCase.getAndUpdatePlaylistsFlow()
+                collectPlayListState()
+            }
+        }
+
+        private suspend fun collectPlayListState() {
+            Log.d("PlayListViewModelImpl", "Collecting playlists state...")
+            useCase.playlists.collect { playlistState ->
+                Log.d("PlayListViewModelImpl", "Received playlists state: $playlistState")
+                _playlists.value = playlistState
+            }
         }
     }
-
-    private suspend fun collectPlayListState() {
-        Log.d("PlayListViewModelImpl", "Collecting playlists state...")
-        useCase.playlists.collect { playlistState ->
-            Log.d("PlayListViewModelImpl", "Received playlists state: $playlistState")
-            _playlists.value = playlistState
-        }
-    }
-}
