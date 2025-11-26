@@ -14,9 +14,13 @@ import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 class SpotifyAuthClientTest {
-
-    open class TestableSpotifyAuthClient @Inject constructor(logger: Logger) : SpotifyAuthClient(logger) {
+    open class TestableSpotifyAuthClient
+    @Inject
+    constructor(
+        logger: Logger,
+    ) : SpotifyAuthClient(logger) {
         private var nextParsed: ParsedAuth? = null
+
         fun stubToken(value: String) {
             nextParsed = ParsedAuth(ParsedAuth.Type.TOKEN, value = value)
         }
@@ -33,9 +37,10 @@ class SpotifyAuthClientTest {
             nextParsed = ParsedAuth(ParsedAuth.Type.OTHER)
         }
 
-        override fun parseAuthResponse(resultCode: Int, data: Intent): ParsedAuth {
-            return nextParsed ?: super.parseAuthResponse(resultCode, data)
-        }
+        override fun parseAuthResponse(
+            resultCode: Int,
+            data: Intent,
+        ): ParsedAuth = nextParsed ?: super.parseAuthResponse(resultCode, data)
     }
 
     @Test

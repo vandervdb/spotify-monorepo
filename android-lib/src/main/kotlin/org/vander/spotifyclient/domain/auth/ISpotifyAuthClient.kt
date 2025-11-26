@@ -7,6 +7,14 @@ import androidx.activity.result.ActivityResultLauncher
 import org.vander.spotifyclient.bridge.AuthConfigK
 
 interface ISpotifyAuthClient {
-    fun authorize(contextActivity: Activity, launcher: ActivityResultLauncher<Intent>, config: AuthConfigK?)
-    fun handleSpotifyAuthResult(result: ActivityResult, onResult: (Result<String>) -> Unit)
+    fun authorize(
+        contextActivity: Activity,
+        launcher: ActivityResultLauncher<Intent>,
+        config: AuthConfigK?,
+    )
+
+    fun handleSpotifyAuthResult(
+        result: ActivityResult,
+        onResult: (Result<String>) -> Unit,
+    )
 }

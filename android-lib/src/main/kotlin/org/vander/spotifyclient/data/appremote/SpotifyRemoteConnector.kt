@@ -7,18 +7,20 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import org.vander.spotifyclient.domain.appremote.RemoteConnector
 import org.vander.spotifyclient.utils.REDIRECT_URI
 
-class SpotifyRemoteConnector() : RemoteConnector {
+class SpotifyRemoteConnector : RemoteConnector {
     override fun connect(
         context: Context,
         clientId: String,
         redirectUrl: String,
         showAuthView: Boolean,
-        listener: RemoteConnector.RemoteListener
+        listener: RemoteConnector.RemoteListener,
     ) {
-        val params = ConnectionParams.Builder(clientId)
-            .setRedirectUri(REDIRECT_URI)
-            .showAuthView(showAuthView)
-            .build()
+        val params =
+            ConnectionParams
+                .Builder(clientId)
+                .setRedirectUri(REDIRECT_URI)
+                .showAuthView(showAuthView)
+                .build()
 
         SpotifyAppRemote.connect(
             context,
@@ -31,11 +33,11 @@ class SpotifyRemoteConnector() : RemoteConnector {
                 override fun onFailure(p0: Throwable?) {
                     listener.onFailure(p0!!)
                 }
-            })
+            },
+        )
     }
 
     override fun disconnect(remote: Any) {
         (remote as? SpotifyAppRemote).let { SpotifyAppRemote.disconnect(it) }
     }
-
 }

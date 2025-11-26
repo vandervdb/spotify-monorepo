@@ -2,13 +2,10 @@ package org.vander.core.ui.state
 
 import org.vander.core.ui.domain.UIQueueItem
 
-
 data class UIQueueState(
-    val items: List<UIQueueItem>
+    val items: List<UIQueueItem>,
 ) {
     companion object {
-        fun empty(): UIQueueState {
-            return UIQueueState(List(0) { UIQueueItem.Companion.empty() })
-        }
+        fun empty(): UIQueueState = UIQueueState(List(0) { UIQueueItem.Companion.empty() })
     }
 }

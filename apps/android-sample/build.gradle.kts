@@ -10,20 +10,33 @@ plugins {
 
 android {
     namespace = "org.vander.android.sample"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "org.vander.android.sample"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = libs.versions.android.versionCode.get().toInt()
-        versionName = libs.versions.android.versionName.get()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.android.targetSdk
+                .get()
+                .toInt()
+        versionCode =
+            libs.versions.android.versionCode
+                .get()
+                .toInt()
+        versionName =
+            libs.versions.android.versionName
+                .get()
 
         testInstrumentationRunner = "com.google.dagger.hilt.android.testing.HiltTestRunner"
 
         manifestPlaceholders["redirectSchemeName"] = "org-vander-androidapp"
         manifestPlaceholders["redirectHostName"] = "callback"
-
     }
 
     buildTypes {
@@ -45,7 +58,9 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion =
+            libs.versions.compose.compiler
+                .get()
     }
 
     buildFeatures {
@@ -56,9 +71,7 @@ android {
     dexOptions {
         javaMaxHeapSize = "2g"
     }
-
 }
-
 
 dependencies {
 
@@ -98,7 +111,6 @@ dependencies {
     implementation(libs.compose.material.icons.ext)
     implementation(libs.androidx.material3.window.size)
 
-
     // --- Coil
     implementation(libs.coil.compose)
 
@@ -112,7 +124,6 @@ dependencies {
     kapt(libs.androidx.hilt.compiler) //  @HiltViewModel
     implementation(libs.hilt.navigation.compose)
 
-
     // --- Tests
     testImplementation(libs.junit4)
     androidTestImplementation(libs.androidx.test.ext.junit)
@@ -121,7 +132,6 @@ dependencies {
     androidTestImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)
 
-
     // Hilt (androidTest)
     androidTestImplementation(libs.hilt.android.testing)
     kaptAndroidTest(libs.hilt.compiler)
@@ -129,5 +139,4 @@ dependencies {
     //  Hilt Unit tests
     testImplementation(libs.hilt.android.testing)
     kaptTest(libs.hilt.compiler)
-
 }

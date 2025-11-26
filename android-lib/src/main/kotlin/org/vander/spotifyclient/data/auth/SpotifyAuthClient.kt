@@ -12,11 +12,19 @@ import org.vander.core.logger.Logger
 import org.vander.spotifyclient.BuildConfig
 import org.vander.spotifyclient.bridge.AuthConfigK
 import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
-import org.vander.spotifyclient.utils.*
+import org.vander.spotifyclient.utils.REDIRECT_URI
+import org.vander.spotifyclient.utils.SCOPE_STREAMING
+import org.vander.spotifyclient.utils.USER_LIBRARY_MODIFY
+import org.vander.spotifyclient.utils.USER_LIBRARY_READ
+import org.vander.spotifyclient.utils.USER_READ_CURRENTLY_PLAYING
+import org.vander.spotifyclient.utils.USER_READ_PLAYBACK_STATE
+import org.vander.spotifyclient.utils.USER_READ_PRIVATE
 import javax.inject.Inject
 
-open class SpotifyAuthClient @Inject constructor(
-    private val logger: Logger
+open class SpotifyAuthClient
+@Inject
+constructor(
+    private val logger: Logger,
 ) : ISpotifyAuthClient {
     companion object {
         private const val TAG = "SpotifyClient"
@@ -26,7 +34,7 @@ open class SpotifyAuthClient @Inject constructor(
     protected data class ParsedAuth(
         val type: Type,
         val value: String? = null,
-        val error: String? = null
+        val error: String? = null,
     ) {
         enum class Type { TOKEN, CODE, ERROR, OTHER }
     }
@@ -43,41 +51,49 @@ open class SpotifyAuthClient @Inject constructor(
      * @param contextActivity The current [Activity] context.
      * @param launcher The [ActivityResultLauncher] used to launch the Spotify login activity.
      */
-    override fun authorize(contextActivity: Activity, launcher: ActivityResultLauncher<Intent>, config: AuthConfigK?) {
-        val request = config?.let {
-             AuthorizationRequest.Builder(
-                config.clientId,
-                AuthorizationResponse.Type.CODE,
-                config.redirectUrl,
-            ).apply {
-                setScopes(
-                    config.scopes
-                )
-                setShowDialog(config.showDialog)
-            }.build()
-        } ?: AuthorizationRequest.Builder(BuildConfig.CLIENT_ID,
-            AuthorizationResponse.Type.CODE,
-            REDIRECT_URI,
-        ).apply {
-            setScopes(
-                arrayOf(
-                    SCOPE_STREAMING,
-                    USER_READ_PRIVATE,
-                    USER_READ_CURRENTLY_PLAYING,
-                    USER_READ_PLAYBACK_STATE,
-                    USER_LIBRARY_MODIFY,
-                    USER_LIBRARY_READ
-                )
-            )
-            setShowDialog(true)
-        }.build()
+    override fun authorize(
+        contextActivity: Activity,
+        launcher: ActivityResultLauncher<Intent>,
+        config: AuthConfigK?,
+    ) {
+        val request =
+            config?.let {
+                AuthorizationRequest
+                    .Builder(
+                        config.clientId,
+                        AuthorizationResponse.Type.CODE,
+                        config.redirectUrl,
+                    ).apply {
+                        setScopes(
+                            config.scopes,
+                        )
+                        setShowDialog(config.showDialog)
+                    }.build()
+            } ?: AuthorizationRequest
+                .Builder(
+                    BuildConfig.CLIENT_ID,
+                    AuthorizationResponse.Type.CODE,
+                    REDIRECT_URI,
+                ).apply {
+                    setScopes(
+                        arrayOf(
+                            SCOPE_STREAMING,
+                            USER_READ_PRIVATE,
+                            USER_READ_CURRENTLY_PLAYING,
+                            USER_READ_PLAYBACK_STATE,
+                            USER_LIBRARY_MODIFY,
+                            USER_LIBRARY_READ,
+                        ),
+                    )
+                    setShowDialog(true)
+                }.build()
         val intent = createLoginActivityIntent(contextActivity, request)
         launcher.launch(intent)
     }
 
     override fun handleSpotifyAuthResult(
         result: ActivityResult,
-        onResult: (Result<String>) -> Unit
+        onResult: (Result<String>) -> Unit,
     ) {
         logger.d(TAG, "handleSpotifyAuthResult: $result")
 
@@ -111,7 +127,6 @@ open class SpotifyAuthClient @Inject constructor(
                     onResult(Result.failure(Exception("Unexpected response type")))
                 }
             }
-
         } else {
             logger.e(TAG, "Error connecting to Spotify, result code: ${result.resultCode}")
             onResult(Result.failure<String>(Exception(result.resultCode.toString())))
@@ -119,7 +134,10 @@ open class SpotifyAuthClient @Inject constructor(
     }
 
     // Extracted to make the class testable without instantiating Spotify SDK responses
-    protected open fun parseAuthResponse(resultCode: Int, data: Intent): ParsedAuth {
+    protected open fun parseAuthResponse(
+        resultCode: Int,
+        data: Intent,
+    ): ParsedAuth {
         val response = AuthorizationClient.getResponse(resultCode, data)
         return when (response.type) {
             AuthorizationResponse.Type.TOKEN -> ParsedAuth(ParsedAuth.Type.TOKEN, value = response.accessToken)

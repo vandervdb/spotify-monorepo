@@ -11,11 +11,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AppRemoteModule {
-
     @Binds
     @Singleton
-    abstract fun bindSpotifyAppRemoteProvider(
-        spotifyAppRemoteProvider: SpotifyAppRemoteProvider
-    ): AppRemoteProvider
-
+    abstract fun bindSpotifyAppRemoteProvider(spotifyAppRemoteProvider: SpotifyAppRemoteProvider): AppRemoteProvider
 }

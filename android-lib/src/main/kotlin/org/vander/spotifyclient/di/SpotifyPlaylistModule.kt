@@ -13,7 +13,5 @@ import javax.inject.Singleton
 internal abstract class SpotifyPlaylistModule {
     @Binds
     @Singleton
-    abstract fun bindSpotifyPlaylistRepository(
-        impl: SpotifyPlaylistRepositoryImpl
-    ): SpotifyPlaylistRepository
+    abstract fun bindSpotifyPlaylistRepository(impl: SpotifyPlaylistRepositoryImpl): SpotifyPlaylistRepository
 }

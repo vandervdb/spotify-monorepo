@@ -11,11 +11,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class SpotifySessionManagerModule {
-
     @Binds
     @Singleton
-    abstract fun bindSpotifySessionManager(
-        spotifySessionManagerImpl: SpotifySessionManagerImpl
-    ): SpotifySessionManager
-
+    abstract fun bindSpotifySessionManager(spotifySessionManagerImpl: SpotifySessionManagerImpl): SpotifySessionManager
 }

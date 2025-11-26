@@ -19,7 +19,7 @@ data class UserDto(
     val images: List<ImageDto>,
     val product: String,
     val type: String,
-    val uri: String
+    val uri: String,
 )
 
 @Serializable
@@ -27,12 +27,11 @@ data class ExplicitContentDto(
     @SerialName("filter_enabled")
     val filterEnabled: Boolean,
     @SerialName("filter_locked")
-    val filterLocked: Boolean
+    val filterLocked: Boolean,
 )
 
 @Serializable
 data class FollowersDto(
     val href: String? = null,
-    val total: Int
+    val total: Int,
 )
-

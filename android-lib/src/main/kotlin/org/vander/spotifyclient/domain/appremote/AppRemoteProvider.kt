@@ -7,8 +7,12 @@ import org.vander.core.domain.state.RemoteClientState
 
 interface AppRemoteProvider {
     val remoteState: StateFlow<RemoteClientState>
+
     suspend fun connect(context: Context): Result<Unit>
+
     fun get(): SpotifyAppRemote?
+
     fun disconnect()
+
     fun getRemoteHandle(): Any?
 }

@@ -9,8 +9,10 @@ import org.vander.core.domain.data.PlaylistCollection
 import org.vander.spotifyclient.domain.repository.SpotifyPlaylistRepository
 import javax.inject.Inject
 
-class PlaylistUseCase @Inject constructor(
-    val playlistRepository: SpotifyPlaylistRepository
+class PlaylistUseCase
+@Inject
+constructor(
+    val playlistRepository: SpotifyPlaylistRepository,
 ) {
     companion object Companion {
         private const val TAG = "PlaylistUseCase"
@@ -28,10 +30,7 @@ class PlaylistUseCase @Inject constructor(
             onFailure = {
                 _playlists.update { PlaylistCollection.empty() }
                 Log.e(TAG, "Error getting user playlists", it)
-            }
+            },
         )
     }
-
-
 }
-

@@ -1,3 +1,5 @@
+import com.diffplug.gradle.spotless.SpotlessExtension
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -5,6 +7,8 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.ktlint.gradle)
 }
 
 subprojects {
@@ -14,12 +18,42 @@ subprojects {
             force("org.jetbrains.kotlin:kotlin-stdlib-common:1.9.25")
         }
     }
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    ktlint {
+        ignoreFailures.set(true)
+    }
 }
 
+ktlint {
+    verbose.set(true)
+    outputToConsole.set(true)
+    ignoreFailures.set(true) // ★★★★★ IMPORTANT ★★★★★
+    android.set(false)
+    filter {
+        exclude("**/build/**")
+        exclude("**/generated/**")
+        exclude("**/node_modules/**")
+    }
+}
 
+extensions.configure<SpotlessExtension>("spotless") {
+    kotlin {
+        target("**/*.kt")
+        targetExclude("**/build/**", "**/node_modules/**")
+
+        ktlint(libs.versions.ktlint.get())
+    }
+
+    kotlinGradle {
+        target("**/*.gradle.kts")
+        targetExclude("**/build/**", "**/node_modules/**")
+
+        ktlint(libs.versions.ktlint.get())
+    }
+}
 
 abstract class CheckCatalogConsistencyTask : DefaultTask() {
-
     @get:InputFile
     abstract val tomlFile: RegularFileProperty
 
@@ -43,10 +77,11 @@ abstract class CheckCatalogConsistencyTask : DefaultTask() {
                 .map { it.groupValues[1] }
                 .toSet()
 
-        val usedVersionKeys = Regex("""version(?:\.ref)?\s*=\s*["']([a-zA-Z0-9_-]+)["']""")
-            .findAll(content)
-            .map { it.groupValues[1] }
-            .toSet()
+        val usedVersionKeys =
+            Regex("""version(?:\.ref)?\s*=\s*["']([a-zA-Z0-9_-]+)["']""")
+                .findAll(content)
+                .map { it.groupValues[1] }
+                .toSet()
 
         val allow = allowedUnusedVersionKeys.get().toSet()
         val unused = declaredVersions - usedVersionKeys - allow
@@ -74,13 +109,12 @@ tasks.register<CheckCatalogConsistencyTask>("checkCatalogConsistency") {
             "android-minSdk",
             "android-targetSdk",
             "android-versionCode",
-            "android-versionName"
-        )
+            "android-versionName",
+        ),
     )
 }
 
 abstract class CheckVersionHardcodedUsagesTask : DefaultTask() {
-
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val gradleFiles: ConfigurableFileCollection
@@ -93,22 +127,23 @@ abstract class CheckVersionHardcodedUsagesTask : DefaultTask() {
         // match "group:artifact:version" between quotes
         val hardcodedDependencyRegex = Regex("""["'][^"']+:[^"']+:[^"']+["']""")
 
-        val badUsages = gradleFiles.files.flatMap { file ->
-            val content = file.readText()
-            val blocks = dependencyBlockRegex.findAll(content)
+        val badUsages =
+            gradleFiles.files.flatMap { file ->
+                val content = file.readText()
+                val blocks = dependencyBlockRegex.findAll(content)
 
-            blocks.flatMap { match ->
-                val block = match.value.lines()
-                block.withIndex()
-                    .filter { (_, line) ->
-                        // ligne qui contient un GAV en dur ET pas de libs.*
-                        hardcodedDependencyRegex.containsMatchIn(line) && "libs." !in line
-                    }
-                    .map { (idx, line) ->
-                        "${file.path} [dependencies block] line ${idx + 1} → $line".trim()
-                    }
+                blocks.flatMap { match ->
+                    val block = match.value.lines()
+                    block
+                        .withIndex()
+                        .filter { (_, line) ->
+                            // ligne qui contient un GAV en dur ET pas de libs.*
+                            hardcodedDependencyRegex.containsMatchIn(line) && "libs." !in line
+                        }.map { (idx, line) ->
+                            "${file.path} [dependencies block] line ${idx + 1} → $line".trim()
+                        }
+                }
             }
-        }
 
         if (badUsages.isNotEmpty()) {
             println("⚠️  Hard-coded dependencies detected:")
@@ -128,6 +163,6 @@ tasks.register<CheckVersionHardcodedUsagesTask>("checkVersionHardcodedUsages") {
         layout.projectDirectory.asFileTree.matching {
             include("**/build.gradle.kts", "**/build.gradle")
             exclude("**/rn-modules/**", "**/node_modules/**")
-        }
+        },
     )
 }

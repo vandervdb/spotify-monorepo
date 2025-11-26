@@ -5,5 +5,6 @@ import org.vander.core.domain.data.PlaylistCollection
 
 interface SpotifyPlaylistRepository {
     val playlists: StateFlow<PlaylistCollection?>
+
     suspend fun getUserPlaylists(): Result<PlaylistCollection>
 }

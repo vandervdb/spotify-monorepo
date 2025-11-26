@@ -1,18 +1,19 @@
 package org.vander.spotifyclient.domain.usecase
 
 import android.util.Log
-import org.vander.core.domain.data.CurrentlyPlaying
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.vander.core.domain.data.CurrentlyPlaying
 import org.vander.spotifyclient.domain.repository.SpotifyQueueRepository
 import javax.inject.Inject
 
-class SpotifyRemoteUseCase @Inject constructor(
+class SpotifyRemoteUseCase
+@Inject
+constructor(
     private val queueRepository: SpotifyQueueRepository,
 ) {
-
     companion object {
         private const val TAG = "SpotifyRemoteUseCase"
     }
@@ -28,7 +29,7 @@ class SpotifyRemoteUseCase @Inject constructor(
             },
             onFailure = { exception ->
                 Log.e(TAG, "Error getting user queue", exception)
-            }
+            },
         )
     }
 }

@@ -9,11 +9,16 @@ version = rootProject.findProperty("VERSION_NAME") ?: "0.1.0-SNAPSHOT"
 android {
     namespace = "org.vander.fake"
 
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
 
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -28,9 +33,11 @@ android {
         compose = false
     }
 
-     composeOptions {
-         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-     }
+    composeOptions {
+        kotlinCompilerExtensionVersion =
+            libs.versions.compose.compiler
+                .get()
+    }
 }
 
 kotlin {

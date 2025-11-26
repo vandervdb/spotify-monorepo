@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RestrictionsDto(
-    val reason: String
+    val reason: String,
 )

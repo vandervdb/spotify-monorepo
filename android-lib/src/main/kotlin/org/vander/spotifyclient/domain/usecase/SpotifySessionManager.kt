@@ -16,13 +16,18 @@ interface SpotifySessionManager {
     val sessionState: StateFlow<SessionState>
 
     fun requestAuthorization(launchAuth: ActivityResultLauncher<Intent>)
+
     fun handleAuthResult(
         context: Context,
         result: ActivityResult,
         coroutineScope: CoroutineScope,
-        dispatcher: CoroutineDispatcher = Dispatchers.Main
+        dispatcher: CoroutineDispatcher = Dispatchers.Main,
     )
 
     suspend fun shutDown()
-    fun launchAuthorizationFlow(activity: Activity, config: AuthConfigK? = null)
+
+    fun launchAuthorizationFlow(
+        activity: Activity,
+        config: AuthConfigK? = null,
+    )
 }

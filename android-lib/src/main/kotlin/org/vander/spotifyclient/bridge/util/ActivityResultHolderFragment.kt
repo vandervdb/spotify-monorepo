@@ -7,19 +7,18 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 
-
 class ActivityResultHolderFragment : Fragment() {
-
     private var onActivityResult: ((ActivityResult) -> Unit)? = null
     private lateinit var launcher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        launcher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            onActivityResult?.invoke(result)
-        }
+        launcher =
+            registerForActivityResult(
+                ActivityResultContracts.StartActivityForResult(),
+            ) { result ->
+                onActivityResult?.invoke(result)
+            }
     }
 
     fun setOnActivityResult(cb: (ActivityResult) -> Unit) {
@@ -32,4 +31,3 @@ class ActivityResultHolderFragment : Fragment() {
         fun newInstance() = ActivityResultHolderFragment()
     }
 }
-

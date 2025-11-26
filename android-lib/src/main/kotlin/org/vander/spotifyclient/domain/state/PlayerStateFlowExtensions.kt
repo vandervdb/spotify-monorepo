@@ -14,9 +14,7 @@ import org.vander.core.domain.state.DomainPlayerState
  * @param transform a function that takes the current state of the [MutableStateFlow]
  *                  and returns the new state.
  */
-inline fun MutableStateFlow<DomainPlayerState>.update(
-    transform: (DomainPlayerState) -> DomainPlayerState
-) {
+inline fun MutableStateFlow<DomainPlayerState>.update(transform: (DomainPlayerState) -> DomainPlayerState) {
     value = transform(value)
 }
 
@@ -36,7 +34,7 @@ inline fun MutableStateFlow<DomainPlayerState>.update(
  */
 inline fun MutableStateFlow<DomainPlayerState>.updateIf(
     predicate: (DomainPlayerState) -> Boolean,
-    transform: (DomainPlayerState) -> DomainPlayerState
+    transform: (DomainPlayerState) -> DomainPlayerState,
 ) {
     val current = value
     if (predicate(current)) {
@@ -61,7 +59,6 @@ fun MutableStateFlow<DomainPlayerState>.setTrack(trackId: String) {
         it.copy(base = newBase)
     }
 }
-
 
 fun MutableStateFlow<DomainPlayerState>.reset() {
     value = DomainPlayerState.empty()

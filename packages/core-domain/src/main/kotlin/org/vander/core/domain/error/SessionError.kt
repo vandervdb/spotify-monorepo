@@ -7,13 +7,19 @@ package org.vander.core.domain.error
  * @param message A detailed message about the error, if available.
  * @param cause The underlying cause of the error, if available.
  */
-sealed class SessionError(message: String? = null, cause: Throwable?) : Exception(message) {
-    data class AuthFailed(override val cause: Throwable? = null) :
-        SessionError("Spotify Authorization Failed", cause)
+sealed class SessionError(
+    message: String? = null,
+    cause: Throwable?,
+) : Exception(message) {
+    data class AuthFailed(
+        override val cause: Throwable? = null,
+    ) : SessionError("Spotify Authorization Failed", cause)
 
-    data class RemoteConnectionFailed(override val cause: Throwable? = null) :
-        SessionError("Spotify Remote Connection Failed", cause)
+    data class RemoteConnectionFailed(
+        override val cause: Throwable? = null,
+    ) : SessionError("Spotify Remote Connection Failed", cause)
 
-    data class UnknownError(override val cause: Throwable? = null) :
-        SessionError("Unknown error occurred", cause)
+    data class UnknownError(
+        override val cause: Throwable? = null,
+    ) : SessionError("Unknown error occurred", cause)
 }

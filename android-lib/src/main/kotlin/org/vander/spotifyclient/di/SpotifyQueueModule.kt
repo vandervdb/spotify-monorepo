@@ -10,9 +10,6 @@ import org.vander.spotifyclient.domain.repository.SpotifyQueueRepository
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class SpotifyQueueModule {
-
     @Binds
-    abstract fun bindQueueRepository(
-        impl: SpotifyQueueRepositoryImpl
-    ): SpotifyQueueRepository
+    abstract fun bindQueueRepository(impl: SpotifyQueueRepositoryImpl): SpotifyQueueRepository
 }

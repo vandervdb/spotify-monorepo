@@ -4,12 +4,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.ktor.client.*
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.vander.core.domain.auth.ITokenProvider
 import org.vander.core.logger.Logger
@@ -21,21 +21,22 @@ import io.ktor.client.plugins.logging.Logger as KtorLogger
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
     @Provides
     @Singleton
     fun provideKtorClient(
         tokenProvider: ITokenProvider,
         config: KtorClientConfig,
-        outputLogger: Logger
-    ): HttpClient {
-        return HttpClient(OkHttp) {
+        outputLogger: Logger,
+    ): HttpClient =
+        HttpClient(OkHttp) {
             install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    prettyPrint = true
-                    isLenient = true
-                })
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        prettyPrint = true
+                        isLenient = true
+                    },
+                )
             }
 
             if (config.enableAuthPlugin) {
@@ -45,11 +46,12 @@ object NetworkModule {
             }
 
             install(Logging) {
-                logger = object : KtorLogger {
-                    override fun log(message: String) {
-                        outputLogger.d("KtorLogger", message)
+                logger =
+                    object : KtorLogger {
+                        override fun log(message: String) {
+                            outputLogger.d("KtorLogger", message)
+                        }
                     }
-                }
                 outputLogger.d("KtorLogger", "Ktor logger installed")
                 level = config.logLevel
             }
@@ -58,5 +60,4 @@ object NetworkModule {
                 url(config.baseUrl)
             }
         }
-    }
 }

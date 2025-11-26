@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class ExternalIdsDto(
     val isrc: String? = null,
     val ean: String? = null,
-    val upc: String? = null
+    val upc: String? = null,
 )

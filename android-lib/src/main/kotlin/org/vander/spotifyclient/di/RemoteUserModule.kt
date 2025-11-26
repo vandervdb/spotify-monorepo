@@ -13,16 +13,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RemoteUserModule {
+    @Binds
+    @Singleton
+    abstract fun bindRemoteUserDataSource(impl: RemoteUserDataSource): IRemoteUserDataSource
 
     @Binds
     @Singleton
-    abstract fun bindRemoteUserDataSource(
-        impl: RemoteUserDataSource
-    ): IRemoteUserDataSource
-
-    @Binds
-    @Singleton
-    abstract fun bindUserRepository(
-        impl: SpotifyUserRepository
-    ): UserRepository
+    abstract fun bindUserRepository(impl: SpotifyUserRepository): UserRepository
 }

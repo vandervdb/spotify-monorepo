@@ -11,10 +11,11 @@ import java.util.*
 object ActivityResultFactory {
     fun register(
         activity: Activity,
-        callback: (ActivityResult) -> Unit
+        callback: (ActivityResult) -> Unit,
     ): ActivityResultLauncher<Intent> {
-        val fa = activity as? FragmentActivity
-            ?: error("Activity must extend FragmentActivity")
+        val fa =
+            activity as? FragmentActivity
+                ?: error("Activity must extend FragmentActivity")
 
         val tag = "ActivityResultHolderFragment_${UUID.randomUUID()}"
         val fm = fa.supportFragmentManager
@@ -39,4 +40,3 @@ object ActivityResultFactory {
         return holder.get()
     }
 }
-

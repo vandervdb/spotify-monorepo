@@ -33,8 +33,6 @@ dependencyResolutionManagement {
     }
 }
 
-
-
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "spotify-monorepo"
@@ -45,7 +43,6 @@ include(":apps:android-sample")
 include(":packages:core-dto")
 include(":packages:core-ui")
 include(":packages:fake")
-
 
 // Load credentials from spotify-secret.properties
 run {

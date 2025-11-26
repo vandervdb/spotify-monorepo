@@ -4,8 +4,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.ktor.client.*
-import io.ktor.client.plugins.logging.*
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.logging.LogLevel
 import org.vander.core.domain.auth.ITokenProvider
 import org.vander.core.logger.Logger
 import org.vander.spotifyclient.network.KtorClientConfig
@@ -16,17 +16,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthRemoteDataSourceModule {
-
     @Provides
     @Singleton
     @Named("AuthHttpClientConfig")
-    fun provideAuthHttpClientConfig(): KtorClientConfig {
-        return KtorClientConfig(
+    fun provideAuthHttpClientConfig(): KtorClientConfig =
+        KtorClientConfig(
             baseUrl = HTTPS_ACCOUNTS_SPOTIFY_COM_API,
             enableAuthPlugin = false,
-            logLevel = LogLevel.INFO
+            logLevel = LogLevel.INFO,
         )
-    }
 
     @Provides
     @Singleton
@@ -34,8 +32,6 @@ object AuthRemoteDataSourceModule {
     fun provideAuthHttpClient(
         tokenProvider: ITokenProvider,
         logger: Logger,
-        @Named("AuthHttpClientConfig") config: KtorClientConfig
-    ): HttpClient {
-        return NetworkModule.provideKtorClient(tokenProvider, config, logger)
-    }
+        @Named("AuthHttpClientConfig") config: KtorClientConfig,
+    ): HttpClient = NetworkModule.provideKtorClient(tokenProvider, config, logger)
 }

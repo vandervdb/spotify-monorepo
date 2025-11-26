@@ -1,20 +1,18 @@
 package org.vander.spotifyclient.data.remote.mapper
 
-import org.vander.core.domain.data.*
-import org.vander.core.dto.*
+import org.vander.core.dto.CurrentlyPlayingWithQueueDto
 
-
-fun CurrentlyPlayingWithQueueDto.toDomain(): CurrentlyPlaying {
-    return CurrentlyPlaying(
+fun CurrentlyPlayingWithQueueDto.toDomain(): CurrentlyPlaying =
+    CurrentlyPlaying(
         currentlyPlaying = currentlyPlaying?.toDomain(),
-        queue = Queue(
-            tracks = queue.map { it?.toDomain() ?: Track.empty() }
-        )
+        queue =
+            Queue(
+                tracks = queue.map { it?.toDomain() ?: Track.empty() },
+            ),
     )
-}
 
-fun TrackDto.toDomain(): Track {
-    return Track(
+fun TrackDto.toDomain(): Track =
+    Track(
         album = album.toDomain(),
         artists = artists.map { it.toDomain() },
         availableMarkets = availableMarkets,
@@ -29,12 +27,11 @@ fun TrackDto.toDomain(): Track {
         name = name,
         trackNumber = trackNumber,
         type = type,
-        uri = uri
+        uri = uri,
     )
-}
 
-fun AlbumDto.toDomain(): Album {
-    return Album(
+fun AlbumDto.toDomain(): Album =
+    Album(
         albumType = albumType,
         totalTracks = totalTracks,
         availableMarkets = availableMarkets,
@@ -46,32 +43,28 @@ fun AlbumDto.toDomain(): Album {
         releaseDate = releaseDate,
         type = type,
         uri = uri,
-        artists = artists.map { it.toDomain() }
+        artists = artists.map { it.toDomain() },
     )
-}
 
-fun ArtistDto.toDomain(): Artist {
-    return Artist(
+fun ArtistDto.toDomain(): Artist =
+    Artist(
         externalUrls = externalUrls.spotify,
         href = href,
         id = id,
         name = name,
         type = type,
-        uri = uri
+        uri = uri,
     )
-}
 
-fun ImageDto.toDomain(): Image {
-    return Image(
+fun ImageDto.toDomain(): Image =
+    Image(
         url = url,
         height = height,
-        width = width
+        width = width,
     )
-}
 
-fun UserDto.toDomain(): User {
-    return User(
+fun UserDto.toDomain(): User =
+    User(
         name = displayName,
-        imageUrl = images.firstOrNull()?.toDomain()?.url
+        imageUrl = images.firstOrNull()?.toDomain()?.url,
     )
-}

@@ -11,7 +11,7 @@ import org.vander.core.domain.state.PlayerStateData
 import org.vander.core.logger.Logger
 import org.vander.spotifyclient.data.player.mapper.toPlayerStateData
 import org.vander.spotifyclient.domain.appremote.AppRemoteProvider
-import org.vander.spotifyclient.domain.player.ISpotifyPlayerClient
+import org.vander.spotifyclient.domain.player.PlayerClient
 import javax.inject.Inject
 
 /**
@@ -23,11 +23,12 @@ import javax.inject.Inject
  * @property appRemoteProvider An [AppRemoteProvider] instance used to access the Spotify App Remote.
  * @property logger A [Logger] instance for logging debug messages.
  */
-class SpotifyPlayerClient @Inject constructor(
+class SpotifyPlayerClient
+@Inject
+constructor(
     private val appRemoteProvider: AppRemoteProvider,
-    private val logger: Logger
-) : ISpotifyPlayerClient {
-
+    private val logger: Logger,
+) : PlayerClient {
     companion object {
         const val TAG = "SpotifyPlayerClient"
     }
@@ -35,7 +36,6 @@ class SpotifyPlayerClient @Inject constructor(
     private var isPlaying = false
     private val playerApi: PlayerApi?
         get() = appRemoteProvider.get()?.playerApi
-
 
     private val _playerConnectionState =
         MutableStateFlow<PlayerConnectionState>(PlayerConnectionState.NotConnected)
@@ -52,7 +52,7 @@ class SpotifyPlayerClient @Inject constructor(
                 logger.d(
                     TAG,
                     "PlayerClient received new data: " + track.name + " by " + track.artist.name +
-                            "(paused: " + state.isPaused + " / coverUri: " + track.imageUri + ")"
+                            "(paused: " + state.isPaused + " / coverUri: " + track.imageUri + ")",
                 )
                 isPlaying = !state.isPaused
                 _lastState.value = state.toPlayerStateData(logger)
@@ -87,7 +87,7 @@ class SpotifyPlayerClient @Inject constructor(
     }
 
     override fun seekTo(position: Long) {
-      playerApi?.seekTo(position)
+        playerApi?.seekTo(position)
     }
 
     override fun setShuffle(shuffle: Boolean) {
@@ -98,13 +98,10 @@ class SpotifyPlayerClient @Inject constructor(
         playerApi?.setRepeat(repeat)
     }
 
-    override fun isPlaying(): Boolean {
-        return isPlaying
-    }
+    override fun isPlaying(): Boolean = isPlaying
 
     override fun unsubscribeFromPlayerState() {
         playerApi?.subscribeToPlayerState()?.cancel()
         appRemoteProvider.disconnect()
     }
-
 }

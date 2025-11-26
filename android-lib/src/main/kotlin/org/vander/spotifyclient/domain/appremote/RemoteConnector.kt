@@ -8,13 +8,14 @@ interface RemoteConnector {
         clientId: String,
         redirectUrl: String,
         showAuthView: Boolean,
-        listener: RemoteListener
+        listener: RemoteListener,
     )
 
     fun disconnect(remote: Any)
 
     interface RemoteListener {
         fun onConnected(remote: Any)
+
         fun onFailure(error: Throwable)
     }
 }

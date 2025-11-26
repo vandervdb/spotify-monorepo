@@ -15,6 +15,7 @@ import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 @InstallIn(SingletonComponent::class)
 interface SpotifyEntryPoint {
     fun spotifySessionManager(): SpotifySessionManager
+
     fun spotifyUseCase(): PlayerUseCase
 }
 
@@ -24,6 +25,6 @@ fun obtainBridgeFromHilt(context: Context): SpotifyBridgeApi {
     return SpotifyBridge(
         sessionManager = entryPoint.spotifySessionManager(),
         useCase = entryPoint.spotifyUseCase(),
-        appContext = context.applicationContext
+        appContext = context.applicationContext,
     )
 }

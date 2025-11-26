@@ -12,11 +12,11 @@ data class Album(
     val releaseDate: String,
     val type: String,
     val uri: String,
-    val artists: List<Artist>
+    val artists: List<Artist>,
 ) {
     companion object {
-        fun empty(): Album {
-            return Album(
+        fun empty(): Album =
+            Album(
                 albumType = "",
                 totalTracks = 0,
                 availableMarkets = emptyList(),
@@ -28,8 +28,7 @@ data class Album(
                 releaseDate = "",
                 type = "",
                 uri = "",
-                artists = emptyList()
+                artists = emptyList(),
             )
-        }
     }
 }

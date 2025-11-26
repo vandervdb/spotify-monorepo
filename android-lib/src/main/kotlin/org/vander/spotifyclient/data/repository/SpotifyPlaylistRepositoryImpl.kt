@@ -1,6 +1,5 @@
 package org.vander.spotifyclient.data.repository
 
-
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,15 +10,16 @@ import org.vander.spotifyclient.domain.datasource.IRemotePlaylistDataSource
 import org.vander.spotifyclient.domain.repository.SpotifyPlaylistRepository
 import javax.inject.Inject
 
-class SpotifyPlaylistRepositoryImpl @Inject constructor(
-    private val api: IRemotePlaylistDataSource
+class SpotifyPlaylistRepositoryImpl
+@Inject
+constructor(
+    private val api: IRemotePlaylistDataSource,
 ) : SpotifyPlaylistRepository {
-
     private val _playlists = MutableStateFlow<PlaylistCollection?>(null)
     override val playlists: StateFlow<PlaylistCollection?> = _playlists.asStateFlow()
 
-    override suspend fun getUserPlaylists(): Result<PlaylistCollection> {
-        return try {
+    override suspend fun getUserPlaylists(): Result<PlaylistCollection> =
+        try {
             val dto = api.fetchUserPlaylists().getOrThrow()
             val result = dto.toDomain()
             _playlists.update { result }
@@ -28,4 +28,3 @@ class SpotifyPlaylistRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
-}

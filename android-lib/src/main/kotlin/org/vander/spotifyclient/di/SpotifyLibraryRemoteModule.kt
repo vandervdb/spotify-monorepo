@@ -13,7 +13,5 @@ import javax.inject.Singleton
 abstract class SpotifyLibraryRemoteModule {
     @Binds
     @Singleton
-    abstract fun bindLibraryRemoteDataSource(
-        impl: RemoteLibraryDataSource
-    ): IRemoteLibraryDataSource
+    abstract fun bindLibraryRemoteDataSource(impl: RemoteLibraryDataSource): IRemoteLibraryDataSource
 }

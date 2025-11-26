@@ -1,20 +1,21 @@
 package org.vander.spotifyclient.data.repository
-
-import android.util.Log
-import org.vander.core.domain.player.IPlayerStateRepository
-import org.vander.core.domain.state.PlayerStateData
-import org.vander.core.domain.state.SavedRemotelyChangedState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.vander.spotifyclient.domain.player.ISpotifyPlayerClient
+import org.vander.core.domain.player.PlayerStateRepository
+import org.vander.core.domain.state.PlayerStateData
+import org.vander.core.domain.state.SavedRemotelyChangedState
+import org.vander.core.logger.Logger
+import org.vander.spotifyclient.domain.player.PlayerClient
 import javax.inject.Inject
 
-class DefaultPlayerStateRepository @Inject constructor(
-    private val playerClient: ISpotifyPlayerClient
-) : IPlayerStateRepository {
-
+class DefaultPlayerStateRepository
+@Inject
+constructor(
+    private val playerClient: PlayerClient,
+    private val logger: Logger,
+) : PlayerStateRepository {
     companion object {
         private const val TAG = "DefaultPlayerStateRepository"
     }
@@ -32,16 +33,16 @@ class DefaultPlayerStateRepository @Inject constructor(
     override suspend fun startListening() {
         if (isListening) return
         isListening = true
-        playerClient.subscribeToPlayerState() { newState ->
+        playerClient.subscribeToPlayerState { newState ->
             if (newState == _playerStateData.value) {
-                Log.d(TAG, "Player state did not change -> saved status changed")
+                logger.d(TAG, "Player state did not change -> saved status changed")
                 _savedRemotelyChangedState.update {
                     SavedRemotelyChangedState(
                         true,
-                        newState.trackId
+                        newState.trackId,
                     )
                 }
-                _savedRemotelyChangedState.update { SavedRemotelyChangedState(false) }  // reset
+                _savedRemotelyChangedState.update { SavedRemotelyChangedState(false) } // reset
             }
             _playerStateData.update { newState }
         }
@@ -50,5 +51,4 @@ class DefaultPlayerStateRepository @Inject constructor(
     override suspend fun stopListening() {
         isListening = false
     }
-
 }

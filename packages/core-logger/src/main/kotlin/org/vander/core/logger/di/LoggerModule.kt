@@ -11,9 +11,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object LoggerModule {
-
     @Singleton
     @Provides
-    fun provideLoggerModule(): Logger =
-        KermitLoggerImpl("SpotifyClient")
+    fun provideLoggerModule(): Logger = KermitLoggerImpl("SpotifyClient")
 }

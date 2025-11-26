@@ -1,19 +1,18 @@
 package org.vander.spotifyclient.network
 
-import org.vander.core.domain.auth.ITokenProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpClientPlugin
 import io.ktor.client.request.HttpRequestPipeline
 import io.ktor.util.AttributeKey
+import org.vander.core.domain.auth.ITokenProvider
 import javax.inject.Inject
 
-
-class AuthHeaderPlugin @Inject constructor(
-    val tokenProvider: ITokenProvider
+class AuthHeaderPlugin
+@Inject
+constructor(
+    val tokenProvider: ITokenProvider,
 ) {
-
     companion object : HttpClientPlugin<Config, AuthHeaderPlugin> {
-
         override val key: AttributeKey<AuthHeaderPlugin> = AttributeKey("AuthHeaderPlugin")
 
         override fun prepare(block: Config.() -> Unit): AuthHeaderPlugin {
@@ -24,7 +23,10 @@ class AuthHeaderPlugin @Inject constructor(
             return AuthHeaderPlugin(config.tokenProvider!!)
         }
 
-        override fun install(plugin: AuthHeaderPlugin, scope: HttpClient) {
+        override fun install(
+            plugin: AuthHeaderPlugin,
+            scope: HttpClient,
+        ) {
             scope.requestPipeline.intercept(HttpRequestPipeline.State) {
                 val token = plugin.tokenProvider.getAccessToken()
                 if (!token.isNullOrBlank()) {

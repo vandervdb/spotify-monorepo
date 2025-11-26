@@ -18,10 +18,6 @@ val DomainPlayerState.skippingPrevious get() = base.skippingPrevious
 val DomainPlayerState.positionMs get() = base.positionMs
 val DomainPlayerState.durationMs get() = base.durationMs
 
-fun DomainPlayerState.copyWithSaved(isSaved: Boolean): DomainPlayerState {
-    return this.copy(isTrackSaved = isSaved)
-}
+fun DomainPlayerState.copyWithSaved(isSaved: Boolean): DomainPlayerState = this.copy(isTrackSaved = isSaved)
 
-fun DomainPlayerState.copyWithBase(base: PlayerStateData): DomainPlayerState {
-    return this.copy(base = base)
-}
+fun DomainPlayerState.copyWithBase(base: PlayerStateData): DomainPlayerState = this.copy(base = base)

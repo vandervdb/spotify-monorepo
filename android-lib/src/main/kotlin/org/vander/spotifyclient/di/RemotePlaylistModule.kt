@@ -11,9 +11,5 @@ import org.vander.spotifyclient.domain.datasource.IRemotePlaylistDataSource
 @InstallIn(SingletonComponent::class)
 abstract class RemotePlaylistModule {
     @Binds
-    abstract fun bindRemotePlaylistDataSource(
-        impl: RemotePlaylistDataSource
-    ): IRemotePlaylistDataSource
-
-
+    abstract fun bindRemotePlaylistDataSource(impl: RemotePlaylistDataSource): IRemotePlaylistDataSource
 }

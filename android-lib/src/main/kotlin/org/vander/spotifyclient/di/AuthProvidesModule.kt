@@ -13,13 +13,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthProvidesModule {
-
     @Provides
     @Singleton
     fun provideAuthRepository(
         authRemoteDataSource: AuthRemoteDataSource,
-        dataStoreManager: IDataStoreManager
-    ): IAuthRepository {
-        return AuthRepository(authRemoteDataSource, dataStoreManager)
-    }
+        dataStoreManager: IDataStoreManager,
+    ): IAuthRepository = AuthRepository(authRemoteDataSource, dataStoreManager)
 }

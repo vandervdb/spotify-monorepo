@@ -14,18 +14,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class LocalModule {
-
     @Binds
     @Singleton
-    abstract fun bindDataStoreManager(
-        impl: DataStoreManager
-    ): IDataStoreManager
+    abstract fun bindDataStoreManager(impl: DataStoreManager): IDataStoreManager
 
     companion object {
         @Provides
         @Singleton
-        fun provideDataStoreManager(@ApplicationContext context: Context): DataStoreManager {
-            return DataStoreManager(context)
-        }
+        fun provideDataStoreManager(
+            @ApplicationContext context: Context,
+        ): DataStoreManager = DataStoreManager(context)
     }
 }

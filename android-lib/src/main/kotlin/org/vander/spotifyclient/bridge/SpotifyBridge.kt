@@ -23,60 +23,68 @@ import org.vander.spotifyclient.domain.usecase.PlayerUseCase
 import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 import javax.inject.Inject
 
-class SpotifyBridge @Inject constructor(
+class SpotifyBridge
+@Inject
+constructor(
     private val sessionManager: SpotifySessionManager,
     private val useCase: PlayerUseCase,
     private val appContext: Context,
 ) : SpotifyBridgeApi {
-
-
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.Main.immediate + job)
 
     private var authLauncher: ActivityResultLauncher<Intent>? = null
 
-    private val lastState = MutableStateFlow(
-        PlayerStateDto(
-            isPlaying = false,
-            positionMs = 0,
-            durationMs = 0,
-            trackUri = null,
-            coverId = null,
-            trackName = null,
-            artistName = null,
-            albumName = null,
+    private val lastState =
+        MutableStateFlow(
+            PlayerStateDto(
+                isPlaying = false,
+                positionMs = 0,
+                durationMs = 0,
+                trackUri = null,
+                coverId = null,
+                trackName = null,
+                artistName = null,
+                albumName = null,
+            ),
         )
-    )
 
     override val sessionState: StateFlow<SessionState> = sessionManager.sessionState
     override val domainPlayerState: StateFlow<DomainPlayerState> = useCase.domainPlayerState
     override val uIQueueState: StateFlow<UIQueueState> = useCase.uIQueueState
 
-    override val playerEvents: Flow<PlayerStateDto> = callbackFlow {
-        domainPlayerState.collect { state ->
-            val dto = state.toPlayerStateDto(null)
-            lastState.value = dto
-            trySend(dto)
+    override val playerEvents: Flow<PlayerStateDto> =
+        callbackFlow {
+            domainPlayerState.collect { state ->
+                val dto = state.toPlayerStateDto(null)
+                lastState.value = dto
+                trySend(dto)
+            }
         }
-    }
 
-    override fun getPlayerState(): PlayerStateDto {
-        return lastState.value
-    }
+    override fun getPlayerState(): PlayerStateDto = lastState.value
 
-    override suspend fun startUpWithModuleActivityResult(activity: Activity, config: AuthConfigK?) {
+    override suspend fun startUpWithModuleActivityResult(
+        activity: Activity,
+        config: AuthConfigK?,
+    ) {
         val launcher = ActivityResultFactory.register(activity, createAuthCallback())
         startUp(launcher, activity, config)
     }
 
-    override suspend fun startUpWithHostActivityResult(activity: Activity, config: AuthConfigK?) {
-        val componentActivity = activity as? ComponentActivity
-            ?: error("Host activity must be a ComponentActivity")
-        val launcher = componentActivity.activityResultRegistry.register(
-            "spotify-auth",
-            ActivityResultContracts.StartActivityForResult(),
-            createAuthCallback()
-        )
+    override suspend fun startUpWithHostActivityResult(
+        activity: Activity,
+        config: AuthConfigK?,
+    ) {
+        val componentActivity =
+            activity as? ComponentActivity
+                ?: error("Host activity must be a ComponentActivity")
+        val launcher =
+            componentActivity.activityResultRegistry.register(
+                "spotify-auth",
+                ActivityResultContracts.StartActivityForResult(),
+                createAuthCallback(),
+            )
         startUp(launcher, activity, config)
     }
 
@@ -113,14 +121,17 @@ class SpotifyBridge @Inject constructor(
         useCase.toggleSaveTrackState(trackId)
     }
 
-
     fun onDestroy() {
         authLauncher?.unregister()
         authLauncher = null
         job.cancel()
     }
 
-    suspend fun startUp(launcher: ActivityResultLauncher<Intent>, activity: Activity, config: AuthConfigK?) {
+    suspend fun startUp(
+        launcher: ActivityResultLauncher<Intent>,
+        activity: Activity,
+        config: AuthConfigK?,
+    ) {
         if (authLauncher == null) {
             authLauncher = launcher
         }
@@ -128,11 +139,8 @@ class SpotifyBridge @Inject constructor(
         sessionManager.launchAuthorizationFlow(activity, config)
     }
 
-    private fun createAuthCallback(): (ActivityResult) -> Unit {
-        return { result ->
+    private fun createAuthCallback(): (ActivityResult) -> Unit =
+        { result ->
             sessionManager.handleAuthResult(appContext, result, scope)
         }
     }
-
-
-}

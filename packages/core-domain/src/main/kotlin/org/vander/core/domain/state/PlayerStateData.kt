@@ -17,12 +17,10 @@ data class PlayerStateData(
     val skippingPrevious: Boolean,
     val positionMs: Long,
     val durationMs: Long,
-
-
 ) {
     companion object {
-        fun empty(): PlayerStateData {
-            return PlayerStateData(
+        fun empty(): PlayerStateData =
+            PlayerStateData(
                 trackName = "",
                 artistName = "",
                 albumName = "",
@@ -40,6 +38,5 @@ data class PlayerStateData(
                 positionMs = 0,
                 durationMs = 0,
             )
-        }
     }
 }

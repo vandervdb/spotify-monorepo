@@ -23,7 +23,9 @@ import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
 import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 import javax.inject.Inject
 
-class SpotifySessionManagerImpl @Inject constructor(
+class SpotifySessionManagerImpl
+@Inject
+constructor(
     private val authClient: ISpotifyAuthClient,
     private val remoteProvider: AppRemoteProvider,
     private val authRepository: IAuthRepository,
@@ -37,14 +39,16 @@ class SpotifySessionManagerImpl @Inject constructor(
 
     private var launchAuthFlow: ActivityResultLauncher<Intent>? = null
 
-
     override fun requestAuthorization(launchAuth: ActivityResultLauncher<Intent>) {
         Log.d(TAG, "Requesting authorization...")
         launchAuthFlow = launchAuth
         _sessionState.update { SessionState.Authorizing }
     }
 
-    override fun launchAuthorizationFlow(activity: Activity, config: AuthConfigK?) {
+    override fun launchAuthorizationFlow(
+        activity: Activity,
+        config: AuthConfigK?,
+    ) {
         Log.d(TAG, "Launching authorization flow...")
         try {
             launchAuthFlow?.let {
@@ -53,8 +57,8 @@ class SpotifySessionManagerImpl @Inject constructor(
                 _sessionState.update {
                     SessionState.Failed(
                         SessionError.UnknownError(
-                            Exception("Authorization flow not set")
-                        )
+                            Exception("Authorization flow not set"),
+                        ),
                     )
                 }
             }
@@ -69,7 +73,7 @@ class SpotifySessionManagerImpl @Inject constructor(
         context: Context,
         result: ActivityResult,
         coroutineScope: CoroutineScope,
-        dispatcher: CoroutineDispatcher
+        dispatcher: CoroutineDispatcher,
     ) {
         authClient.handleSpotifyAuthResult(result) { authResult ->
             if (authResult.isSuccess) {
@@ -81,22 +85,20 @@ class SpotifySessionManagerImpl @Inject constructor(
                             Log.e(TAG, "Error storing access token", error)
                             _sessionState.update {
                                 SessionState.Failed(
-                                    SessionError.AuthFailed(error)
+                                    SessionError.AuthFailed(error),
                                 )
                             }
-                        }
-                        .onSuccess {
+                        }.onSuccess {
                             Log.d(TAG, "Access token stored, Connecting to remote...")
                             connectRemote(context, coroutineScope, dispatcher)
-
                         }
                 }
             } else {
                 _sessionState.update {
                     SessionState.Failed(
                         SessionError.AuthFailed(
-                            Exception("Authorization failed with unknown error")
-                        )
+                            Exception("Authorization failed with unknown error"),
+                        ),
                     )
                 }
             }
@@ -112,7 +114,7 @@ class SpotifySessionManagerImpl @Inject constructor(
     private fun connectRemote(
         context: Context,
         coroutineScope: CoroutineScope,
-        dispatcher: CoroutineDispatcher = Dispatchers.Main
+        dispatcher: CoroutineDispatcher = Dispatchers.Main,
     ) {
         _sessionState.update { SessionState.ConnectingRemote }
         coroutineScope.launch(dispatcher) {
@@ -125,8 +127,8 @@ class SpotifySessionManagerImpl @Inject constructor(
                 _sessionState.update {
                     SessionState.Failed(
                         SessionError.RemoteConnectionFailed(
-                            result.exceptionOrNull()
-                        )
+                            result.exceptionOrNull(),
+                        ),
                     )
                 }
             }
@@ -135,5 +137,4 @@ class SpotifySessionManagerImpl @Inject constructor(
 
     private suspend fun fetchAndStoreAuthToken(authCode: String): Result<Unit> =
         authRepository.storeAccessToken(authCode)
-
 }

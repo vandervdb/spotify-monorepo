@@ -12,10 +12,13 @@ import org.vander.spotifyclient.domain.repository.UserRepository
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class SpotifyUserRepository @Inject constructor(private val api: IRemoteUserDataSource) : UserRepository {
-
+class SpotifyUserRepository
+@Inject
+constructor(
+    private val api: IRemoteUserDataSource,
+) : UserRepository {
     private val _currentUser = MutableStateFlow<User?>(null)
-    override fun observeCurrentUser(): Flow<User?> = _currentUser.asStateFlow()
+    override val currentUser: Flow<User?> = _currentUser.asStateFlow()
 
     override suspend fun fetchCurrentUser() {
         try {

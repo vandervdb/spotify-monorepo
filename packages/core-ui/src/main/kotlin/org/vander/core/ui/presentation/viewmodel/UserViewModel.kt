@@ -5,5 +5,6 @@ import org.vander.core.domain.data.User
 
 interface UserViewModel {
     val currentUser: Flow<User?>
+
     fun refresh()
 }

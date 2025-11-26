@@ -10,37 +10,39 @@ import org.vander.core.ui.presentation.viewmodel.PlayerViewModel
 import org.vander.core.ui.state.UIQueueState
 
 class FakePlayerViewModel : PlayerViewModel {
-
     // Backing properties
     private val _sessionState = MutableStateFlow<SessionState>(SessionState.Ready)
-    private val _uiQueueState = MutableStateFlow(UIQueueState.empty())
-    private val _domainPlayerState = MutableStateFlow(
-        DomainPlayerState(
-            base = PlayerStateData(
-                trackName = "Zelda's Theme",
-                artistName = "Koji Kondo",
-                albumName = "Zelda",
-                coverId = "",
-                trackId = "",
-                isPaused = true,
-                playing = false,
-                paused = true,
-                stopped = false,
-                shuffling = false,
-                repeating = true,
-                seeking = false,
-                skippingNext = false,
-                skippingPrevious = false,
-                positionMs = 1234567890L,
-                durationMs = 1234567890L
-            ),
-            isTrackSaved = false
-        )
-    )
+    override val sessionState: StateFlow<SessionState> get() = _sessionState.asStateFlow()
 
-    override val sessionState: StateFlow<SessionState> = _sessionState.asStateFlow()
-    override val uIQueueState: StateFlow<UIQueueState> = _uiQueueState.asStateFlow()
-    override val domainPlayerState: StateFlow<DomainPlayerState> = _domainPlayerState.asStateFlow()
+    private val _uiQueueState = MutableStateFlow(UIQueueState.empty())
+    override val uiQueueState: StateFlow<UIQueueState> get() = _uiQueueState.asStateFlow()
+
+    private val _domainPlayerState =
+        MutableStateFlow(
+            DomainPlayerState(
+                base =
+                    PlayerStateData(
+                        trackName = "Zelda's Theme",
+                        artistName = "Koji Kondo",
+                        albumName = "Zelda",
+                        coverId = "",
+                        trackId = "",
+                        isPaused = true,
+                        playing = false,
+                        paused = true,
+                        stopped = false,
+                        shuffling = false,
+                        repeating = true,
+                        seeking = false,
+                        skippingNext = false,
+                        skippingPrevious = false,
+                        positionMs = 1234567890L,
+                        durationMs = 1234567890L,
+                    ),
+                isTrackSaved = false,
+            ),
+        )
+    override val domainPlayerState: StateFlow<DomainPlayerState> get() = _domainPlayerState.asStateFlow()
 
     override fun startUp() {
         // TODO: initialise si besoin (_sessionState.value = SessionState.Ready, etc.)

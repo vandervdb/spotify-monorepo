@@ -39,7 +39,7 @@ configurations {
                 "io.mockk:mockk-agent:1.13.10",
                 "io.mockk:mockk-agent-api:1.13.10",
                 "io.mockk:mockk-agent-api-jvm:1.13.10",
-                "io.mockk:mockk-agent-android:1.13.10"
+                "io.mockk:mockk-agent-android:1.13.10",
             )
         }
     }
@@ -47,10 +47,16 @@ configurations {
 
 android {
     namespace = "org.vander.spotifyclient"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
 
         consumerProguardFiles("consumer-rules.pro")
 
@@ -63,8 +69,6 @@ android {
 
         manifestPlaceholders["redirectSchemeName"] = "org-vander-androidapp"
         manifestPlaceholders["redirectHostName"] = "callback"
-
-
     }
 
     buildTypes {
@@ -72,11 +76,10 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
-
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -95,7 +98,9 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion =
+            libs.versions.compose.compiler
+                .get()
     }
 
     packaging {
@@ -135,6 +140,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.firebase.crashlytics.buildtools)
     debugImplementation(libs.compose.ui.tooling)
 
     // Material 3 + Adaptive
@@ -204,5 +210,4 @@ dependencies {
     // Hilt (androidTest)
     androidTestImplementation(libs.hilt.android.testing)
     kaptAndroidTest(libs.hilt.compiler)
-
 }

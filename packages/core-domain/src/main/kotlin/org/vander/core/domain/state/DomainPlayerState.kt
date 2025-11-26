@@ -5,8 +5,6 @@ data class DomainPlayerState(
     val isTrackSaved: Boolean? = null,
 ) {
     companion object {
-        fun empty(): DomainPlayerState {
-            return DomainPlayerState(PlayerStateData.Companion.empty(), null)
-        }
+        fun empty(): DomainPlayerState = DomainPlayerState(PlayerStateData.Companion.empty(), null)
     }
 }

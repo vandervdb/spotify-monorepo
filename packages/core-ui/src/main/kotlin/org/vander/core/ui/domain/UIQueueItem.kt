@@ -6,12 +6,11 @@ data class UIQueueItem(
     val trackId: String,
 ) {
     companion object {
-        fun empty(): UIQueueItem {
-            return UIQueueItem(
+        fun empty(): UIQueueItem =
+            UIQueueItem(
                 trackName = "",
                 artistName = "",
-                trackId = ""
+                trackId = "",
             )
-        }
     }
 }

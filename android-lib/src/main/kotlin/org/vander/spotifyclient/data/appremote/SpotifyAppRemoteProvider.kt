@@ -26,9 +26,11 @@ import javax.inject.Singleton
  * throughout the application's lifecycle.
  */
 @Singleton
-class SpotifyAppRemoteProvider @Inject constructor(
+class SpotifyAppRemoteProvider
+@Inject
+constructor(
     private val connector: RemoteConnector,
-    private val logger: Logger
+    private val logger: Logger,
 ) : AppRemoteProvider {
     companion object {
         private const val TAG = "SpotifyAppRemoteProvider"
@@ -37,7 +39,6 @@ class SpotifyAppRemoteProvider @Inject constructor(
     private var _remoteState =
         MutableStateFlow<RemoteClientState>(RemoteClientState.NotConnected)
     override val remoteState: StateFlow<RemoteClientState> = _remoteState.asStateFlow()
-
 
     private var remoteHandle: Any? = null
 
@@ -67,7 +68,7 @@ class SpotifyAppRemoteProvider @Inject constructor(
                         logger.e(TAG, "SpotifyAppRemote connection failed", error)
                         continuation.resumeWith(Result.success(Result.failure(error)))
                     }
-                }
+                },
             )
         }
     }
@@ -91,5 +92,4 @@ class SpotifyAppRemoteProvider @Inject constructor(
         remoteHandle = null
         _remoteState.update { RemoteClientState.NotConnected }
     }
-
 }

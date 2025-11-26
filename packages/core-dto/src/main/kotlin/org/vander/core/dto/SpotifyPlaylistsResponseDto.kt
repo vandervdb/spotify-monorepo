@@ -10,5 +10,5 @@ data class SpotifyPlaylistsResponseDto(
     val offset: Int,
     val previous: String? = null,
     val total: Int,
-    val items: List<SpotifyPlaylistDto>
+    val items: List<SpotifyPlaylistDto>,
 )

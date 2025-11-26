@@ -11,9 +11,8 @@ import javax.inject.Singleton
 @Module
 @TestInstallIn(
     components = [SingletonComponent::class],
-    replaces = [LoggerModule::class]
+    replaces = [LoggerModule::class],
 )
-
 object TestLoggerModule {
     @Provides
     @Singleton

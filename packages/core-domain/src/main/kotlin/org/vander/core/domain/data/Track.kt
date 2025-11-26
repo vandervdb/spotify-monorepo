@@ -18,8 +18,8 @@ class Track(
     val uri: String,
 ) {
     companion object {
-        fun empty(): Track {
-            return Track(
+        fun empty(): Track =
+            Track(
                 album = Album.empty(),
                 artists = emptyList(),
                 availableMarkets = emptyList(),
@@ -34,8 +34,7 @@ class Track(
                 name = "",
                 trackNumber = 0,
                 type = "",
-                uri = ""
+                uri = "",
             )
-        }
     }
 }
