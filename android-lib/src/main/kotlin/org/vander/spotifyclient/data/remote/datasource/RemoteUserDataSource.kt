@@ -18,12 +18,14 @@ class RemoteUserDataSource
         private val tokenProvider: ITokenProvider,
     ) : IRemoteUserDataSource {
         override suspend fun fetchUser(): Result<UserDto> {
-            val token = tokenProvider.getAccessToken() ?: ""
+            val token = tokenProvider.getAccessToken().orEmpty()
             return try {
-                val response = httpClient.get("me")
-                headers {
-                    append(HttpHeaders.Authorization, "Bearer $token")
-                }
+                val response =
+                    httpClient.get("me") {
+                        headers {
+                            append(HttpHeaders.Authorization, "Bearer $token")
+                        }
+                    }
                 return response.parseSpotifyResult<UserDto>("RemoteUserDataSource")
             } catch (e: Exception) {
                 Result.failure(e)

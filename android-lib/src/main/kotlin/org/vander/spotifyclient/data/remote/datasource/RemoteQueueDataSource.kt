@@ -1,6 +1,9 @@
 package org.vander.spotifyclient.data.remote.datasource
 
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.http.HttpHeaders
+import io.ktor.http.headers
 import org.vander.core.domain.auth.ITokenProvider
 import org.vander.core.dto.CurrentlyPlayingWithQueueDto
 import org.vander.spotifyclient.domain.datasource.IRemoteQueueDataSource
@@ -15,7 +18,7 @@ class RemoteQueueDataSource
         private val tokenProvider: ITokenProvider,
     ) : IRemoteQueueDataSource {
         override suspend fun fetchUserQueue(): Result<CurrentlyPlayingWithQueueDto> {
-            val token = tokenProvider.getAccessToken() ?: ""
+            val token = tokenProvider.getAccessToken().orEmpty()
             return try {
                 val response =
                     httpClient.get("me/player/queue") {
