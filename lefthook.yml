@@ -1,0 +1,52 @@
+pre-commit:
+    parallel: true
+
+    # ---- Spotless ----
+    commands:
+        spotless:
+            run: ./scripts/spotless-pre-commit.sh
+            glob: "*.{kt,kts}"
+
+        # ---- Ktlint ----
+        ktlint:
+            glob: "*.kt"
+            run: ./gradlew ktlintCheck -x spotlessKotlin -x spotlessKotlinGradle
+
+        # ---- React Native (lint type checking) ----
+        eslint:
+            root: "react-native"
+            glob: "*.{ts,tsx,js,jsx}"
+            run: npm run lint --if-present
+
+
+pre-push:
+    parallel: false
+
+    commands:
+        # ---- Android Lint ----
+        android_lint:
+            run: ./gradlew lint
+
+        # ---- Android Unit Tests ----
+        android_tests:
+            run: ./gradlew test
+
+        # ---- React Native Tests (Jest) ----
+        rn_tests:
+            root: "react-native"
+            run: npm test --if-present
+
+        # ---- Build Verification ----
+        android_build:
+            run: ./gradlew assembleDebug
+
+
+#commit-msg:
+#    commands:
+#        conventional:
+#            run: |
+#                echo "$1" | grep -E "^(feat|fix|chore|docs|refactor|style|test|perf)(\(.+\))?: .+" || {
+#                  echo "❌ Commit message does not follow Conventional Commits"
+#                  echo "👉 Example: feat(player): improve play/pause UX"
+#                  exit 1
+#                }

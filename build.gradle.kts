@@ -1,5 +1,3 @@
-import com.diffplug.gradle.spotless.SpotlessExtension
-
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -37,7 +35,8 @@ ktlint {
     }
 }
 
-extensions.configure<SpotlessExtension>("spotless") {
+spotless {
+
     kotlin {
         target("**/*.kt")
         targetExclude("**/build/**", "**/node_modules/**")
