@@ -19,8 +19,8 @@ import org.vander.core.domain.state.SessionState
 import org.vander.core.ui.state.UIQueueState
 import org.vander.spotifyclient.bridge.util.ActivityResultFactory
 import org.vander.spotifyclient.data.player.mapper.toPlayerStateDto
+import org.vander.spotifyclient.domain.data.session.SpotifySessionManager
 import org.vander.spotifyclient.domain.usecase.PlayerUseCase
-import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 import javax.inject.Inject
 
 class SpotifyBridge

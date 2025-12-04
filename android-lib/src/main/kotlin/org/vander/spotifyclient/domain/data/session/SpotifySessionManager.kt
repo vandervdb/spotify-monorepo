@@ -1,4 +1,4 @@
-package org.vander.spotifyclient.domain.usecase
+package org.vander.spotifyclient.domain.data.session
 
 import android.app.Activity
 import android.content.Context

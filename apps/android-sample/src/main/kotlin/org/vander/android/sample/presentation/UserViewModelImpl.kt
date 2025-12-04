@@ -15,7 +15,7 @@ open class UserViewModelImpl
         private val userRepository: UserRepository,
     ) : ViewModel(),
         UserViewModel {
-        override val currentUser = userRepository.currentUser()
+        override val currentUser = userRepository.currentUser
 
         override fun refresh() {
             viewModelScope.launch {

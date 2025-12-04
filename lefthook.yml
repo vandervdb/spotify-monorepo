@@ -1,3 +1,5 @@
+colors: true
+
 pre-commit:
     parallel: true
 

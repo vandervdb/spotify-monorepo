@@ -8,8 +8,8 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import org.vander.spotifyclient.bridge.SpotifyBridge
 import org.vander.spotifyclient.bridge.SpotifyBridgeApi
+import org.vander.spotifyclient.domain.data.session.SpotifySessionManager
 import org.vander.spotifyclient.domain.usecase.PlayerUseCase
-import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)

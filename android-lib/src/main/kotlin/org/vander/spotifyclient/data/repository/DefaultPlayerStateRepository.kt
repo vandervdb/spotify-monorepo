@@ -24,7 +24,7 @@ class DefaultPlayerStateRepository
         override val playerStateData: StateFlow<PlayerStateData> = _playerStateData.asStateFlow()
 
         private val _savedRemotelyChangedState =
-            MutableStateFlow<SavedRemotelyChangedState>(SavedRemotelyChangedState())
+            MutableStateFlow(SavedRemotelyChangedState())
         override val savedRemotelyChangedState: StateFlow<SavedRemotelyChangedState> =
             _savedRemotelyChangedState.asStateFlow()
 

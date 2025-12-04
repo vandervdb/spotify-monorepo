@@ -8,9 +8,9 @@ import kotlinx.coroutines.launch
 import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.logger.Logger
 import org.vander.core.ui.presentation.viewmodel.PlayerViewModel
+import org.vander.spotifyclient.domain.data.session.SpotifySessionManager
 import org.vander.spotifyclient.domain.repository.LibraryRepository
 import org.vander.spotifyclient.domain.usecase.PlayerUseCase
-import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
 import javax.inject.Inject
 
 @HiltViewModel

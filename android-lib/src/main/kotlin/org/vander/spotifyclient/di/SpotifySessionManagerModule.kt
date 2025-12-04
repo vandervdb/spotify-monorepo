@@ -5,7 +5,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import org.vander.spotifyclient.data.session.SpotifySessionManagerImpl
-import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
+import org.vander.spotifyclient.domain.data.session.SpotifySessionManager
 import javax.inject.Singleton
 
 @Module

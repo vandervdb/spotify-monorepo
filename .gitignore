@@ -80,3 +80,4 @@ Thumbs.db
 # --- Divers RN ---
 **/.gradle/
 **/.DS_Store
+/.kotlin/errors/

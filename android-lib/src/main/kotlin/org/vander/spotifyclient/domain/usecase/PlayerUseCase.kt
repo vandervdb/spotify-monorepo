@@ -16,6 +16,7 @@ import org.vander.core.domain.state.SavedRemotelyChangedState
 import org.vander.core.domain.state.SessionState
 import org.vander.core.ui.domain.UIQueueItem
 import org.vander.core.ui.state.UIQueueState
+import org.vander.spotifyclient.domain.data.session.SpotifySessionManager
 import org.vander.spotifyclient.domain.player.PlayerClient
 import org.vander.spotifyclient.domain.repository.LibraryRepository
 import org.vander.spotifyclient.domain.state.setTrackSaved

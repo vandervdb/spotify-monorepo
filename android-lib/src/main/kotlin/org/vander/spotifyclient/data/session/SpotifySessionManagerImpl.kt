@@ -20,7 +20,7 @@ import org.vander.core.domain.state.SessionState
 import org.vander.spotifyclient.bridge.AuthConfigK
 import org.vander.spotifyclient.domain.appremote.AppRemoteProvider
 import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
-import org.vander.spotifyclient.domain.usecase.SpotifySessionManager
+import org.vander.spotifyclient.domain.data.session.SpotifySessionManager
 import javax.inject.Inject
 
 class SpotifySessionManagerImpl

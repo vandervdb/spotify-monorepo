@@ -1,6 +1,18 @@
 package org.vander.spotifyclient.data.remote.mapper
 
+import org.vander.core.domain.data.Album
+import org.vander.core.domain.data.Artist
+import org.vander.core.domain.data.CurrentlyPlaying
+import org.vander.core.domain.data.Image
+import org.vander.core.domain.data.Queue
+import org.vander.core.domain.data.Track
+import org.vander.core.domain.data.User
+import org.vander.core.dto.AlbumDto
+import org.vander.core.dto.ArtistDto
 import org.vander.core.dto.CurrentlyPlayingWithQueueDto
+import org.vander.core.dto.ImageDto
+import org.vander.core.dto.TrackDto
+import org.vander.core.dto.UserDto
 
 fun CurrentlyPlayingWithQueueDto.toDomain(): CurrentlyPlaying =
     CurrentlyPlaying(
