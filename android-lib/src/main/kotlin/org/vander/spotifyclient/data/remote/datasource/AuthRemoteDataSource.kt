@@ -15,6 +15,7 @@ import org.vander.spotifyclient.utils.REDIRECT_URI
 import org.vander.spotifyclient.utils.parseSpotifyResult
 import javax.inject.Inject
 import javax.inject.Named
+import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 class AuthRemoteDataSource
@@ -27,9 +28,7 @@ class AuthRemoteDataSource
         override suspend fun fetchAccessToken(code: String): Result<TokenResponseDto> {
             return try {
                 val credentials = "$CLIENT_ID:$CLIENT_SECRET"
-                val encodedCredentials =
-                    kotlin.io.encoding.Base64
-                        .encode(credentials.toByteArray())
+                val encodedCredentials = Base64.encode(credentials.toByteArray())
                 val response =
                     httpClient.submitForm(
                         url = "token",

@@ -22,3 +22,6 @@
 
 # Silence missing optional Spotify base annotations referenced in AAR
 -dontwarn com.spotify.base.annotations.**
+
+# Silence missing Kotlin UUID classes
+-dontwarn kotlin.uuid.**

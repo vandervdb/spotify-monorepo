@@ -40,7 +40,6 @@ fun ScaffoldWithBottomBar() {
         topBarContent = newTopBar
     }
 
-    // Defensive: clear top bar when Home is the active route (covers restored state cases)
     val navBackEntryTopBar by navController.currentBackStackEntryAsState()
     val currentRouteForTopBar = navBackEntryTopBar?.destination?.route
     LaunchedEffect(currentRouteForTopBar) {

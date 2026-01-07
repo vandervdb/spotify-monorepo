@@ -1,8 +1,5 @@
 package org.vander.android.sample.ui.navigation
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -49,14 +46,4 @@ fun AppNavHost(
             )
         }
     }
-}
-
-// Fonction d'extension pour trouver l'activité de manière sûre
-private fun Context.findActivity(): Activity? {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-    return null
 }

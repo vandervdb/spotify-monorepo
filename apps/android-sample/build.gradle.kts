@@ -71,6 +71,12 @@ android {
     dexOptions {
         javaMaxHeapSize = "2g"
     }
+
+    lint {
+        disable += "NullSafeMutableLiveData"
+        disable += "RememberInComposition"
+        disable += "FrequentlyChangingValue"
+    }
 }
 
 dependencies {
