@@ -8,7 +8,6 @@ const config: Config = {
   setupFiles: ['react-native/jest/setup.js'],
   setupFilesAfterEnv: ['@testing-library/jest-native/extend-expect'],
 
-  // ✅ on ne passe PAS de preset ici ; babel-jest va lire ton babel.config.js (=> babel.shared.js)
   transform: { '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest' },
 
   transformIgnorePatterns: [

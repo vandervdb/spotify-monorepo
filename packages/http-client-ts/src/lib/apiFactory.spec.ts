@@ -1,3 +1,4 @@
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import axios, { AxiosInstance } from 'axios';
 import { attachBearerInterceptor, attachLogger } from './interceptors';
 import { createGetApi, createPostApi } from './apiFactory';

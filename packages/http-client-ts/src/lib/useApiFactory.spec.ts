@@ -1,5 +1,6 @@
 // useApiFactory.spec.ts
 
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { renderHook } from '@testing-library/react-native';
 import * as apiFactory from './apiFactory'; // <— import namespace
 import { useApiFactory } from './useApiFactory';
