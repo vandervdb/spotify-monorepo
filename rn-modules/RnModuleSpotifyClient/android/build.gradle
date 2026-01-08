@@ -1,0 +1,25 @@
+buildscript {
+    ext {
+        buildToolsVersion = "35.0.0"
+        minSdkVersion = 26
+        compileSdkVersion = 36
+        targetSdkVersion = 36
+        ndkVersion = "26.1.10909125"
+        kotlinVersion = "1.9.25"
+
+        spotifyClientId = System.getenv("SPOTIFY_CLIENT_ID") ?: ""
+        spotifyClientSecret = System.getenv("SPOTIFY_CLIENT_SECRET") ?: ""
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.7.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.51.1")
+    }
+}
+
+apply plugin: "com.facebook.react.rootproject"

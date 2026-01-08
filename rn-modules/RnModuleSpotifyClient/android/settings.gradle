@@ -1,0 +1,27 @@
+pluginManagement {
+    includeBuild("../../../node_modules/@react-native/gradle-plugin")
+
+    repositories {
+        maven { url = uri("../../../node_modules/react-native/android") }
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'RnModuleSpotifyClient'
+include (":app")
+//project(":app").projectDir = new File(rootProject.projectDir, './app')
+
+
+includeBuild('../../../') { includedBuild ->
+    dependencySubstitution {
+        substitute module('org.vander:android-lib') using project(':android-lib')
+        substitute module('org.vander:core-domain') using project(':packages:core-domain')
+        substitute module('org.vander:core-dto') using project(':packages:core-dto')
+        substitute module('org.vander:core-ui') using project(':packages:core-ui')
+    }
+}
+
+includeBuild('../../../node_modules/@react-native/gradle-plugin')
