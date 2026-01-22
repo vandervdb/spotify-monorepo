@@ -13,9 +13,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.SessionState
+import org.vander.core.logger.Logger
 import org.vander.core.ui.state.UIQueueState
 import org.vander.spotifyclient.bridge.util.ActivityResultFactory
 import org.vander.spotifyclient.data.player.mapper.toPlayerStateDto
@@ -29,6 +30,7 @@ class SpotifyBridge
         private val sessionManager: SpotifySessionManager,
         private val useCase: PlayerUseCase,
         private val appContext: Context,
+        private val logger: Logger,
     ) : SpotifyBridgeApi {
         private val job = SupervisorJob()
         private val scope = CoroutineScope(Dispatchers.Main.immediate + job)
@@ -50,19 +52,22 @@ class SpotifyBridge
             )
 
         override val sessionState: StateFlow<SessionState> = sessionManager.sessionState
-        override val domainPlayerState: StateFlow<DomainPlayerState> = useCase.domainPlayerState
+        override val playerState: StateFlow<DomainPlayerState> = useCase.domainPlayerState
         override val uIQueueState: StateFlow<UIQueueState> = useCase.uIQueueState
 
         override val playerEvents: Flow<PlayerStateDto> =
-            callbackFlow {
-                domainPlayerState.collect { state ->
+            playerState
+                .map { state ->
                     val dto = state.toPlayerStateDto(null)
                     lastState.value = dto
-                    trySend(dto)
+                    dto
                 }
-            }
 
         override fun getPlayerState(): PlayerStateDto = lastState.value
+
+        override fun getSessionState(): SessionState = sessionState.value
+
+        override fun getUIQueueState(): UIQueueState = uIQueueState.value
 
         override suspend fun startUpWithModuleActivityResult(
             activity: Activity,
@@ -132,15 +137,19 @@ class SpotifyBridge
             activity: Activity,
             config: AuthConfigK?,
         ) {
-            if (authLauncher == null) {
-                authLauncher = launcher
-            }
-            sessionManager.requestAuthorization(authLauncher!!)
+            logger.d(TAG, "startUp called with activity: $activity and launcher: $launcher")
+            authLauncher = launcher
+            sessionManager.requestAuthorization(launcher)
             sessionManager.launchAuthorizationFlow(activity, config)
         }
 
         private fun createAuthCallback(): (ActivityResult) -> Unit =
             { result ->
-                sessionManager.handleAuthResult(appContext, result, scope)
+                logger.d(TAG, "Received auth result: $result")
+                sessionManager.handleAuthResult(appContext, result, scope, Dispatchers.Main)
             }
+
+        companion object {
+            private const val TAG = "SpotifyBridge"
+        }
     }

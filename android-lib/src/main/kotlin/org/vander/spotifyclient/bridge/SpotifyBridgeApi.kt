@@ -11,9 +11,13 @@ interface SpotifyBridgeApi {
     val playerEvents: Flow<PlayerStateDto>
     val sessionState: StateFlow<SessionState>
     val uIQueueState: StateFlow<UIQueueState>
-    val domainPlayerState: StateFlow<DomainPlayerState>
+    val playerState: StateFlow<DomainPlayerState>
 
     fun getPlayerState(): PlayerStateDto
+
+    fun getSessionState(): SessionState
+
+    fun getUIQueueState(): UIQueueState
 
     suspend fun startUpWithModuleActivityResult(
         activity: Activity,

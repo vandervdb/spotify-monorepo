@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.rnmodulespotifyclient.NativeSpotifyClientModuleSpec
+import org.rnmodulespotifyclient.bridge.mapper.toAuthConfig
 import org.rnmodulespotifyclient.bridge.mapper.toWritableMap
 import org.vander.spotifyclient.bridge.SpotifyBridgeApi
 import org.vander.spotifyclient.bridge.di.obtainBridgeFromHilt
@@ -34,6 +35,7 @@ class NativeSpotifyClientModule(
 
     override fun getName() = NAME
 
+
     override fun initialize() {
         super.initialize()
         scope.launch {
@@ -45,7 +47,7 @@ class NativeSpotifyClientModule(
             }
         }
         scope.launch {
-            bridge.domainPlayerState.collect {
+            bridge.playerState.collect {
                 sendEvent(
                     "spotify/playerState",
                     it.toWritableMap(),
@@ -63,27 +65,33 @@ class NativeSpotifyClientModule(
     }
 
     override fun startUpWithHostActivityResult(
-        config: ReadableMap?,
-        promise: Promise?,
+        config: ReadableMap,
+        promise: Promise,
     ) {
-        if (promise == null) return
         internalStartUp(promise) { activity ->
             if (activity == null) return@internalStartUp
             scope.launch {
-                bridge.startUpWithHostActivityResult(activity)
+                try {
+                    bridge.startUpWithHostActivityResult(activity, config.toAuthConfig())
+                } catch (t: Throwable) {
+                    promise.reject("START_UP_ERROR", t.message ?: "Unknown error", t)
+                }
             }
         }
     }
 
     override fun startUpWithModuleActivityResult(
-        config: ReadableMap?,
-        promise: Promise?,
+        config: ReadableMap,
+        promise: Promise,
     ) {
-        if (promise == null) return
         internalStartUp(promise) { activity ->
             if (activity == null) return@internalStartUp
             scope.launch {
-                bridge.startUpWithModuleActivityResult(activity)
+                try {
+                    bridge.startUpWithModuleActivityResult(activity, config.toAuthConfig())
+                } catch (t: Throwable) {
+                    promise.reject("START_UP_ERROR", t.message ?: "Unknown error", t)
+                }
             }
         }
     }
@@ -108,33 +116,27 @@ class NativeSpotifyClientModule(
         scope.launch {
             try {
                 startAction(activity)
-                promise.resolve(null)
             } catch (t: Throwable) {
                 promise.reject("START_FAIL", t)
             }
         }
     }
 
-    fun startUp(
-        config: ReadableMap?,
-        promise: Promise,
-    ) {
-        val activity: Activity =
-            currentActivity ?: return promise.reject("NO_ACTIVITY", "No current Activity")
-        val isComponent = activity is ComponentActivity
-        if (!isComponent) {
-            return promise.reject(
-                "BAD_ACTIVITY",
-                "Host Activity must extend ComponentActivity",
+    override fun startUp(config: ReadableMap, promise: Promise) {
+        val activity = currentActivity as? ComponentActivity
+            ?: return promise.reject(
+                "INVALID_ACTIVITY",
+                "Host Activity is missing or does not extend ComponentActivity"
             )
-        }
+
+        val authConfig = config.toAuthConfig()
 
         scope.launch {
             try {
-                bridge.startUpWithHostActivityResult(activity)
-                promise.resolve(null)
+                bridge.startUpWithHostActivityResult(activity, authConfig)
+                promise.resolve(true)
             } catch (t: Throwable) {
-                promise.reject("START_FAIL", t)
+                promise.reject("START_UP_ERROR", t.message ?: "Unknown error", t)
             }
         }
     }
@@ -192,12 +194,25 @@ class NativeSpotifyClientModule(
         scope.launch {
             runCatching { bridge.getPlayerState() }
                 .onSuccess { state -> promise.resolve(state.toWritableMap()) }
-                .onFailure { t -> promise.reject("GET_STATE_FAIL", t) }
+                .onFailure { t -> promise.reject("GET_PLAYLIST_STATE_FAIL", t) }
         }
     }
 
-    override fun startPlayerEvents(promise: Promise?) {
-        promise?.resolve(null)
+    override fun getSessionState(promise: Promise) {
+        scope.launch {
+            runCatching { bridge.getSessionState() }
+                .onSuccess { state -> promise.resolve(state.toWritableMap()) }
+                .onFailure { t -> promise.reject("GET_SESSION_STATE_FAIL", t) }
+        }
+    }
+
+    override fun getQueueState(promise: Promise) {
+        scope.launch {
+            runCatching { bridge.getUIQueueState() }
+                .onSuccess { state -> promise.resolve(state.toWritableMap()) }
+                .onFailure { t -> promise.reject("GET_QUEUE_STATE_FAIL", t) }
+        }
+
     }
 
     private fun sendEvent(
@@ -209,12 +224,7 @@ class NativeSpotifyClientModule(
             .emit(name, payload)
     }
 
-    override fun stopPlayerEvents(promise: Promise) {
-        job.cancel()
-        promise.resolve(null)
-    }
-
-    override fun addListener(eventName: String?) {
+    override fun addListener(eventName: String) {
         // Required for NativeEventEmitter
     }
 

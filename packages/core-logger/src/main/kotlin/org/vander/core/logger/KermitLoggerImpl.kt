@@ -6,7 +6,7 @@ import co.touchlab.kermit.platformLogWriter
 import co.touchlab.kermit.Logger as KermitLogger
 
 class KermitLoggerImpl(
-    private val baseTag: String = "VanderApp",
+    private val baseTag: String = "KERMIT",
     private val config: LoggerConfig = StaticConfig(logWriterList = listOf(platformLogWriter())),
 ) : Logger {
     private val logger = KermitLogger(config).withTag(baseTag)

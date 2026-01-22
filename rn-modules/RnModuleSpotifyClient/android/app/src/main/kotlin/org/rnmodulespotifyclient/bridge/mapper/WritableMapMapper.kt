@@ -52,13 +52,7 @@ fun SessionState.toWritableMap(): WritableMap =
                     Arguments.createMap().apply {
                         putNullableString("message", exception.message)
                         putString("exceptionType", exception::class.java.name)
-                        // Option A (compact): single string stack
                         putNullableString("stack", exception.stackTrace?.joinToString("\n"))
-                        // Option B (verbose): array (uncomment if you prefer array)
-                        // val arr = Arguments.createArray().apply {
-                        //     exception.stackTrace?.forEach { pushString(it.toString()) }
-                        // }
-                        // putArray("stack", arr)
                     }
                 putMap("error", err)
             }

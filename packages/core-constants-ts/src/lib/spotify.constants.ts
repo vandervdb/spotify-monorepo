@@ -11,7 +11,7 @@ const ENDPOINT_PLAYER = 'player';
 
 export const API_CONSTANTS = {
   REQUEST_CODE: 22114458,
-  REDIRECT_URI: 'org-vander-myspotifyapp://callback',
+  REDIRECT_URI: 'org-vander-androidapp://callback',
 
   // URLs
   TOKEN_EXPIRATION_DURATION,

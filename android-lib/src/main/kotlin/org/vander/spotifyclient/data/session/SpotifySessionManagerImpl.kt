@@ -49,10 +49,11 @@ class SpotifySessionManagerImpl
             activity: Activity,
             config: AuthConfigK?,
         ) {
-            Log.d(TAG, "Launching authorization flow...")
+            Log.d(TAG, "Launching authorization flow with launcher: $launchAuthFlow")
             try {
                 launchAuthFlow?.let {
-                    authClient.authorize(activity, it, null)
+                    Log.d(TAG, "Calling authClient.authorize")
+                    authClient.authorize(activity, it, config)
                 } ?: run {
                     _sessionState.update {
                         SessionState.Failed(
@@ -63,6 +64,7 @@ class SpotifySessionManagerImpl
                     }
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Error in launchAuthorizationFlow", e)
                 _sessionState.update {
                     SessionState.Failed(SessionError.UnknownError(e))
                 }
@@ -75,7 +77,9 @@ class SpotifySessionManagerImpl
             coroutineScope: CoroutineScope,
             dispatcher: CoroutineDispatcher,
         ) {
+            Log.d(TAG, "handleAuthResult called with result: $result")
             authClient.handleSpotifyAuthResult(result) { authResult ->
+                Log.d(TAG, "authClient.handleSpotifyAuthResult callback: success=${authResult.isSuccess}")
                 if (authResult.isSuccess) {
                     coroutineScope.launch {
                         val authCode = authResult.getOrElse { "" }

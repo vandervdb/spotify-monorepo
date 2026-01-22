@@ -6,6 +6,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import org.vander.core.logger.KermitLoggerImpl
 import org.vander.spotifyclient.bridge.SpotifyBridge
 import org.vander.spotifyclient.bridge.SpotifyBridgeApi
 import org.vander.spotifyclient.domain.data.session.SpotifySessionManager
@@ -26,5 +27,6 @@ fun obtainBridgeFromHilt(context: Context): SpotifyBridgeApi {
         sessionManager = entryPoint.spotifySessionManager(),
         useCase = entryPoint.spotifyUseCase(),
         appContext = context.applicationContext,
+        logger = KermitLoggerImpl("SPOTIFYBRIDGE"),
     )
 }

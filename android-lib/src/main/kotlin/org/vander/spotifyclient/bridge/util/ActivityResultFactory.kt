@@ -21,11 +21,6 @@ object ActivityResultFactory {
         val fm = fa.supportFragmentManager
 
         val holder = ActivityResultHolderFragment.newInstance()
-        fm.commit(allowStateLoss = false) {
-            add(holder, tag)
-        }
-        fm.executePendingTransactions()
-
         holder.setOnActivityResult { result ->
             try {
                 callback(result)
@@ -37,6 +32,12 @@ object ActivityResultFactory {
                 }
             }
         }
+
+        fm.commit(allowStateLoss = false) {
+            add(holder, tag)
+        }
+        fm.executePendingTransactions()
+
         return holder.get()
     }
 }

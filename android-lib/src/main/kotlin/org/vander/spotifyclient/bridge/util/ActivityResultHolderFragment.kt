@@ -13,19 +13,31 @@ class ActivityResultHolderFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        launcher =
-            registerForActivityResult(
-                ActivityResultContracts.StartActivityForResult(),
-            ) { result ->
-                onActivityResult?.invoke(result)
-            }
+        if (!::launcher.isInitialized) {
+            launcher =
+                registerForActivityResult(
+                    ActivityResultContracts.StartActivityForResult(),
+                ) { result ->
+                    onActivityResult?.invoke(result)
+                }
+        }
     }
 
     fun setOnActivityResult(cb: (ActivityResult) -> Unit) {
         this.onActivityResult = cb
     }
 
-    fun get(): ActivityResultLauncher<Intent> = launcher
+    fun get(): ActivityResultLauncher<Intent> {
+        if (!::launcher.isInitialized) {
+            launcher =
+                registerForActivityResult(
+                    ActivityResultContracts.StartActivityForResult(),
+                ) { result ->
+                    onActivityResult?.invoke(result)
+                }
+        }
+        return launcher
+    }
 
     companion object {
         fun newInstance() = ActivityResultHolderFragment()
