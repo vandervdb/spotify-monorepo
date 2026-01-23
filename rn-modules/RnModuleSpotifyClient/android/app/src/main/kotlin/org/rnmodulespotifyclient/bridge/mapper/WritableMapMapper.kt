@@ -13,49 +13,28 @@ import org.vander.core.ui.state.UIQueueState
 import org.vander.spotifyclient.bridge.PlayerStateDto
 
 fun SessionState.toWritableMap(): WritableMap =
-    when (this) {
-        is SessionState.Idle ->
-            Arguments.createMap().apply {
-                putInt("schema", 1)
-                putString("type", "Idle")
-            }
+    Arguments.createMap().apply {
+        putInt("schema", 1)
 
-        is SessionState.Authorizing ->
+        val typeMap =
             Arguments.createMap().apply {
-                putInt("schema", 1)
-                putString("type", "Authorizing")
-            }
-
-        is SessionState.ConnectingRemote ->
-            Arguments.createMap().apply {
-                putInt("schema", 1)
-                putString("type", "ConnectingRemote")
-            }
-
-        is SessionState.Ready ->
-            Arguments.createMap().apply {
-                putInt("schema", 1)
-                putString("type", "Ready")
-            }
-
-        is SessionState.IsPaused ->
-            Arguments.createMap().apply {
-                putInt("schema", 1)
-                putString("type", "IsPaused")
-            }
-
-        is SessionState.Failed ->
-            Arguments.createMap().apply {
-                putInt("schema", 1)
-                putString("type", "Failed")
-                val err =
-                    Arguments.createMap().apply {
-                        putNullableString("message", exception.message)
-                        putString("exceptionType", exception::class.java.name)
-                        putNullableString("stack", exception.stackTrace?.joinToString("\n"))
+                when (this@toWritableMap) {
+                    is SessionState.Idle -> putBoolean("Idle", true)
+                    is SessionState.Authorizing -> putBoolean("Authorizing", true)
+                    is SessionState.ConnectingRemote -> putBoolean("ConnectingRemote", true)
+                    is SessionState.Ready -> putBoolean("Ready", true)
+                    is SessionState.IsPaused -> putBoolean("IsPaused", true)
+                    is SessionState.Failed -> {
+                        val failedMap =
+                            Arguments.createMap().apply {
+                                putString("exception", exception.message ?: "Unknown error")
+                            }
+                        putMap("Failed", failedMap)
                     }
-                putMap("error", err)
+                }
             }
+
+        putMap("type", typeMap)
     }
 
 fun PlayerStateData.toWritableMap(): WritableMap =
@@ -75,7 +54,6 @@ fun PlayerStateData.toWritableMap(): WritableMap =
         putBoolean("seeking", seeking)
         putBoolean("skippingNext", skippingNext)
         putBoolean("skippingPrevious", skippingPrevious)
-        // RN uses Double for numbers
         putDouble("positionMs", positionMs.toDouble())
         putDouble("durationMs", durationMs.toDouble())
     }
@@ -84,7 +62,6 @@ fun DomainPlayerState.toWritableMap(): WritableMap =
     Arguments.createMap().apply {
         putInt("schema", 1)
         putMap("base", base.toWritableMap())
-        // Decide: omit vs null — here we keep explicit null for clarity
         putNullableBoolean("isTrackSaved", isTrackSaved)
     }
 

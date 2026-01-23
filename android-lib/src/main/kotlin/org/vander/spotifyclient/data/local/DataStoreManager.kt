@@ -1,7 +1,6 @@
 package org.vander.spotifyclient.data.local
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -9,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import org.vander.core.logger.Logger
 import org.vander.spotifyclient.domain.auth.IDataStoreManager
 import java.io.IOException
 import javax.inject.Inject
@@ -21,6 +21,7 @@ class DataStoreManager
     @Inject
     constructor(
         @ApplicationContext private val context: Context,
+        private val logger: Logger,
     ) : IDataStoreManager {
         companion object {
             private const val TAG = "DataStoreManager"
@@ -37,7 +38,7 @@ class DataStoreManager
         override suspend fun saveAccessToken(token: String): Result<Unit> =
             try {
                 context.dataStore.edit { preferences ->
-                    Log.d(TAG, "Saving access token: $token")
+                    logger.d(TAG, "Saving access token: $token")
                     preferences[ACCESS_TOKEN_KEY] = token
                 }
                 Result.success(Unit)
@@ -60,7 +61,7 @@ class DataStoreManager
         override suspend fun clearAccessToken(): Result<Unit> =
             try {
                 context.dataStore.edit { preferences ->
-                    Log.d(TAG, "Clearing access token")
+                    logger.d(TAG, "Clearing access token")
                     preferences.remove(ACCESS_TOKEN_KEY)
                 }
                 Result.success(Unit)

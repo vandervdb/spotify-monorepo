@@ -27,6 +27,6 @@ fun obtainBridgeFromHilt(context: Context): SpotifyBridgeApi {
         sessionManager = entryPoint.spotifySessionManager(),
         useCase = entryPoint.spotifyUseCase(),
         appContext = context.applicationContext,
-        logger = KermitLoggerImpl("SPOTIFYBRIDGE"),
+        logger = KermitLoggerImpl("ANDROID_LIB"),
     )
 }

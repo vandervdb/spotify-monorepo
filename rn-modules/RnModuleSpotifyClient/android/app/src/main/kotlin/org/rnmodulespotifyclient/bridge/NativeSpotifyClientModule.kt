@@ -35,7 +35,6 @@ class NativeSpotifyClientModule(
 
     override fun getName() = NAME
 
-
     override fun initialize() {
         super.initialize()
         scope.launch {
@@ -122,12 +121,16 @@ class NativeSpotifyClientModule(
         }
     }
 
-    override fun startUp(config: ReadableMap, promise: Promise) {
-        val activity = currentActivity as? ComponentActivity
-            ?: return promise.reject(
-                "INVALID_ACTIVITY",
-                "Host Activity is missing or does not extend ComponentActivity"
-            )
+    override fun startUp(
+        config: ReadableMap,
+        promise: Promise,
+    ) {
+        val activity =
+            currentActivity as? ComponentActivity
+                ?: return promise.reject(
+                    "INVALID_ACTIVITY",
+                    "Host Activity is missing or does not extend ComponentActivity",
+                )
 
         val authConfig = config.toAuthConfig()
 
@@ -212,7 +215,6 @@ class NativeSpotifyClientModule(
                 .onSuccess { state -> promise.resolve(state.toWritableMap()) }
                 .onFailure { t -> promise.reject("GET_QUEUE_STATE_FAIL", t) }
         }
-
     }
 
     private fun sendEvent(

@@ -3,7 +3,6 @@ package org.vander.spotifyclient.data.session
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,6 +16,7 @@ import kotlinx.coroutines.launch
 import org.vander.core.domain.auth.IAuthRepository
 import org.vander.core.domain.error.SessionError
 import org.vander.core.domain.state.SessionState
+import org.vander.core.logger.Logger
 import org.vander.spotifyclient.bridge.AuthConfigK
 import org.vander.spotifyclient.domain.appremote.AppRemoteProvider
 import org.vander.spotifyclient.domain.auth.ISpotifyAuthClient
@@ -29,6 +29,7 @@ class SpotifySessionManagerImpl
         private val authClient: ISpotifyAuthClient,
         private val remoteProvider: AppRemoteProvider,
         private val authRepository: IAuthRepository,
+        private val logger: Logger,
     ) : SpotifySessionManager {
         companion object {
             private const val TAG = "SpotifySessionManagerImpl"
@@ -40,7 +41,7 @@ class SpotifySessionManagerImpl
         private var launchAuthFlow: ActivityResultLauncher<Intent>? = null
 
         override fun requestAuthorization(launchAuth: ActivityResultLauncher<Intent>) {
-            Log.d(TAG, "Requesting authorization...")
+            logger.d(TAG, "Requesting authorization...")
             launchAuthFlow = launchAuth
             _sessionState.update { SessionState.Authorizing }
         }
@@ -49,10 +50,10 @@ class SpotifySessionManagerImpl
             activity: Activity,
             config: AuthConfigK?,
         ) {
-            Log.d(TAG, "Launching authorization flow with launcher: $launchAuthFlow")
+            logger.d(TAG, "Launching authorization flow with launcher: $launchAuthFlow")
             try {
                 launchAuthFlow?.let {
-                    Log.d(TAG, "Calling authClient.authorize")
+                    logger.d(TAG, "Calling authClient.authorize")
                     authClient.authorize(activity, it, config)
                 } ?: run {
                     _sessionState.update {
@@ -64,7 +65,7 @@ class SpotifySessionManagerImpl
                     }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error in launchAuthorizationFlow", e)
+                logger.e(TAG, "Error in launchAuthorizationFlow", e)
                 _sessionState.update {
                     SessionState.Failed(SessionError.UnknownError(e))
                 }
@@ -77,23 +78,23 @@ class SpotifySessionManagerImpl
             coroutineScope: CoroutineScope,
             dispatcher: CoroutineDispatcher,
         ) {
-            Log.d(TAG, "handleAuthResult called with result: $result")
+            logger.d(TAG, "handleAuthResult called with result: $result")
             authClient.handleSpotifyAuthResult(result) { authResult ->
-                Log.d(TAG, "authClient.handleSpotifyAuthResult callback: success=${authResult.isSuccess}")
+                logger.d(TAG, "authClient.handleSpotifyAuthResult callback: success=${authResult.isSuccess}")
                 if (authResult.isSuccess) {
                     coroutineScope.launch {
                         val authCode = authResult.getOrElse { "" }
-                        Log.d(TAG, "Launching auth token request...")
+                        logger.d(TAG, "Launching auth token request...")
                         fetchAndStoreAuthToken(authCode)
                             .onFailure { error ->
-                                Log.e(TAG, "Error storing access token", error)
+                                logger.e(TAG, "Error storing access token", error)
                                 _sessionState.update {
                                     SessionState.Failed(
                                         SessionError.AuthFailed(error),
                                     )
                                 }
                             }.onSuccess {
-                                Log.d(TAG, "Access token stored, Connecting to remote...")
+                                logger.d(TAG, "Access token stored, Connecting to remote...")
                                 connectRemote(context, coroutineScope, dispatcher)
                             }
                     }
@@ -124,10 +125,10 @@ class SpotifySessionManagerImpl
             coroutineScope.launch(dispatcher) {
                 val result = remoteProvider.connect(context)
                 if (result.isSuccess) {
-                    Log.d(TAG, "SessionState.Ready")
+                    logger.d(TAG, "SessionState.Ready")
                     _sessionState.update { SessionState.Ready }
                 } else {
-                    Log.e(TAG, "Failed to connect to remote", result.exceptionOrNull())
+                    logger.e(TAG, "Failed to connect to remote", result.exceptionOrNull())
                     _sessionState.update {
                         SessionState.Failed(
                             SessionError.RemoteConnectionFailed(

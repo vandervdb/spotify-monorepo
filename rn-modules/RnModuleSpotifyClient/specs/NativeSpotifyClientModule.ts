@@ -8,6 +8,22 @@ export type AuthConfig = {
     showDialog: boolean,
 };
 
+export type SessionState = {
+    Idle?: boolean,
+    Authorizing?: boolean,
+    ConnectingRemote?: boolean,
+    Ready?: boolean,
+    IsPaused?: boolean,
+    Failed?: {
+        exception?: string,
+    },
+};
+
+export type SessionEvent = {
+    schema: string,
+    type: SessionState,
+}
+
 export type PlayerState = {
     isPlaying: boolean,
     positionMs: number,
@@ -19,15 +35,7 @@ export type PlayerState = {
     albumName?: string,
 }
 
-export type SessionState = {
-    Idle?: boolean,
-    ConnectingRemote?: boolean,
-    Ready?: boolean,
-    IsPaused?: boolean,
-    Failed?: {
-        exception?: string,
-    },
-};
+export type ConnectionStatus = 'idle' | 'connecting' |'authorizing' | 'ready' | 'paused' | 'failed';
 
 export type QueueState = {
     items: Array<{

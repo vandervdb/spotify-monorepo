@@ -1,6 +1,5 @@
 package org.vander.spotifyclient.domain.usecase
 
-import android.util.Log
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +13,7 @@ import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.PlayerStateData
 import org.vander.core.domain.state.SavedRemotelyChangedState
 import org.vander.core.domain.state.SessionState
+import org.vander.core.logger.KermitLoggerImpl
 import org.vander.core.ui.domain.UIQueueItem
 import org.vander.core.ui.state.UIQueueState
 import org.vander.spotifyclient.domain.data.session.SpotifySessionManager
@@ -34,6 +34,7 @@ class PlayerUseCase
         val playerRepository: PlayerStateRepository,
         val playerClient: PlayerClient,
     ) {
+        private val logger = KermitLoggerImpl("PLAYER_USE_CASE")
         private val _domainPlayerState =
             MutableStateFlow(DomainPlayerState.empty())
         val domainPlayerState: StateFlow<DomainPlayerState> = _domainPlayerState.asStateFlow()
@@ -50,7 +51,7 @@ class PlayerUseCase
 
         suspend fun startUp() =
             coroutineScope {
-                Log.d(TAG, "Starting up...")
+                logger.d(TAG, "Starting up...")
                 launch { updateSpotifyPlayerStateAndUIQueueState() }
                 launch { collectSessionState() }
                 launch { observeSavedRemotelyChangedState() }
@@ -86,30 +87,30 @@ class PlayerUseCase
         suspend fun playUri(uri: String) = playerClient.play("spotify:track:$uri")
 
         private suspend fun collectSessionState() {
-            Log.d(TAG, "Collecting session state...")
+            logger.d(TAG, "Collecting session state...")
             sessionUseCase.sessionState.collect { sessionState ->
-                Log.d(TAG, "Received session state: $sessionState")
+                logger.d(TAG, "Received session state: $sessionState")
                 when (sessionState) {
                     is SessionState.Ready -> {
-                        Log.d(TAG, "Session state: Ready")
+                        logger.d(TAG, "Session state: Ready")
                         remoteUseCase.getAndEmitUserQueueFlow()
                         playerRepository.startListening()
                     }
 
                     else -> {
-                        Log.d(TAG, "Session state: $sessionState")
+                        logger.d(TAG, "Session state: $sessionState")
                     }
                 }
             }
         }
 
         private suspend fun observeSavedRemotelyChangedState() {
-            Log.d(TAG, "Observing saved remotely changed state...")
+            logger.d(TAG, "Observing saved remotely changed state...")
             savedRemotelyChangedState.collect { state ->
                 val isSaved = state.isSaved
-                Log.d(TAG, "Received saved remotely changed state: $isSaved")
+                logger.d(TAG, "Received saved remotely changed state: $isSaved")
                 if (isSaved) {
-                    Log.d(TAG, "Saved remotely changed state: true")
+                    logger.d(TAG, "Saved remotely changed state: true")
                     val trackId = state.trackId
                     updateSpotifyPlayerWithIsSavedState(playerStateData = null, trackId)
                 }
@@ -123,8 +124,8 @@ class PlayerUseCase
             ) { queueData, playerStateData ->
                 Pair(queueData, playerStateData)
             }.collect { (queueData, playerStateData) ->
-                Log.d(TAG, "Received player state data: $playerStateData")
-                Log.d(TAG, "Received queue data: $queueData")
+                logger.d(TAG, "Received player state data: $playerStateData")
+                logger.d(TAG, "Received queue data: $queueData")
                 if (queueData != null && !hasReceivedUpdatedQueue) {
                     val playerStateDataItem =
                         UIQueueItem(
@@ -134,15 +135,15 @@ class PlayerUseCase
                         )
                     val matchesCurrent = queueData.currentlyPlaying?.id == playerStateData.trackId
                     if (!matchesCurrent) {
-                        Log.d(
+                        logger.d(
                             TAG,
                             "queueData's currentlyPlaying and playerStateData don't share same trackId",
                         )
                         remoteUseCase.getAndEmitUserQueueFlow()
                         return@collect
                     }
-                    Log.d(TAG, "queueData's currentlyPlaying and playerStateData share same trackId")
-                    Log.d(TAG, "Updating UI queue state...")
+                    logger.d(TAG, "queueData's currentlyPlaying and playerStateData share same trackId")
+                    logger.d(TAG, "Updating UI queue state...")
                     hasReceivedUpdatedQueue = true
                     val queueListItems =
                         queueData.queue.tracks.map {
@@ -158,7 +159,7 @@ class PlayerUseCase
 
                 if (hasReceivedUpdatedQueue && playerStateData != PlayerStateData.empty()) {
                     if (!isTrackInQueue(playerStateData.trackId, _uIQueueState.value)) {
-                        Log.d(TAG, "Queue is not updated, so we will request it again")
+                        logger.d(TAG, "Queue is not updated, so we will request it again")
                         hasReceivedUpdatedQueue = false
                         remoteUseCase.getAndEmitUserQueueFlow()
                     }
@@ -171,11 +172,11 @@ class PlayerUseCase
             playerStateData: PlayerStateData? = null,
             trackId: String? = null,
         ) {
-            Log.d(TAG, "Updating Spotify player state: $playerStateData")
+            logger.d(TAG, "Updating Spotify player state: $playerStateData")
             val currentTrackId = playerStateData?.trackId ?: trackId!!
             val isSaved = libraryRepository.isTrackSaved(currentTrackId).getOrDefault(false)
             val currentPlayerState = _domainPlayerState.value
-            Log.d(TAG, "(Spotify player state: $currentPlayerState)")
+            logger.d(TAG, "(Spotify player state: $currentPlayerState)")
             _domainPlayerState.update { currentPlayerState.copy(isTrackSaved = isSaved) }
 
             if (playerStateData != null) {

@@ -59,20 +59,40 @@ class SpotifyBridge
             playerState
                 .map { state ->
                     val dto = state.toPlayerStateDto(null)
+                    logger.d(
+                        TAG,
+                        "playerEvents: isPlaying=${dto.isPlaying}, posMs=${dto.positionMs}, durMs=${dto.durationMs}, uri=${dto.trackUri}",
+                    )
                     lastState.value = dto
                     dto
                 }
 
-        override fun getPlayerState(): PlayerStateDto = lastState.value
+        override fun getPlayerState(): PlayerStateDto {
+            val value = lastState.value
+            logger.d(
+                TAG,
+                "getPlayerState: isPlaying=${value.isPlaying}, posMs=${value.positionMs}, durMs=${value.durationMs}, uri=${value.trackUri}",
+            )
+            return value
+        }
 
-        override fun getSessionState(): SessionState = sessionState.value
+        override fun getSessionState(): SessionState {
+            val value = sessionState.value
+            logger.d(TAG, "getSessionState: $value")
+            return value
+        }
 
-        override fun getUIQueueState(): UIQueueState = uIQueueState.value
+        override fun getUIQueueState(): UIQueueState {
+            val value = uIQueueState.value
+            logger.d(TAG, "getUIQueueState: $value")
+            return value
+        }
 
         override suspend fun startUpWithModuleActivityResult(
             activity: Activity,
             config: AuthConfigK?,
         ) {
+            logger.d(TAG, "startUpWithModuleActivityResult(activity=$activity, config=$config)")
             val launcher = ActivityResultFactory.register(activity, createAuthCallback())
             startUp(launcher, activity, config)
         }
@@ -81,6 +101,7 @@ class SpotifyBridge
             activity: Activity,
             config: AuthConfigK?,
         ) {
+            logger.d(TAG, "startUpWithHostActivityResult(activity=$activity, config=$config)")
             val componentActivity =
                 activity as? ComponentActivity
                     ?: error("Host activity must be a ComponentActivity")
@@ -94,39 +115,49 @@ class SpotifyBridge
         }
 
         override suspend fun disconnect() {
+            logger.d(TAG, "disconnect()")
             sessionManager.shutDown()
             onDestroy()
+            logger.d(TAG, "disconnect() done")
         }
 
         override suspend fun playUri(uri: String) {
+            logger.d(TAG, "playUri(uri=$uri)")
             useCase.playUri(uri)
         }
 
         override suspend fun pause() {
+            logger.d(TAG, "pause()")
             useCase.pause()
         }
 
         override suspend fun resume() {
+            logger.d(TAG, "resume()")
             useCase.resume()
         }
 
         override suspend fun seekTo(ms: Long) {
+            logger.d(TAG, "seekTo(ms=$ms)")
             useCase.seekTo(ms)
         }
 
         override suspend fun skipNext() {
+            logger.d(TAG, "skipNext()")
             useCase.skipNext()
         }
 
         override suspend fun skipPrevious() {
+            logger.d(TAG, "skipPrevious()")
             useCase.skipPrevious()
         }
 
         override fun toggleSaveTrackState(trackId: String) {
+            logger.d(TAG, "toggleSaveTrackState(trackId=$trackId)")
             useCase.toggleSaveTrackState(trackId)
         }
 
         fun onDestroy() {
+            logger.d(TAG, "onDestroy() - unregister launcher + cancel job")
             authLauncher?.unregister()
             authLauncher = null
             job.cancel()
@@ -137,15 +168,23 @@ class SpotifyBridge
             activity: Activity,
             config: AuthConfigK?,
         ) {
-            logger.d(TAG, "startUp called with activity: $activity and launcher: $launcher")
+            logger.d(TAG, "startUp(activity=$activity, launcher=$launcher, config=$config)")
             authLauncher = launcher
+
+            logger.d(TAG, "startUp -> requestAuthorization()")
             sessionManager.requestAuthorization(launcher)
+
+            logger.d(TAG, "startUp -> launchAuthorizationFlow()")
             sessionManager.launchAuthorizationFlow(activity, config)
+            logger.d(TAG, "startUp() done (flow launched)")
+
+            logger.d(TAG, "starting up PlayerUseCase")
+            useCase.startUp()
         }
 
         private fun createAuthCallback(): (ActivityResult) -> Unit =
             { result ->
-                logger.d(TAG, "Received auth result: $result")
+                logger.d(TAG, "createAuthCallback -> onActivityResult(result=$result)")
                 sessionManager.handleAuthResult(appContext, result, scope, Dispatchers.Main)
             }
 

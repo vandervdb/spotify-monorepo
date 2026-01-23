@@ -11,16 +11,19 @@ import {
 } from 'react-native';
 import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
 
-import {useSpotifyModule } from './index';
+import {useSpotifyModule, useStyle } from './index';
 
 function App(): React.JSX.Element {
+    const  {
+        isDarkMode,
+        backgroundStyle
+    } = useStyle();
+
     const {
         isConnected,
         authenticateUser,
         disconnect,
         player,
-        isDarkMode,
-        backgroundStyle
     } = useSpotifyModule();
 
     return (
@@ -80,17 +83,6 @@ function App(): React.JSX.Element {
 
                             <Text style={styles.h2}>Events</Text>
 
-                            <View style={styles.eventsBox}>
-                                {(player.events?.length ?? 0) === 0 ? (
-                                    <Text style={styles.small}>No events yet…</Text>
-                                ) : (
-                                    player.events.map((e, idx) => (
-                                        <Text key={idx} style={styles.small}>
-                                            • {e}
-                                        </Text>
-                                    ))
-                                )}
-                            </View>
                         </>
                     ) : (
                         <Text style={styles.h2}>Please login to access player controls.</Text>

@@ -1,3 +1,6 @@
+import com.diffplug.gradle.spotless.SpotlessTask
+import com.diffplug.spotless.LineEnding
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -37,6 +40,8 @@ ktlint {
 
 spotless {
 
+    lineEndings = LineEnding.UNIX
+
     kotlin {
         target("**/*.kt")
         targetExclude("**/build/**", "**/node_modules/**")
@@ -50,6 +55,13 @@ spotless {
 
         ktlint(libs.versions.ktlint.get())
     }
+}
+
+// Désactive le configuration cache uniquement pour Spotless (évite l'état "stale" récurrent)
+tasks.withType<SpotlessTask>().configureEach {
+    notCompatibleWithConfigurationCache(
+        "Spotless utilise un cache JVM-local pouvant devenir stale avec le configuration cache (issue diffplug/spotless#987).",
+    )
 }
 
 abstract class CheckCatalogConsistencyTask : DefaultTask() {
