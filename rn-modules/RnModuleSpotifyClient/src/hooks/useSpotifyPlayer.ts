@@ -1,14 +1,14 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Alert, NativeEventEmitter} from 'react-native';
 import {log} from '@core/logger';
-import {withCatch} from "../utils";
-import SpotifyModuleSpec, {PlayerState, QueueState} from '../../specs/NativeSpotifyClientModule';
+import {createNativeModuleEmitter, withCatch} from "../utils";
+import SpotifyModuleSpec from '../../specs/NativeSpotifyClientModule';
+import {PlayerState, QueueState} from "../../specs";
 
 export const useSpotifyPlayer = () => {
+
     const emitterRef = useRef<NativeEventEmitter | null>(null);
-    if (emitterRef.current == null) {
-        emitterRef.current = new NativeEventEmitter(SpotifyModuleSpec as any);
-    }
+    emitterRef.current ??= createNativeModuleEmitter(SpotifyModuleSpec);
 
     const player = useMemo(() => ({
         playUri: SpotifyModuleSpec.playUri,
@@ -37,8 +37,8 @@ export const useSpotifyPlayer = () => {
 
     const [uri, setUri] = useState<string>('spotify:track:11dFghVXANMlKmJXsNCbNl');
     const [positionMs, setPositionMs] = useState<string>('0');
-
     const [stateText, setStateText] = useState<string>('—');
+    const [playerState, setPlayerState] = useState<PlayerState | null>(null);
 
     useEffect(() => {
         log.debug('useSpotifyPlayer: Initializing player listener');

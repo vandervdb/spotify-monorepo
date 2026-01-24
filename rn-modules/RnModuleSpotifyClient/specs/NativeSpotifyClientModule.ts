@@ -1,5 +1,5 @@
 // @flow strict-local
-import { TurboModule, TurboModuleRegistry } from 'react-native';
+import {TurboModule, TurboModuleRegistry} from 'react-native';
 
 export type AuthConfig = {
     clientId: string,
@@ -7,7 +7,6 @@ export type AuthConfig = {
     scopes: string[] | undefined,
     showDialog: boolean,
 };
-
 export type SessionState = {
     Idle?: boolean,
     Authorizing?: boolean,
@@ -18,12 +17,10 @@ export type SessionState = {
         exception?: string,
     },
 };
-
 export type SessionEvent = {
     schema: string,
     type: SessionState,
 }
-
 export type PlayerState = {
     isPlaying: boolean,
     positionMs: number,
@@ -33,10 +30,9 @@ export type PlayerState = {
     trackName?: string,
     artistName?: string,
     albumName?: string,
+    isTrackSaved?: boolean,
 }
-
-export type ConnectionStatus = 'idle' | 'connecting' |'authorizing' | 'ready' | 'paused' | 'failed';
-
+export type ConnectionStatus = 'idle' | 'connecting' | 'authorizing' | 'ready' | 'paused' | 'failed';
 export type QueueState = {
     items: Array<{
         trackName?: string,
@@ -44,6 +40,7 @@ export type QueueState = {
         trackUri?: string,
     }>
 }
+
 
 export interface Spec extends TurboModule {
     // PLAYER (sync session)
@@ -58,10 +55,11 @@ export interface Spec extends TurboModule {
 
     // PLAYER
     getPlayerState(): Promise<PlayerState>;
+    getQueueState(): Promise<QueueState>;
 
     // SESSION
     getSessionState(): Promise<SessionState>;
-    getQueueState(): Promise<QueueState>;
+
     addListener(eventName: string): void;
     removeListeners(count: number): void;
 }

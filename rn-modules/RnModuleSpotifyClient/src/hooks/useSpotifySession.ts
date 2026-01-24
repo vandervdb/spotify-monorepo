@@ -1,17 +1,16 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import SpotifyModuleSpec, {SessionEvent, SessionState} from '../../specs/NativeSpotifyClientModule';
+import SpotifyModuleSpec from '../../specs/NativeSpotifyClientModule';
 import {NativeEventEmitter} from 'react-native';
 import {log} from '@core/logger';
-import {withCatch} from '../utils';
+import {createNativeModuleEmitter, withCatch} from '../utils';
+import {SessionEvent, SessionState} from "../../specs";
 
 type ConnectionStatus = 'idle' | 'connecting' | 'authorizing' | 'ready' | 'paused' | 'failed';
 
 export const useSpotifySession = () => {
 
     const emitterRef = useRef<NativeEventEmitter | null>(null);
-    if (emitterRef.current == null) {
-        emitterRef.current = new NativeEventEmitter(SpotifyModuleSpec as any);
-    }
+    emitterRef.current ??= createNativeModuleEmitter(SpotifyModuleSpec);
 
     const session = useMemo(() => ({
         startUpWithHostActivityResult: SpotifyModuleSpec.startUpWithHostActivityResult,
