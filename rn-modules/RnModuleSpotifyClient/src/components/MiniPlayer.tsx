@@ -7,22 +7,6 @@ import { PlayerState } from '../../specs';
 const MiniPlayer = () => {
     const { player, isConnected, authenticateUser } = useSpotifyModule();
 
-    // Synchronisation de l'état local avec l'état du lecteur Spotify
-    useEffect(() => {
-        if (player) {
-            // On rafraîchit l'état initial
-            player.refreshState();
-
-            // Note: Le hook useSpotifyPlayer semble déjà loguer les changements d'état via un listener,
-            // mais pour une UI réactive, on s'assure d'avoir un intervalle de rafraîchissement
-            // si le module natif n'envoie pas de mises à jour de position fréquentes.
-            const interval = setInterval(() => {
-                player.refreshState();
-            }, 1000);
-
-            return () => clearInterval(interval);
-        }
-    }, [player]);
 
     // Si on n'est pas connecté, on affiche un bouton de connexion
     if (!isConnected) {
@@ -46,7 +30,6 @@ const MiniPlayer = () => {
     return (
         <Card style={styles.container} elevation={4}>
             <View style={styles.content}>
-                {/* Informations sur le titre */}
                 <View style={styles.trackInfo}>
                     <Text variant="titleMedium" numberOfLines={1} style={styles.title}>
                         {trackName}
@@ -56,7 +39,6 @@ const MiniPlayer = () => {
                     </Text>
                 </View>
 
-                {/* Contrôles */}
                 <View style={styles.controls}>
                     <IconButton
                         icon={isPlaying ? 'pause' : 'play'}
@@ -67,7 +49,6 @@ const MiniPlayer = () => {
                 </View>
             </View>
 
-            {/* Barre de progression */}
             <ProgressBar
                 progress={progress}
                 color={MD3Colors.primary50}
@@ -84,7 +65,7 @@ const styles = StyleSheet.create({
         margin: 8,
         borderRadius: 12,
         overflow: 'hidden',
-        backgroundColor: '#282828', // Style sombre typique de Spotify
+        backgroundColor: '#282828',
     },
     content: {
         flexDirection: 'row',

@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Alert, NativeEventEmitter} from 'react-native';
 import {log} from '@core/logger';
-import {createNativeModuleEmitter, withCatch} from "../utils";
+import {createNativeModuleEmitter, mapSpotifyPlayerState, withCatch} from "../utils";
 import SpotifyModuleSpec from '../../specs/NativeSpotifyClientModule';
 import {PlayerState, QueueState} from "../../specs";
 
@@ -39,12 +39,21 @@ export const useSpotifyPlayer = () => {
     const [positionMs, setPositionMs] = useState<string>('0');
     const [stateText, setStateText] = useState<string>('—');
     const [playerState, setPlayerState] = useState<PlayerState | null>(null);
+    const lastRawStateRef = useRef<string>('');
+    const counter = useRef<number>(0);
 
     useEffect(() => {
         log.debug('useSpotifyPlayer: Initializing player listener');
-        const sub = player.addPlayerListener((e: PlayerState) => {
-            log.debug('useSpotifyPlayer: Player state changed', JSON.stringify(e));
-            setPlayerState(e);
+        const sub = player.addPlayerListener((e: any) => {
+            const rawString = JSON.stringify(e);
+            if (rawString === lastRawStateRef.current) {
+                return;
+            }
+            lastRawStateRef.current = rawString;
+            counter.current += 1;
+
+            log.debug('useSpotifyPlayer: Player state changed', rawString);
+            setPlayerState(mapSpotifyPlayerState(counter.current, e));
         });
 
         return () => {
@@ -89,18 +98,6 @@ export const useSpotifyPlayer = () => {
         });
     }, [positionMs, withCatch, player]);
 
-    const refreshState = useCallback(() => {
-        withCatch(async () => {
-            const st = await player.getPlayerState();
-            setPlayerState(st);
-            setStateText(
-                `Playing: ${st.isPlaying} | pos=${st.positionMs}/${st.durationMs} | ` +
-                `${st.trackName ?? '—'} — ${st.artistName ?? '—'}`,
-            );
-        }).then(r => {
-            if (r!) log.error(r);
-        });
-    }, [withCatch, player]);
 
     return useMemo(() => ({
         uri,
@@ -113,6 +110,5 @@ export const useSpotifyPlayer = () => {
         pause,
         resume,
         seek,
-        refreshState,
-    }), [uri, positionMs, stateText, playerState, play, pause, resume, seek, refreshState]);
+    }), [uri, positionMs, stateText, playerState, play, pause, resume, seek]);
 }
