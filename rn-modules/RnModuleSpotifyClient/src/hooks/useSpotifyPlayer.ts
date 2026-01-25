@@ -44,6 +44,7 @@ export const useSpotifyPlayer = () => {
         log.debug('useSpotifyPlayer: Initializing player listener');
         const sub = player.addPlayerListener((e: PlayerState) => {
             log.debug('useSpotifyPlayer: Player state changed', JSON.stringify(e));
+            setPlayerState(e);
         });
 
         return () => {
@@ -91,6 +92,7 @@ export const useSpotifyPlayer = () => {
     const refreshState = useCallback(() => {
         withCatch(async () => {
             const st = await player.getPlayerState();
+            setPlayerState(st);
             setStateText(
                 `Playing: ${st.isPlaying} | pos=${st.positionMs}/${st.durationMs} | ` +
                 `${st.trackName ?? '—'} — ${st.artistName ?? '—'}`,
@@ -106,10 +108,11 @@ export const useSpotifyPlayer = () => {
         positionMs,
         setPositionMs,
         stateText,
+        playerState,
         play,
         pause,
         resume,
         seek,
         refreshState,
-    }), [uri, positionMs, stateText, play, pause, resume, seek, refreshState]);
+    }), [uri, positionMs, stateText, playerState, play, pause, resume, seek, refreshState]);
 }

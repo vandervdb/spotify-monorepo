@@ -7,6 +7,9 @@ export type AuthConfig = {
     scopes: string[] | undefined,
     showDialog: boolean,
 };
+
+export type ConnectionStatus = 'idle' | 'connecting' | 'authorizing' | 'ready' | 'paused' | 'failed';
+
 export type SessionState = {
     Idle?: boolean,
     Authorizing?: boolean,
@@ -32,7 +35,6 @@ export type PlayerState = {
     albumName?: string,
     isTrackSaved?: boolean,
 }
-export type ConnectionStatus = 'idle' | 'connecting' | 'authorizing' | 'ready' | 'paused' | 'failed';
 export type QueueState = {
     items: Array<{
         trackName?: string,
@@ -40,7 +42,6 @@ export type QueueState = {
         trackUri?: string,
     }>
 }
-
 
 export interface Spec extends TurboModule {
     // PLAYER (sync session)

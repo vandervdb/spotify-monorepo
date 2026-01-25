@@ -10,6 +10,7 @@ import {
     View,
 } from 'react-native';
 import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
+import MiniPlayer from './components/MiniPlayer';
 
 import {useSpotifyModule, useStyle } from './index';
 
@@ -34,6 +35,9 @@ function App(): React.JSX.Element {
             />
             <ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.flex1}>
                 <Header />
+                <View style={[styles.container, {backgroundColor: isDarkMode ? Colors.black : Colors.white}]}>
+                    <MiniPlayer />
+                </View>
                 <View style={[styles.container, {backgroundColor: isDarkMode ? Colors.black : Colors.white}]}>
                     <Text style={styles.h1}>Spotify Client Module Demo</Text>
 

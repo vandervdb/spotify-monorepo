@@ -25,6 +25,7 @@ export const useSpotifyModule = () => {
             seek: player.seek,
             refreshState: player.refreshState,
             stateText: player.stateText,
+            playerState: player.playerState,
             uri: player.uri,
             setUri: player.setUri,
             positionMs: player.positionMs,
