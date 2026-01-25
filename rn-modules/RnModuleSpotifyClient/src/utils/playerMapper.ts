@@ -9,7 +9,7 @@ export const mapSpotifyPlayerState = ( count: number, data: any): PlayerState =>
         isPlaying: base.playing ?? false,
         positionMs: base.positionMs ?? 0,
         durationMs: base.durationMs ?? 0,
-        trackUri: base.trackId ? `spotify:track:${base.trackId}` : undefined,
+        trackUri: base.trackId ? base.trackId : undefined,
         coverId: base.coverId,
         trackName: base.trackName,
         artistName: base.artistName,

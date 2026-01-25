@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Card, IconButton, MD3Colors, ProgressBar, Text} from 'react-native-paper';
 import {useSpotifyModule} from '../hooks';
+import SpotifyTrackCover from "./SpotifyTrackCover";
 
 const MiniPlayer = () => {
     const { player, isConnected, authenticateUser } = useSpotifyModule();
@@ -28,6 +29,10 @@ const MiniPlayer = () => {
         <Card style={styles.container} elevation={4}>
             <View style={styles.content}>
                 <View style={styles.trackInfo}>
+                    <SpotifyTrackCover uri={player?.playerState?.coverId ?? ""}/>
+                </View>
+
+                <View style={styles.trackInfo}>
                     <Text variant="titleMedium" numberOfLines={1} style={styles.title}>
                         {trackName}
                     </Text>
@@ -41,6 +46,8 @@ const MiniPlayer = () => {
                         icon={isPlaying ? 'pause' : 'play'}
                         mode="contained"
                         size={30}
+                        iconColor={ '#FFFFFF'}
+                        containerColor={'#282828'}
                         onPress={() => isPlaying ? player?.pause() : player?.resume()}
                     />
                 </View>
