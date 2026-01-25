@@ -1,14 +1,12 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Card, IconButton, ProgressBar, MD3Colors, Text } from 'react-native-paper';
-import { useSpotifyModule } from '../hooks';
-import { PlayerState } from '../../specs';
+import React from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Card, IconButton, MD3Colors, ProgressBar, Text} from 'react-native-paper';
+import {useSpotifyModule} from '../hooks';
 
 const MiniPlayer = () => {
     const { player, isConnected, authenticateUser } = useSpotifyModule();
 
 
-    // Si on n'est pas connecté, on affiche un bouton de connexion
     if (!isConnected) {
         return (
             <Card style={styles.container}>
@@ -19,7 +17,6 @@ const MiniPlayer = () => {
         );
     }
 
-    // Extraction des données de l'état actuel
     const isPlaying = player?.playerState?.isPlaying ?? false;
     const trackName = player?.playerState?.trackName || "Aucune lecture";
     const artistName = player?.playerState?.artistName || "";
