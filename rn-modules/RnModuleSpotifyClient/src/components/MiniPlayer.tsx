@@ -2,7 +2,8 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Card, IconButton, MD3Colors, ProgressBar, Text} from 'react-native-paper';
 import {useSpotifyModule} from '../hooks';
-import SpotifyTrackCover from "./SpotifyTrackCover";
+import MiniPlayerComponent from "./MiniPlayerComponent";
+import {log} from "@core/logger";
 
 const MiniPlayer = () => {
     const { player, isConnected, authenticateUser } = useSpotifyModule();
@@ -21,25 +22,19 @@ const MiniPlayer = () => {
     const isPlaying = player?.playerState?.isPlaying ?? false;
     const trackName = player?.playerState?.trackName || "Aucune lecture";
     const artistName = player?.playerState?.artistName || "";
+    const coverUri = player?.playerState?.coverId ?? "";
     const progress = player?.playerState?.durationMs
         ? player.playerState.positionMs / player.playerState.durationMs
         : 0;
-
+log.debug(`MiniPlayer: isPlaying=${isPlaying}, trackName=${trackName}, artistName=${artistName}, coverUri=${coverUri}, progress=${progress}`);
     return (
         <Card style={styles.container} elevation={4}>
             <View style={styles.content}>
-                <View style={styles.trackInfo}>
-                    <SpotifyTrackCover uri={player?.playerState?.coverId ?? ""}/>
-                </View>
-
-                <View style={styles.trackInfo}>
-                    <Text variant="titleMedium" numberOfLines={1} style={styles.title}>
-                        {trackName}
-                    </Text>
-                    <Text variant="bodySmall" numberOfLines={1} style={styles.artist}>
-                        {artistName}
-                    </Text>
-                </View>
+                <MiniPlayerComponent
+                    trackName={trackName}
+                    artistName={artistName}
+                    coverUri={coverUri}
+                />
 
                 <View style={styles.controls}>
                     <IconButton
@@ -79,6 +74,7 @@ const styles = StyleSheet.create({
     },
     trackInfo: {
         flex: 1,
+        flexShrink: 1,
         justifyContent: 'center',
     },
     title: {
