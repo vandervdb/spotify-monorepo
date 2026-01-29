@@ -37,8 +37,9 @@ export const useSpotifyPlayer = () => {
 
     const [uri, setUri] = useState<string>('spotify:track:11dFghVXANMlKmJXsNCbNl');
     const [positionMs, setPositionMs] = useState<string>('0');
-    const [stateText, setStateText] = useState<string>('—');
+    const [stateText] = useState<string>('—');
     const [playerState, setPlayerState] = useState<PlayerState | null>(null);
+    const [queueState, setQueueState] = useState<QueueState | null>(null);
     const lastRawStateRef = useRef<string>('');
     const counter = useRef<number>(0);
 
@@ -66,6 +67,7 @@ export const useSpotifyPlayer = () => {
         log.debug('useSpotifyPlayer: Initializing queue listener');
         const sub = player.addQueueListener((e: QueueState) => {
             log.debug('useSpotifyPlayer: Queue state changed', JSON.stringify(e));
+            setQueueState(e);
         });
 
         return () => {
@@ -100,12 +102,13 @@ export const useSpotifyPlayer = () => {
 
 
     return useMemo(() => ({
+        playerState,
+        queueState,
         uri,
         setUri,
         positionMs,
         setPositionMs,
         stateText,
-        playerState,
         play,
         pause,
         resume,

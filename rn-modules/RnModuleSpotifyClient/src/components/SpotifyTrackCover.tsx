@@ -1,9 +1,13 @@
-import React, {useRef} from 'react';
-import { Image } from 'react-native';
+import React from 'react';
+import {Image} from 'react-native';
 import {log} from "@core/logger";
 import {SPOTIFY_CONSTANTS} from '../utils'
 
-export const SpotifyTrackCover = ({uri}: {uri: string}) => {
+export interface SpotifyTrackCoverProps {
+    uri: string;
+}
+
+export const SpotifyTrackCover = ({uri}: SpotifyTrackCoverProps) => {
     log.debug(`Rendering SpotifyTrackCover with uri: ${uri}`);
 
     return (

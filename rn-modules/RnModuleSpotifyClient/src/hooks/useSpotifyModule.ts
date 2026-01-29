@@ -14,17 +14,30 @@ export const useSpotifyModule = () => {
         }
     };
 
-    const playerActions = useMemo(() => {
+    const SessionUiState = useMemo(() =>
+    {
+        return {
+            isConnected: session.isConnected,
+            connectionStatus: session.connectionStatus,
+            lastSessionError: session.lastSessionError,
+            authenticateUser,
+            disconnect: session.disconnect,
+        };
+    }, [session.isConnected, session.connectionStatus, session.lastSessionError]);
+
+
+    const playerUiState = useMemo(() => {
         const canUsePlayer = session.connectionStatus === 'ready' || session.connectionStatus === 'paused';
         if (!canUsePlayer) return null;
 
         return {
+            playerState: player.playerState,
+            queueState: player.queueState,
             play: player.play,
             pause: player.pause,
             resume: player.resume,
             seek: player.seek,
             stateText: player.stateText,
-            playerState: player.playerState,
             uri: player.uri,
             setUri: player.setUri,
             positionMs: player.positionMs,
@@ -33,11 +46,7 @@ export const useSpotifyModule = () => {
     }, [session.connectionStatus, player]);
 
     return {
-        isConnected: session.isConnected,
-        connectionStatus: session.connectionStatus,
-        lastSessionError: session.lastSessionError,
-        authenticateUser,
-        disconnect: session.disconnect,
-        player: playerActions,
+        session: SessionUiState,
+        player: playerUiState,
     };
 };

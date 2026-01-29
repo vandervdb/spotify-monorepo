@@ -21,6 +21,7 @@
   "dependencies": {
     "@core/logger": "workspace:*",
     "@react-native-vector-icons/material-design-icons": "^12.4.0",
+    "lodash": "^4.17.23",
     "react": "18.3.1",
     "react-native": "0.76.3",
     "react-native-dotenv": "3.4.11",
@@ -42,6 +43,7 @@
     "@react-native/eslint-config": "0.76.3",
     "@react-native/metro-config": "0.76.3",
     "@react-native/typescript-config": "0.76.3",
+    "@types/lodash": "^4",
     "@types/react": "^18.2.6",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.6.3",
