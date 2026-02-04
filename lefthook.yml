@@ -12,7 +12,7 @@ pre-commit:
         # ---- Ktlint ----
         ktlint:
             glob: "*.kt"
-            run: ./gradlew ktlintCheck -x spotlessKotlin -x spotlessKotlinGradle
+            run: echo "🔍 RUNNING Ktlint checks..." && ./gradlew ktlintCheck -x spotlessKotlin -x spotlessKotlinGradle
 
         # ---- Prettier (TypeScript/JavaScript formatting) ----
         prettier:
@@ -23,7 +23,7 @@ pre-commit:
         eslint:
             root: "react-native"
             glob: "*.{ts,tsx,js,jsx}"
-            run: npm run lint --if-present
+            run: echo " ✅ RUNNING TS lint checks... " && npm run lint --if-present
 
 
 pre-push:
@@ -32,20 +32,20 @@ pre-push:
     commands:
         # ---- Android Lint ----
         android_lint:
-            run: ./gradlew lint
+            run: echo " ✅ RUNNING Android lint checks... " && ./gradlew lint
 
         # ---- Android Unit Tests ----
         android_tests:
-            run: ./gradlew test
+            run: echo " ✅ RUNNING Android tests checks... " &&  ./gradlew test
 
         # ---- React Native Tests (Jest) ----
         rn_tests:
             root: "react-native"
-            run: npm test --if-present
+            run: echo " ✅ RUNNING React native test checks... " && npm test --if-present
 
         # ---- Build Verification ----
         android_build:
-            run: ./gradlew assembleDebug
+            run: echo " ✅ RUNNING Android builds... " && ./gradlew assembleDebug
 
 
 #commit-msg:

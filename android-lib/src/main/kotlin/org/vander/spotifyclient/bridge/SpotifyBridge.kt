@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import org.vander.core.domain.auth.IAuthRepository
 import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.SessionState
 import org.vander.core.logger.Logger
@@ -29,6 +30,7 @@ class SpotifyBridge
     constructor(
         private val sessionManager: SpotifySessionManager,
         private val useCase: PlayerUseCase,
+        private val authRepository: IAuthRepository,
         private val appContext: Context,
         private val logger: Logger,
     ) : SpotifyBridgeApi {
@@ -71,7 +73,8 @@ class SpotifyBridge
             val value = lastState.value
             logger.d(
                 TAG,
-                "getPlayerState: isPlaying=${value.isPlaying}, posMs=${value.positionMs}, durMs=${value.durationMs}, uri=${value.trackUri}",
+                "getPlayerState: isPlaying=${value.isPlaying}, " +
+                    "posMs=${value.positionMs}, durMs=${value.durationMs}, uri=${value.trackUri}",
             )
             return value
         }
@@ -87,6 +90,17 @@ class SpotifyBridge
             logger.d(TAG, "getUIQueueState: $value")
             return value
         }
+
+        /**
+         * Retrieves the authentication token for the current session if available.
+         *
+         * This method interacts with the `authRepository` to obtain an access token, which may be null
+         * if the retrieval fails or if no valid token is present.
+         * Tis method is used by TurboModule to allow ts code to make spotify REST API calls (Playground).
+         *
+         * @return The authentication token as a nullable String, or null if no token is available.
+         */
+        override suspend fun getAuthToken(): String? = authRepository.getAccessToken().getOrNull()
 
         override suspend fun startUpWithModuleActivityResult(
             activity: Activity,

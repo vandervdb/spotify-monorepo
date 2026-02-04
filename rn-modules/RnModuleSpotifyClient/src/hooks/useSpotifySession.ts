@@ -15,8 +15,9 @@ export const useSpotifySession = () => {
         () => ({
             startUpWithHostActivityResult: SpotifyModuleSpec.startUpWithHostActivityResult,
             startUpWithModuleActivityResult: SpotifyModuleSpec.startUpWithModuleActivityResult,
-            disconnect: SpotifyModuleSpec.disconnect,
+            getAuthToken: SpotifyModuleSpec.getAuthToken,
             getSessionState: SpotifyModuleSpec.getSessionState,
+            disconnect: SpotifyModuleSpec.disconnect,
 
             addListener: (cb: (e: any) => void) => {
                 const sub1 = emitterRef.current!.addListener('spotify/sessionState', cb);
@@ -179,6 +180,21 @@ export const useSpotifySession = () => {
         });
     }, [withCatch, showDialog, session]);
 
+    const getAuthToken = useCallback(async () => {
+        log.debug('useSpotifySession: Getting auth token');
+        const r = await withCatch(async () => {
+            log.debug('useSpotifySession: Calling session.getAuthToken');
+            const token = await session.getAuthToken();
+            log.debug('useSpotifySession: getAuthToken completed');
+            return token;
+        });
+        if (r!) {
+            log.error('useSpotifySession: Error in getAuthToken', r);
+        } else {
+            log.debug('useSpotifySession: getAuthToken succeeded');
+        }
+    }, []);
+
     const disconnect = useCallback(() => {
         log.debug('useSpotifySession: Disconnecting');
         withCatch(async () => {
@@ -200,6 +216,7 @@ export const useSpotifySession = () => {
             setShowDialog,
             startWithModuleActivityResult,
             startWithHostActivityResult,
+            getAuthToken,
             connectionStatus,
             isConnected,
             disconnect,
@@ -209,6 +226,7 @@ export const useSpotifySession = () => {
             showDialog,
             startWithModuleActivityResult,
             startWithHostActivityResult,
+            getAuthToken,
             connectionStatus,
             isConnected,
             disconnect,

@@ -17,9 +17,9 @@ class AuthRepository
             private const val TAG = "AuthRepository"
         }
 
-        override suspend fun storeAccessToken(authCode: String): Result<Unit> =
+        override suspend fun storeAccessToken(token: String): Result<Unit> =
             authRemoteDataSource
-                .fetchAccessToken(authCode)
+                .fetchAccessToken(token)
                 .onFailure { logger.e(TAG, "Error fetching access token", it) }
                 .mapCatching { dto ->
                     logger.d(TAG, "Saving access token: ${dto.accessToken}")

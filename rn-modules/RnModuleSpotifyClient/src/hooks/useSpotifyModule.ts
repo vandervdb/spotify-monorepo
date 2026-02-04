@@ -14,12 +14,13 @@ export const useSpotifyModule = () => {
         }
     };
 
-    const SessionUiState = useMemo(() => {
+    const SessionState = useMemo(() => {
         return {
             isConnected: session.isConnected,
             connectionStatus: session.connectionStatus,
             lastSessionError: session.lastSessionError,
             authenticateUser,
+            getAuthToken: session.getAuthToken,
             disconnect: session.disconnect,
         };
     }, [session.isConnected, session.connectionStatus, session.lastSessionError]);
@@ -44,7 +45,7 @@ export const useSpotifyModule = () => {
     }, [session.connectionStatus, player]);
 
     return {
-        session: SessionUiState,
+        session: SessionState,
         player: playerUiState,
     };
 };

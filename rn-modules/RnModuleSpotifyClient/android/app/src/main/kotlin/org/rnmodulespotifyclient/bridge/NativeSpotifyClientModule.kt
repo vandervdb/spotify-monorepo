@@ -95,6 +95,17 @@ class NativeSpotifyClientModule(
         }
     }
 
+    override fun getAuthToken(): String {
+        if (activity == null) return@internalStartup
+        scope.launch {
+            try {
+                return bridge.getAuthToken()
+            } catch (t: Throwable) {
+                promise.reject("AUTH_TOKEN_ERROR", t.message ?: "Unknown error", t)
+            }
+        }
+    }
+
     private fun internalStartUp(
         promise: Promise,
         startAction: (activity: Activity?) -> Unit,

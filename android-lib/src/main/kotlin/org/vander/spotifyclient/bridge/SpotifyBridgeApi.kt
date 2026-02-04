@@ -19,6 +19,8 @@ interface SpotifyBridgeApi {
 
     fun getUIQueueState(): UIQueueState
 
+    suspend fun getAuthToken(): String?
+
     suspend fun startUpWithModuleActivityResult(
         activity: Activity,
         config: AuthConfigK? = null,
