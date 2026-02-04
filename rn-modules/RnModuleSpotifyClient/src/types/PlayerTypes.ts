@@ -1,6 +1,8 @@
-export interface Track {
+export interface QueueTrack {
     trackName: string;
     artistName: string;
-    coverId: string;
+    trackUri: string;
 }
+
+export type CurrentTrack = QueueTrack & { coverUri: string };
 

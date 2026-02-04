@@ -1,21 +1,16 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import SpotifyTrackCover from "./SpotifyTrackCover";
 import {ScrollingText} from "./ScrollingText";
 
 export interface MiniPlayerTrackProps {
     trackName: string;
     artistName: string;
-    coverUri: string;
+    width?: number;
 }
 
-const MiniPlayerTrack = ({ trackName, artistName, coverUri }: MiniPlayerTrackProps) => {
+const MiniPlayerTrack = ({ trackName, artistName, width }: MiniPlayerTrackProps) => {
     return (
-        <View style={styles.content}>
-            <View style={styles.trackInfo}>
-                <SpotifyTrackCover uri={coverUri}/>
-            </View>
-
+        <View style={[styles.content, width ? { width } : {}]}>
             <View style={styles.trackTextContainer}>
                 <ScrollingText
                     text={trackName}
@@ -36,14 +31,10 @@ export default MiniPlayerTrack;
 
 const styles = StyleSheet.create({
     content: {
-        width: 250, // Largeur fixe pour que chaque item de la FlatList soit visible
+        width: 250, // Largeur par défaut si width n'est pas fourni
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 8,
-        marginRight: 16,
-    },
-    trackInfo: {
-        marginRight: 12,
     },
     trackTextContainer: {
         flex: 1,

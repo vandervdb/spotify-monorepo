@@ -36,11 +36,13 @@ export type PlayerState = {
     isTrackSaved?: boolean,
 }
 export type QueueState = {
-    items: Array<{
-        trackName?: string,
-        artistName?: string,
-        trackUri?: string,
-    }>
+    items: Array<TrackItem>
+}
+
+export type TrackItem = {
+    trackName?: string,
+    artistName?: string,
+    trackId?: string,
 }
 
 export interface Spec extends TurboModule {

@@ -1,27 +1,36 @@
 import {Card, IconButton, MD3Colors, ProgressBar} from "react-native-paper";
 import {StyleSheet, View} from "react-native";
-import TracksComponent from "./TracksComponent";
+import TracksList from "./TracksList";
+import SpotifyTrackCover from "./SpotifyTrackCover";
 import React from "react";
-import {Track} from "../types";
 import {log} from "@core/logger";
+import {PlayerState} from "../../specs";
+import {QueueTrack} from "../types";
 
 export interface MiniplayerConnectedProps {
-    isPlaying: boolean;
-    progress: number;
-    queueTracks: Track[];
-    setUri?: (uri: string) => void;
+    currentlyPlaying: PlayerState | undefined;
+    queueTracks: QueueTrack[];
+    setUri?: React.Dispatch<React.SetStateAction<string>>;
     pause?: () => void;
     resume?: () => void;
 }
 
-const MiniPlayerConnected = ({isPlaying, progress, queueTracks, setUri, pause, resume}: MiniplayerConnectedProps) => {
-    log.debug(`MiniPlayerConnected: queueTracks length = ${queueTracks.length}`);
+const MiniPlayerConnected = (
+    {currentlyPlaying, queueTracks, setUri, pause, resume}: MiniplayerConnectedProps) => {
+
+    const {isPlaying, positionMs} = currentlyPlaying || {isPlaying: false, positionMs: 0};
+    log.debug(`Currently Playing: ${currentlyPlaying?.trackName} / ${currentlyPlaying?.artistName} / ${currentlyPlaying?.trackUri} }`);
+
     return (
         <Card style={styles.container} elevation={4}>
             <View style={styles.content}>
+                <View style={styles.coverContainer}>
+                    <SpotifyTrackCover uri={currentlyPlaying?.coverId}/>
+                </View>
                 <View style={styles.tracksWrapper}>
-                    <TracksComponent
+                    <TracksList
                         trackList={queueTracks}
+                        currentlyPlaying={currentlyPlaying}
                         onCurrentTrackChange={(uri) => setUri?.(uri)}
                     />
                 </View>
@@ -37,7 +46,7 @@ const MiniPlayerConnected = ({isPlaying, progress, queueTracks, setUri, pause, r
                 </View>
             </View>
             <ProgressBar
-                progress={progress}
+                progress={positionMs / 1000}
                 color={MD3Colors.primary50}
                 style={styles.progress}
             />
@@ -60,9 +69,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 8,
     },
+    coverContainer: {
+        marginRight: 12,
+    },
     tracksWrapper: {
         flex: 1,
         height: 60,
+        overflow: 'hidden',
     },
     controls: {
         flexDirection: 'row',

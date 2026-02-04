@@ -3,9 +3,9 @@ import {log} from '@core/logger';
 
 
 export const mapSpotifyPlayerState = ( count: number, data: any): PlayerState => {
-    log.debug(`[mapSpotifyPlayerState] input data ${count}:`, JSON.stringify(data, null, 2));
+    log.debug(`[mapSpotifyPlayerState] input data ${count}:`);
     const base = data?.base || {};
-    const result = {
+    return {
         isPlaying: base.playing ?? false,
         positionMs: base.positionMs ?? 0,
         durationMs: base.durationMs ?? 0,
@@ -16,6 +16,4 @@ export const mapSpotifyPlayerState = ( count: number, data: any): PlayerState =>
         albumName: base.albumName,
         isTrackSaved: data.isTrackSaved ?? false,
     };
-    log.debug('[mapSpotifyPlayerState] mapped result:', JSON.stringify(result, null, 2));
-    return result;
 };

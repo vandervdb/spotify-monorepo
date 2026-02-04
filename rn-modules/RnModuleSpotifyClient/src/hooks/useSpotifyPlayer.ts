@@ -10,6 +10,8 @@ export const useSpotifyPlayer = () => {
     const emitterRef = useRef<NativeEventEmitter | null>(null);
     emitterRef.current ??= createNativeModuleEmitter(SpotifyModuleSpec);
 
+    const isFirstRender = useRef(true);
+
     const player = useMemo(() => ({
         playUri: SpotifyModuleSpec.playUri,
         pause: SpotifyModuleSpec.pause,
@@ -100,6 +102,14 @@ export const useSpotifyPlayer = () => {
         });
     }, [positionMs, withCatch, player]);
 
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        play();
+    }, [play])
+
 
     return useMemo(() => ({
         playerState,
@@ -113,5 +123,5 @@ export const useSpotifyPlayer = () => {
         pause,
         resume,
         seek,
-    }), [uri, positionMs, stateText, playerState, play, pause, resume, seek]);
+    }), [uri, positionMs, stateText, queueState, playerState, play, pause, resume, seek]);
 }
