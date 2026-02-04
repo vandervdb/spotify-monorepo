@@ -1,41 +1,43 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Alert, NativeEventEmitter} from 'react-native';
 import {log} from '@core/logger';
-import {createNativeModuleEmitter, mapSpotifyPlayerState, withCatch} from "../utils";
+import {createNativeModuleEmitter, mapSpotifyPlayerState, withCatch} from '../utils';
 import SpotifyModuleSpec from '../../specs/NativeSpotifyClientModule';
-import {PlayerState, QueueState} from "../../specs";
+import {PlayerState, QueueState} from '../../specs';
 
 export const useSpotifyPlayer = () => {
-
     const emitterRef = useRef<NativeEventEmitter | null>(null);
     emitterRef.current ??= createNativeModuleEmitter(SpotifyModuleSpec);
 
     const isFirstRender = useRef(true);
 
-    const player = useMemo(() => ({
-        playUri: SpotifyModuleSpec.playUri,
-        pause: SpotifyModuleSpec.pause,
-        resume: SpotifyModuleSpec.resume,
-        seekTo: SpotifyModuleSpec.seekTo,
-        getPlayerState: SpotifyModuleSpec.getPlayerState,
+    const player = useMemo(
+        () => ({
+            playUri: SpotifyModuleSpec.playUri,
+            pause: SpotifyModuleSpec.pause,
+            resume: SpotifyModuleSpec.resume,
+            seekTo: SpotifyModuleSpec.seekTo,
+            getPlayerState: SpotifyModuleSpec.getPlayerState,
 
-        addPlayerListener: (cb: (e: any) => void) => {
-            const sub = emitterRef.current!.addListener('spotify/playerState', cb);
-            return {
-                remove: () => {
-                    sub.remove();
-                }
-            };
-        },
-        addQueueListener: (cb: (e: any) => void) => {
-            const sub = emitterRef.current!.addListener('spotify/uiQueue', cb);
-            return {
-                remove: () => {
-                    sub.remove();
-                }
-            };
-        },
-    }), []);
+            addPlayerListener: (cb: (e: any) => void) => {
+                const sub = emitterRef.current!.addListener('spotify/playerState', cb);
+                return {
+                    remove: () => {
+                        sub.remove();
+                    },
+                };
+            },
+            addQueueListener: (cb: (e: any) => void) => {
+                const sub = emitterRef.current!.addListener('spotify/uiQueue', cb);
+                return {
+                    remove: () => {
+                        sub.remove();
+                    },
+                };
+            },
+        }),
+        [],
+    );
 
     const [uri, setUri] = useState<string>('spotify:track:11dFghVXANMlKmJXsNCbNl');
     const [positionMs, setPositionMs] = useState<string>('0');
@@ -108,20 +110,22 @@ export const useSpotifyPlayer = () => {
             return;
         }
         play();
-    }, [play])
+    }, [play]);
 
-
-    return useMemo(() => ({
-        playerState,
-        queueState,
-        uri,
-        setUri,
-        positionMs,
-        setPositionMs,
-        stateText,
-        play,
-        pause,
-        resume,
-        seek,
-    }), [uri, positionMs, stateText, queueState, playerState, play, pause, resume, seek]);
-}
+    return useMemo(
+        () => ({
+            playerState,
+            queueState,
+            uri,
+            setUri,
+            positionMs,
+            setPositionMs,
+            stateText,
+            play,
+            pause,
+            resume,
+            seek,
+        }),
+        [uri, positionMs, stateText, queueState, playerState, play, pause, resume, seek],
+    );
+};

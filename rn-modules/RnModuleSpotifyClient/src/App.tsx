@@ -1,15 +1,11 @@
 import React from 'react';
-import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View,} from 'react-native';
+import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View} from 'react-native';
 import {Header} from 'react-native/Libraries/NewAppScreen';
 import MiniPlayer from './components/MiniPlayer';
-import {useStyle} from "./hooks";
-
+import {useStyle} from './hooks';
 
 function App(): React.JSX.Element {
-    const  {
-        isDarkMode,
-        backgroundStyle
-    } = useStyle();
+    const {isDarkMode, backgroundStyle} = useStyle();
 
     return (
         <SafeAreaView style={[styles.flex1, backgroundStyle]}>
@@ -33,7 +29,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingBottom: 24,
         backgroundColor: '#00000000',
-  },
+    },
     h1: {fontSize: 22, fontWeight: '700', marginTop: 12, marginBottom: 12},
     h2: {fontSize: 16, fontWeight: '600', marginTop: 16, marginBottom: 6},
     input: {
@@ -44,7 +40,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         color: '#222',
         backgroundColor: '#fff',
-  },
+    },
     inputSmall: {flex: 1},
     row: {flexDirection: 'row', alignItems: 'center', marginVertical: 6},
     spacer: {width: 10},
@@ -54,9 +50,9 @@ const styles = StyleSheet.create({
         borderColor: '#444',
         borderRadius: 8,
         padding: 10,
-    marginTop: 8,
+        marginTop: 8,
         backgroundColor: '#fafafa',
-  },
+    },
 });
 
 export default App;

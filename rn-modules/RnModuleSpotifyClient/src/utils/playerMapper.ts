@@ -1,8 +1,7 @@
-import {PlayerState} from "../../specs";
+import {PlayerState} from '../../specs';
 import {log} from '@core/logger';
 
-
-export const mapSpotifyPlayerState = ( count: number, data: any): PlayerState => {
+export const mapSpotifyPlayerState = (count: number, data: any): PlayerState => {
     log.debug(`[mapSpotifyPlayerState] input data ${count}:`);
     const base = data?.base || {};
     return {

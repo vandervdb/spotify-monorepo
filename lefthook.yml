@@ -14,6 +14,11 @@ pre-commit:
             glob: "*.kt"
             run: ./gradlew ktlintCheck -x spotlessKotlin -x spotlessKotlinGradle
 
+        # ---- Prettier (TypeScript/JavaScript formatting) ----
+        prettier:
+            run: ./scripts/prettier-pre-commit.sh
+            glob: "*.{ts,tsx,js,jsx}"
+
         # ---- React Native (lint type checking) ----
         eslint:
             root: "react-native"

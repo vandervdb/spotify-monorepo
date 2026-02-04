@@ -1,12 +1,12 @@
-import {Card, Text} from "react-native-paper";
-import {TouchableOpacity, StyleSheet} from "react-native";
-import React from "react";
+import {Card, Text} from 'react-native-paper';
+import {TouchableOpacity, StyleSheet} from 'react-native';
+import React from 'react';
 
 export interface MiniPlayerDisconnectedProps {
     authenticate?: () => void;
 }
 
-const MiniPlayerDisconnected = ({authenticate} : MiniPlayerDisconnectedProps) => {
+const MiniPlayerDisconnected = ({authenticate}: MiniPlayerDisconnectedProps) => {
     return (
         <Card style={styles.container}>
             <TouchableOpacity style={styles.authButton} onPress={authenticate}>
@@ -17,22 +17,20 @@ const MiniPlayerDisconnected = ({authenticate} : MiniPlayerDisconnectedProps) =>
 };
 export default MiniPlayerDisconnected;
 
-const styles = StyleSheet.create(
-    {
-        container: {
-            margin: 8,
-            borderRadius: 12,
-            overflow: 'hidden',
-            backgroundColor: '#282828',
-        },
-        authButton: {
-            padding: 16,
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        authText: {
-            color: '#1DB954',
-            fontWeight: 'bold',
-        },
-    }
-);
+const styles = StyleSheet.create({
+    container: {
+        margin: 8,
+        borderRadius: 12,
+        overflow: 'hidden',
+        backgroundColor: '#282828',
+    },
+    authButton: {
+        padding: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    authText: {
+        color: '#1DB954',
+        fontWeight: 'bold',
+    },
+});

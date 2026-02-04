@@ -1,8 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Animated, Easing, ScrollView, StyleSheet, View} from "react-native";
-import {Text} from "react-native-paper";
+import React, {useEffect, useRef, useState} from 'react';
+import {Animated, Easing, ScrollView, StyleSheet, View} from 'react-native';
+import {Text} from 'react-native-paper';
 
-export const ScrollingText = ({text, style, variant}: { text: string, style?: any, variant: any }) => {
+export const ScrollingText = ({text, style, variant}: {text: string; style?: any; variant: any}) => {
     const [containerWidth, setContainerWidth] = useState(0);
     const [textWidth, setTextWidth] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -27,7 +27,7 @@ export const ScrollingText = ({text, style, variant}: { text: string, style?: an
                         duration: 0,
                         useNativeDriver: true,
                     }),
-                ])
+                ]),
             );
             animation.start();
             return () => animation.stop();
@@ -35,24 +35,19 @@ export const ScrollingText = ({text, style, variant}: { text: string, style?: an
     }, [textWidth, containerWidth, text]);
 
     return (
-        <View
-            style={styles.scrollingTextContainer}
-            onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
-        >
+        <View style={styles.scrollingTextContainer} onLayout={e => setContainerWidth(e.nativeEvent.layout.width)}>
             <Animated.View
                 style={{
                     flexDirection: 'row',
                     transform: [{translateX: scrollX}],
                     width: textWidth > 0 ? textWidth : undefined,
                     minWidth: textWidth > 0 ? textWidth : undefined,
-                }}
-            >
+                }}>
                 <Text
                     variant={variant}
                     style={[style, {flexShrink: 0, width: textWidth > 0 ? textWidth : undefined}]}
                     numberOfLines={1}
-                    ellipsizeMode="clip"
-                >
+                    ellipsizeMode="clip">
                     {text}
                 </Text>
             </Animated.View>
@@ -61,16 +56,14 @@ export const ScrollingText = ({text, style, variant}: { text: string, style?: an
                 horizontal
                 style={{position: 'absolute', opacity: 0, height: 0}}
                 contentContainerStyle={{alignItems: 'flex-start'}}
-                pointerEvents="none"
-            >
+                pointerEvents="none">
                 <Text
                     variant={variant}
                     style={[style, {flexShrink: 0, width: undefined}]}
-                    onLayout={(e) => {
+                    onLayout={e => {
                         const w = e.nativeEvent.layout.width;
                         if (w > 0) setTextWidth(w);
-                    }}
-                >
+                    }}>
                     {text}
                 </Text>
             </ScrollView>

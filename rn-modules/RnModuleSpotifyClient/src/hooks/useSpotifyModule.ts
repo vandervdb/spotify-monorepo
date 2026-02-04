@@ -1,7 +1,7 @@
-import { useSpotifySession } from "./useSpotifySession";
-import { useSpotifyPlayer } from "./useSpotifyPlayer";
-import { log } from '@core/logger';
-import { useMemo } from "react";
+import {useSpotifySession} from './useSpotifySession';
+import {useSpotifyPlayer} from './useSpotifyPlayer';
+import {log} from '@core/logger';
+import {useMemo} from 'react';
 
 export const useSpotifyModule = () => {
     const session = useSpotifySession();
@@ -9,13 +9,12 @@ export const useSpotifyModule = () => {
 
     const authenticateUser = () => {
         if (!session.isConnected) {
-            log.debug("Starting Spotify session");
+            log.debug('Starting Spotify session');
             session.startWithHostActivityResult();
         }
     };
 
-    const SessionUiState = useMemo(() =>
-    {
+    const SessionUiState = useMemo(() => {
         return {
             isConnected: session.isConnected,
             connectionStatus: session.connectionStatus,
@@ -24,7 +23,6 @@ export const useSpotifyModule = () => {
             disconnect: session.disconnect,
         };
     }, [session.isConnected, session.connectionStatus, session.lastSessionError]);
-
 
     const playerUiState = useMemo(() => {
         const canUsePlayer = session.connectionStatus === 'ready' || session.connectionStatus === 'paused';

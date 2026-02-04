@@ -1,8 +1,8 @@
 import {NativeEventEmitter} from 'react-native';
 
 export type EventEmitterCompatibleModule = {
-  addListener(eventName: string): void;
-  removeListeners(count: number): void;
+    addListener(eventName: string): void;
+    removeListeners(count: number): void;
 };
 
 /**
@@ -11,5 +11,5 @@ export type EventEmitterCompatibleModule = {
  * On centralise donc le cast ici (au lieu de `as any` partout).
  */
 export function createNativeModuleEmitter(module: EventEmitterCompatibleModule): NativeEventEmitter {
-  return new NativeEventEmitter(module);
+    return new NativeEventEmitter(module);
 }

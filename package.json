@@ -19,7 +19,9 @@
     "ios": "yarn workspace rn-sample ios",
     "start": "yarn workspace rn-sample start",
     "start-reset": "yarn workspace rn-sample start --reset-cache",
-    "typecheck": "yarn workspaces foreach -A -t run typecheck"
+    "typecheck": "yarn workspaces foreach -A -t run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx}\""
   },
   "dependencies": {
     "@babel/runtime": "^7.23.0",
@@ -69,7 +71,9 @@
     "react-native": "0.76.x"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "18.16.9",
+    "prettier": "^3.8.1",
     "react-test-renderer": "18.3.1",
     "typescript": "^5.9.3"
   }

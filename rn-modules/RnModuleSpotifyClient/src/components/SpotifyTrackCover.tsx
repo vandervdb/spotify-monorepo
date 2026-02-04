@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import {Animated, Image} from 'react-native';
-import {log} from "@core/logger";
-import {SPOTIFY_CONSTANTS} from '../utils'
+import {log} from '@core/logger';
+import {SPOTIFY_CONSTANTS} from '../utils';
 
 export interface SpotifyTrackCoverProps {
     uri: string | undefined;
@@ -9,7 +9,7 @@ export interface SpotifyTrackCoverProps {
 }
 
 export const SpotifyTrackCover = ({uri, direction = 'right'}: SpotifyTrackCoverProps) => {
-    const coverUri = `${SPOTIFY_CONSTANTS.SPOTIFY_COVER_UI}${uri}`
+    const coverUri = `${SPOTIFY_CONSTANTS.SPOTIFY_COVER_UI}${uri}`;
     const translateX = useRef(new Animated.Value(direction === 'right' ? 100 : -100)).current;
 
     log.debug(`Rendering SpotifyTrackCover with uri: ${coverUri}`);
@@ -28,12 +28,9 @@ export const SpotifyTrackCover = ({uri, direction = 'right'}: SpotifyTrackCoverP
 
     return (
         <Animated.View style={{transform: [{translateX}]}}>
-            <Image
-                source={{uri: coverUri}}
-                style={{width: 50, height: 50, borderRadius: 3}}
-            />
+            <Image source={{uri: coverUri}} style={{width: 50, height: 50, borderRadius: 3}} />
         </Animated.View>
     );
-}
+};
 
 export default SpotifyTrackCover;

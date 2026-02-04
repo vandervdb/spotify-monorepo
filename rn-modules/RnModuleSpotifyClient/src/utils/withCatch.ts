@@ -1,5 +1,5 @@
-import {log} from "@core/logger";
-import {Alert} from "react-native";
+import {log} from '@core/logger';
+import {Alert} from 'react-native';
 
 export const withCatch = async (fn: () => Promise<any>) => {
     try {

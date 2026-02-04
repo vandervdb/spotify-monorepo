@@ -4,5 +4,4 @@ export interface QueueTrack {
     trackUri: string;
 }
 
-export type CurrentTrack = QueueTrack & { coverUri: string };
-
+export type CurrentTrack = QueueTrack & {coverUri: string};

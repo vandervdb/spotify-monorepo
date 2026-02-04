@@ -3,30 +3,32 @@ import SpotifyModuleSpec from '../../specs/NativeSpotifyClientModule';
 import {NativeEventEmitter} from 'react-native';
 import {log} from '@core/logger';
 import {createNativeModuleEmitter, withCatch} from '../utils';
-import {SessionEvent, SessionState} from "../../specs";
+import {SessionEvent, SessionState} from '../../specs';
 
 type ConnectionStatus = 'idle' | 'connecting' | 'authorizing' | 'ready' | 'paused' | 'failed';
 
 export const useSpotifySession = () => {
-
     const emitterRef = useRef<NativeEventEmitter | null>(null);
     emitterRef.current ??= createNativeModuleEmitter(SpotifyModuleSpec);
 
-    const session = useMemo(() => ({
-        startUpWithHostActivityResult: SpotifyModuleSpec.startUpWithHostActivityResult,
-        startUpWithModuleActivityResult: SpotifyModuleSpec.startUpWithModuleActivityResult,
-        disconnect: SpotifyModuleSpec.disconnect,
-        getSessionState: SpotifyModuleSpec.getSessionState,
+    const session = useMemo(
+        () => ({
+            startUpWithHostActivityResult: SpotifyModuleSpec.startUpWithHostActivityResult,
+            startUpWithModuleActivityResult: SpotifyModuleSpec.startUpWithModuleActivityResult,
+            disconnect: SpotifyModuleSpec.disconnect,
+            getSessionState: SpotifyModuleSpec.getSessionState,
 
-        addListener: (cb: (e: any) => void) => {
-            const sub1 = emitterRef.current!.addListener('spotify/sessionState', cb);
-            return {
-                remove: () => {
-                    sub1.remove();
-                }
-            };
-        }
-    }), []);
+            addListener: (cb: (e: any) => void) => {
+                const sub1 = emitterRef.current!.addListener('spotify/sessionState', cb);
+                return {
+                    remove: () => {
+                        sub1.remove();
+                    },
+                };
+            },
+        }),
+        [],
+    );
 
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('idle');
@@ -105,7 +107,8 @@ export const useSpotifySession = () => {
         });
 
         log.debug('useSpotifySession: Checking initial session state');
-        session.getSessionState()
+        session
+            .getSessionState()
             .then(state => {
                 log.debug('useSpotifySession: Initial session state:', JSON.stringify(state));
                 applySessionState(state, 'initial');
@@ -119,7 +122,6 @@ export const useSpotifySession = () => {
             sub.remove();
         };
     }, [applySessionState, session]);
-
 
     const startWithModuleActivityResult = useCallback(() => {
         log.debug('useSpotifySession: Starting with ModuleActivityResult');
@@ -135,7 +137,7 @@ export const useSpotifySession = () => {
                     'user-read-currently-playing',
                     'user-read-playback-state',
                     'user-library-modify',
-                    'user-library-read'
+                    'user-library-read',
                 ],
                 showDialog: showDialog,
             });
@@ -163,7 +165,7 @@ export const useSpotifySession = () => {
                     'user-read-currently-playing',
                     'user-read-playback-state',
                     'user-library-modify',
-                    'user-library-read'
+                    'user-library-read',
                 ],
                 showDialog: showDialog,
             });
@@ -192,22 +194,25 @@ export const useSpotifySession = () => {
         });
     }, [withCatch, session]);
 
-    return useMemo(() => ({
-        showDialog,
-        setShowDialog,
-        startWithModuleActivityResult,
-        startWithHostActivityResult,
-        connectionStatus,
-        isConnected,
-        disconnect,
-        lastSessionError,
-    }), [
-        showDialog,
-        startWithModuleActivityResult,
-        startWithHostActivityResult,
-        connectionStatus,
-        isConnected,
-        disconnect,
-        lastSessionError,
-    ]);
+    return useMemo(
+        () => ({
+            showDialog,
+            setShowDialog,
+            startWithModuleActivityResult,
+            startWithHostActivityResult,
+            connectionStatus,
+            isConnected,
+            disconnect,
+            lastSessionError,
+        }),
+        [
+            showDialog,
+            startWithModuleActivityResult,
+            startWithHostActivityResult,
+            connectionStatus,
+            isConnected,
+            disconnect,
+            lastSessionError,
+        ],
+    );
 };

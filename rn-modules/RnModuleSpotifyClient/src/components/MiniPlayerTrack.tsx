@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {ScrollingText} from "./ScrollingText";
+import {ScrollingText} from './ScrollingText';
 
 export interface MiniPlayerTrackProps {
     trackName: string;
@@ -8,24 +8,16 @@ export interface MiniPlayerTrackProps {
     width?: number;
 }
 
-const MiniPlayerTrack = ({ trackName, artistName, width }: MiniPlayerTrackProps) => {
+const MiniPlayerTrack = ({trackName, artistName, width}: MiniPlayerTrackProps) => {
     return (
-        <View style={[styles.content, width ? { width } : {}]}>
+        <View style={[styles.content, width ? {width} : {}]}>
             <View style={styles.trackTextContainer}>
-                <ScrollingText
-                    text={trackName}
-                    variant="titleMedium"
-                    style={styles.title}
-                />
-                <ScrollingText
-                    text={artistName}
-                    variant="bodySmall"
-                    style={styles.artist}
-                />
+                <ScrollingText text={trackName} variant="titleMedium" style={styles.title} />
+                <ScrollingText text={artistName} variant="bodySmall" style={styles.artist} />
             </View>
         </View>
     );
-}
+};
 
 export default MiniPlayerTrack;
 

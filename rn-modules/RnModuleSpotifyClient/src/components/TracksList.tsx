@@ -1,19 +1,17 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {FlatList, ViewToken} from 'react-native';
-import MiniPlayerTrack from "./MiniPlayerTrack";
-import {log} from "@core/logger";
-import {QueueTrack} from "../types";
-import {PlayerState} from "../../specs";
+import MiniPlayerTrack from './MiniPlayerTrack';
+import {log} from '@core/logger';
+import {QueueTrack} from '../types';
+import {PlayerState} from '../../specs';
 
 export interface TracksComponentProps {
     trackList: QueueTrack[];
-    currentlyPlaying: (PlayerState | undefined);
+    currentlyPlaying: PlayerState | undefined;
     onCurrentTrackChange: (trackId: string) => void;
 }
 
-
 const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksComponentProps) => {
-
     const flatListRef = useRef<FlatList>(null);
     const [containerWidth, setContainerWidth] = useState(0);
     const displayedTrackId = useRef(currentlyPlaying?.trackUri);
@@ -21,8 +19,8 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
     const currentTrackUri = currentlyPlaying?.trackUri;
 
     log.debug(
-        `TracksComponent: currentlyPlaying = ${currentTrackUri} / displayedTrackId = ${displayedTrackId.current}`
-    )
+        `TracksComponent: currentlyPlaying = ${currentTrackUri} / displayedTrackId = ${displayedTrackId.current}`,
+    );
 
     useEffect(() => {
         if (currentTrackUri && trackList.length > 0 && currentTrackUri !== displayedTrackId.current) {
@@ -45,7 +43,7 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
     }, [currentTrackUri, trackList]);
 
     const onViewableItemsChanged = useCallback(
-        ({changed, viewableItems}: { changed: ViewToken<QueueTrack>[], viewableItems: ViewToken<QueueTrack>[] }) => {
+        ({changed, viewableItems}: {changed: ViewToken<QueueTrack>[]; viewableItems: ViewToken<QueueTrack>[]}) => {
             if (isScrollingProgrammatically.current) return;
 
             const currentTrackId = viewableItems[0]?.item?.trackUri;
@@ -56,18 +54,17 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
             if (currentTrackId) {
                 displayedTrackId.current = currentTrackId;
             }
-        }, []);
+        },
+        [],
+    );
 
     const onScrollEnd = useCallback(() => {
-                if (isScrollingProgrammatically.current) return;
+        if (isScrollingProgrammatically.current) return;
 
-                log.debug(`onScrollEnd: ${displayedTrackId.current}`);
-                if (displayedTrackId.current === currentTrackUri || !displayedTrackId.current) return;
-                onCurrentTrackChange(displayedTrackId.current);
-            }, [currentTrackUri, onCurrentTrackChange]
-        )
-    ;
-
+        log.debug(`onScrollEnd: ${displayedTrackId.current}`);
+        if (displayedTrackId.current === currentTrackUri || !displayedTrackId.current) return;
+        onCurrentTrackChange(displayedTrackId.current);
+    }, [currentTrackUri, onCurrentTrackChange]);
     if (trackList.length === 0) {
         return null;
     }
@@ -77,19 +74,19 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
             ref={flatListRef}
             horizontal={true}
             pagingEnabled
-            onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+            onLayout={e => setContainerWidth(e.nativeEvent.layout.width)}
             data={trackList}
             renderItem={({item}) => (
                 <MiniPlayerTrack
-                    trackName={item.trackName ?? ""}
-                    artistName={item.artistName ?? ""}
+                    trackName={item.trackName ?? ''}
+                    artistName={item.artistName ?? ''}
                     width={containerWidth}
                 />
             )}
             keyExtractor={(item, index) => item.trackUri || index.toString()}
             onViewableItemsChanged={onViewableItemsChanged}
             onMomentumScrollEnd={onScrollEnd}
-            onScrollToIndexFailed={(info) => {
+            onScrollToIndexFailed={info => {
                 log.error(`ScrollToIndex failed: ${JSON.stringify(info)}`);
                 // setTimeout(() => {
                 //     flatListRef.current?.scrollToIndex({
