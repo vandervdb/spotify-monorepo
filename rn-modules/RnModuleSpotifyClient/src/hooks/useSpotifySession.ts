@@ -180,6 +180,13 @@ export const useSpotifySession = () => {
         });
     }, [withCatch, showDialog, session]);
 
+    const authenticateUser = useCallback(() => {
+        if (!isConnected) {
+            log.debug('Starting Spotify session');
+            startWithHostActivityResult();
+        }
+    }, [isConnected, startWithHostActivityResult]);
+
     const getAuthToken = useCallback(async () => {
         log.debug('useSpotifySession: Getting auth token');
         const r = await withCatch(async () => {
@@ -214,6 +221,7 @@ export const useSpotifySession = () => {
         () => ({
             showDialog,
             setShowDialog,
+            authenticateUser,
             startWithModuleActivityResult,
             startWithHostActivityResult,
             getAuthToken,
@@ -222,15 +230,6 @@ export const useSpotifySession = () => {
             disconnect,
             lastSessionError,
         }),
-        [
-            showDialog,
-            startWithModuleActivityResult,
-            startWithHostActivityResult,
-            getAuthToken,
-            connectionStatus,
-            isConnected,
-            disconnect,
-            lastSessionError,
-        ],
+        [showDialog, authenticateUser, getAuthToken, connectionStatus, isConnected, disconnect, lastSessionError],
     );
 };

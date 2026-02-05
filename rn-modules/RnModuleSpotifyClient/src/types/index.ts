@@ -1,1 +1,2 @@
-export * from './PlayerTypes';
+export * from './playerTypes';
+export * from './sessionTypes';

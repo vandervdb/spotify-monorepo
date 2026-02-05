@@ -83,3 +83,4 @@ Thumbs.db
 **/.DS_Store
 /.kotlin
 /**/**/bin/
+/.output.txt

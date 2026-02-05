@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {useSpotifyModule} from '../hooks';
+import {useSpotifyPlayer, useSpotifySession} from '../hooks';
 import {log} from '@core/logger';
 import MiniPlayerDisconnected from './MiniPlayerDisconnected';
 import MiniPlayerConnected from './MiniPlayerConnected';
@@ -19,12 +19,12 @@ const mapQueueToTracks = (queueItems: TrackItem[] | undefined): QueueTrack[] => 
 };
 
 const MiniPlayer = () => {
-    const {player, session} = useSpotifyModule();
-    const playerState = player?.playerState;
-    const queueItems = player?.queueState?.items;
+    const {isConnected, authenticateUser} = useSpotifySession();
+    const {setUri, pause, resume, playerState, queueState} = useSpotifyPlayer();
+    const queueItems = queueState?.items;
     const queueTracks = useMemo(() => mapQueueToTracks(queueItems), [queueItems]);
 
-    if (!session?.isConnected || !player) return <MiniPlayerDisconnected authenticate={session?.authenticateUser} />;
+    if (!isConnected) return <MiniPlayerDisconnected authenticate={authenticateUser} />;
 
     log.debug(`MiniPlayer: PLAYER STATE -> ${JSON.stringify(playerState)}`);
     log.debug(`MiniPlayer: QUEUE -> ${JSON.stringify(queueTracks)}`);
@@ -34,9 +34,9 @@ const MiniPlayer = () => {
         <MiniPlayerConnected
             currentlyPlaying={playerState ?? undefined}
             queueTracks={queueTracks}
-            setUri={player?.setUri}
-            pause={player?.pause}
-            resume={player?.resume}
+            setUri={setUri}
+            pause={pause}
+            resume={resume}
         />
     );
 };

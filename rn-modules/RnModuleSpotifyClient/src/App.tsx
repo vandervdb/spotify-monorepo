@@ -1,11 +1,18 @@
-import React from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View} from 'react-native';
 import {Header} from 'react-native/Libraries/NewAppScreen';
 import MiniPlayer from './components/MiniPlayer';
-import {useStyle} from './hooks';
+import {useSpotifySession, useStyle} from './hooks';
 
 function App(): React.JSX.Element {
     const {isDarkMode, backgroundStyle} = useStyle();
+    const {authenticateUser, isConnected, getAuthToken} = useSpotifySession();
+
+    useEffect(() => {
+        if (!isConnected) {
+            authenticateUser();
+        }
+    }, [isConnected, authenticateUser]);
 
     return (
         <SafeAreaView style={[styles.flex1, backgroundStyle]}>

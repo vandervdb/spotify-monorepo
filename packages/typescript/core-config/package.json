@@ -1,0 +1,38 @@
+{
+  "name": "@core/config",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "source": "src/index.ts",
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "clean": "tsc -b --clean",
+    "lint": "eslint .",
+    "test": "jest"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "react-native": "./src/index.ts",
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "react-native-dotenv": "^3.4.11",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0"
+  }
+}
