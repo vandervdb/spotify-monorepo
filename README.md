@@ -89,18 +89,21 @@ spotify-monorepo/
 │  │  └─ ios/                      # RN iOS project (Xcode)
 │  └─ android-sample/              # Native Android app (Kotlin/Compose)
 ├─ packages/
-│  ├─ core-config-ts/              # Typed access to env variables (@env)
-│  ├─ core-constants-ts/           # Global constants
-│  ├─ core-domain/                 # Shared domain interfaces (Kotlin)
-│  ├─ core-domain-ts/              # Shared domain interfaces
-│  ├─ core-dto/                    # DTOs (Kotlin)
-│  ├─ core-dto-ts/                 # DTOs
-│  ├─ core-logger-ts/              # Shared logger
-│  ├─ core-ui/                     # UI components (Kotlin)
-│  ├─ fake/                        # Fake implementations / test data (Kotlin)
-│  ├─ http-client-ts/              # HTTP client
-│  ├─ keychain-service-ts/         # Keychain / SecureStorage access
-│  └─ test-utils-ts/               # Test utilities
+│  ├─ android/
+│  │  ├─ core-domain/                 # Shared domain interfaces (Kotlin)
+│  │  ├─ core-dto/                    # DTOs (Kotlin)
+│  │  ├─ core-logger/                 # Shared logger (Kotlin)
+│  │  ├─ core-ui/                     # UI components (Kotlin)
+│  │  └─ fake/                        # Fake implementations / test data (Kotlin)
+│  └─ typescript/
+│     ├─ core-config/                 # Typed access to env variables (@env)
+│     ├─ core-constants/              # Global constants
+│     ├─ core-domain/                 # Shared domain interfaces
+│     ├─ core-dto/                    # DTOs
+│     ├─ core-logger/                 # Shared logger
+│     ├─ http-client/                 # HTTP client
+│     ├─ keychain-service/            # Keychain / SecureStorage access
+│     └─ test-utils/                  # Test utilities
 ├─ rn-lib/                         # Internal RN library (exposed via alias)
 ├─ rn-modules/                     # React Native modules / TurboModules
 ├─ ts-lib/                         # TypeScript-only libraries
@@ -248,14 +251,14 @@ module.exports = (api) => {
       ['module-resolver', {
         extensions: ['.js', '.ts', '.tsx', '.json'],
         alias: {
-          '@core/config':      path.resolve(root, 'packages/core-config-ts/src'),
-          '@core/constants':   path.resolve(root, 'packages/core-constants-ts/src'),
-          '@core/domain':      path.resolve(root, 'packages/core-domain-ts/src'),
-          '@core/dto':         path.resolve(root, 'packages/core-dto-ts/src'),
-          '@core/logger':      path.resolve(root, 'packages/core-logger-ts/src'),
-          '@test/utils':       path.resolve(root, 'packages/test-utils-ts/src'),
-          '@http/client':      path.resolve(root, 'packages/http-client-ts/src'),
-          '@keychain/service': path.resolve(root, 'packages/keychain-service-ts/src'),
+          '@core/config':      path.resolve(root, 'packages/typescript/core-config/src'),
+          '@core/constants':   path.resolve(root, 'packages/typescript/core-constants/src'),
+          '@core/domain':      path.resolve(root, 'packages/typescript/core-domain/src'),
+          '@core/dto':         path.resolve(root, 'packages/typescript/core-dto/src'),
+          '@core/logger':      path.resolve(root, 'packages/typescript/core-logger/src'),
+          '@test/utils':       path.resolve(root, 'packages/typescript/test-utils/src'),
+          '@http/client':      path.resolve(root, 'packages/typescript/http-client/src'),
+          '@keychain/service': path.resolve(root, 'packages/typescript/keychain-service/src'),
           // Example: expose internal clients
           // '@spotify/client':   path.resolve(root, 'rn-lib/src')
         },

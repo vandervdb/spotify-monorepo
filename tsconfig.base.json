@@ -19,29 +19,29 @@
       "@spotify/client": ["rn-lib/src/index.ts"],
       "@spotify/client/*": ["rn-lib/src/*"],
 
-      "@core/config": ["packages/core-config-ts/src/index.ts"],
-      "@core/config/*": ["packages/core-config-ts/src/*"],
+      "@core/config": ["packages/typescript/core-config/src/index.ts"],
+      "@core/config/*": ["packages/typescript/core-config/src/*"],
 
-      "@core/constants": ["packages/core-constants-ts/src/index.ts"],
-      "@core/constants/*": ["packages/core-constants-ts/src/*"],
+      "@core/constants": ["packages/typescript/core-constants/src/index.ts"],
+      "@core/constants/*": ["packages/typescript/core-constants/src/*"],
 
-      "@core/domain": ["packages/core-domain-ts/src/index.ts"],
-      "@core/domain/*": ["packages/core-domain-ts/src/*"],
+      "@core/domain": ["packages/typescript/core-domain/src/index.ts"],
+      "@core/domain/*": ["packages/typescript/core-domain/src/*"],
 
-      "@core/dto": ["packages/core-dto-ts/src/index.ts"],
-      "@core/dto/*": ["packages/core-dto-ts/src/*"],
+      "@core/dto": ["packages/typescript/core-dto/src/index.ts"],
+      "@core/dto/*": ["packages/typescript/core-dto/src/*"],
 
-      "@core/logger": ["packages/core-logger-ts/src/index.ts"],
-      "@core/logger/*": ["packages/core-logger-ts/src/*"],
+      "@core/logger": ["packages/typescript/core-logger/src/index.ts"],
+      "@core/logger/*": ["packages/typescript/core-logger/src/*"],
 
-      "@http/client": ["packages/http-client-ts/src/index.ts"],
-      "@http/client/*": ["packages/http-client-ts/src/*"],
+      "@http/client": ["packages/typescript/http-client/src/index.ts"],
+      "@http/client/*": ["packages/typescript/http-client/src/*"],
 
-      "@keychain/service": ["packages/keychain-service-ts/src/index.ts"],
-      "@keychain/service/*": ["packages/keychain-service-ts/src/*"],
+      "@keychain/service": ["packages/typescript/keychain-service/src/index.ts"],
+      "@keychain/service/*": ["packages/typescript/keychain-service/src/*"],
 
-      "@test/utils": ["packages/test-utils-ts/src/index.ts"],
-      "@test/utils/*": ["packages/test-utils-ts/src/*"],
+      "@test/utils": ["packages/typescript/test-utils/src/index.ts"],
+      "@test/utils/*": ["packages/typescript/test-utils/src/*"],
 
       "@feature-now-playing/*": ["packages/feature-now-playing/src/*"],
 

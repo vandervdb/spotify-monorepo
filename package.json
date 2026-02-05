@@ -5,7 +5,8 @@
   "workspaces": [
     "ts-lib/*",
     "rn-lib",
-    "packages/*",
+    "packages/android/*",
+    "packages/typescript/*",
     "apps/*",
     "rn-modules/RnModuleSpotifyClient"
   ],

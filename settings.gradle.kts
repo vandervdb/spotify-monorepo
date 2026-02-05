@@ -37,12 +37,12 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "spotify-monorepo"
 include(":android-lib")
-include(":packages:core-logger")
-include(":packages:core-domain")
+include(":packages:android:core-logger")
+include(":packages:android:core-domain")
 include(":apps:android-sample")
-include(":packages:core-dto")
-include(":packages:core-ui")
-include(":packages:fake")
+include(":packages:android:core-dto")
+include(":packages:android:core-ui")
+include(":packages:android:fake")
 
 // Load credentials from spotify-secret.properties
 run {

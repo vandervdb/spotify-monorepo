@@ -1805,9 +1805,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@core/config@workspace:*, @core/config@workspace:packages/core-config-ts":
+"@core/config@workspace:*, @core/config@workspace:packages/typescript/core-config":
   version: 0.0.0-use.local
-  resolution: "@core/config@workspace:packages/core-config-ts"
+  resolution: "@core/config@workspace:packages/typescript/core-config"
   dependencies:
     "@babel/core": "npm:^7.25.2"
     "@babel/preset-env": "npm:^7.20.0"
@@ -1819,35 +1819,35 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@core/constants@workspace:*, @core/constants@workspace:packages/core-constants-ts":
+"@core/constants@workspace:*, @core/constants@workspace:packages/typescript/core-constants":
   version: 0.0.0-use.local
-  resolution: "@core/constants@workspace:packages/core-constants-ts"
+  resolution: "@core/constants@workspace:packages/typescript/core-constants"
   dependencies:
     tslib: "npm:^2.3.0"
   languageName: unknown
   linkType: soft
 
-"@core/domain@workspace:*, @core/domain@workspace:packages/core-domain-ts":
+"@core/domain@workspace:*, @core/domain@workspace:packages/typescript/core-domain":
   version: 0.0.0-use.local
-  resolution: "@core/domain@workspace:packages/core-domain-ts"
+  resolution: "@core/domain@workspace:packages/typescript/core-domain"
   dependencies:
     "@core/dto": "workspace:*"
     tslib: "npm:^2.3.0"
   languageName: unknown
   linkType: soft
 
-"@core/dto@workspace:*, @core/dto@workspace:packages/core-dto-ts":
+"@core/dto@workspace:*, @core/dto@workspace:packages/typescript/core-dto":
   version: 0.0.0-use.local
-  resolution: "@core/dto@workspace:packages/core-dto-ts"
+  resolution: "@core/dto@workspace:packages/typescript/core-dto"
   dependencies:
     "@babel/core": "npm:^7.25.2"
     tslib: "npm:^2.3.0"
   languageName: unknown
   linkType: soft
 
-"@core/logger@workspace:*, @core/logger@workspace:packages/core-logger-ts":
+"@core/logger@workspace:*, @core/logger@workspace:packages/typescript/core-logger":
   version: 0.0.0-use.local
-  resolution: "@core/logger@workspace:packages/core-logger-ts"
+  resolution: "@core/logger@workspace:packages/typescript/core-logger"
   dependencies:
     tslib: "npm:^2.3.0"
   languageName: unknown
@@ -2131,9 +2131,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@http/client@workspace:*, @http/client@workspace:packages/http-client-ts":
+"@http/client@workspace:*, @http/client@workspace:packages/typescript/http-client":
   version: 0.0.0-use.local
-  resolution: "@http/client@workspace:packages/http-client-ts"
+  resolution: "@http/client@workspace:packages/typescript/http-client"
   dependencies:
     "@core/domain": "workspace:*"
     "@core/dto": "workspace:*"
@@ -2812,9 +2812,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@keychain/service@workspace:*, @keychain/service@workspace:packages/keychain-service-ts":
+"@keychain/service@workspace:*, @keychain/service@workspace:packages/typescript/keychain-service":
   version: 0.0.0-use.local
-  resolution: "@keychain/service@workspace:packages/keychain-service-ts"
+  resolution: "@keychain/service@workspace:packages/typescript/keychain-service"
   dependencies:
     "@core/constants": "workspace:*"
     "@core/domain": "workspace:*"
@@ -3865,9 +3865,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@test/utils@workspace:*, @test/utils@workspace:packages/test-utils-ts":
+"@test/utils@workspace:*, @test/utils@workspace:packages/typescript/test-utils":
   version: 0.0.0-use.local
-  resolution: "@test/utils@workspace:packages/test-utils-ts"
+  resolution: "@test/utils@workspace:packages/typescript/test-utils"
   dependencies:
     "@types/jest": "npm:^29.5.0"
     jest: "npm:^29.7.0"

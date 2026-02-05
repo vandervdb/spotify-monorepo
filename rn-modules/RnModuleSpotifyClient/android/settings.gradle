@@ -18,9 +18,9 @@ include (":app")
 includeBuild('../../../') { includedBuild ->
     dependencySubstitution {
         substitute module('org.vander:android-lib') using project(':android-lib')
-        substitute module('org.vander:core-domain') using project(':packages:core-domain')
-        substitute module('org.vander:core-dto') using project(':packages:core-dto')
-        substitute module('org.vander:core-ui') using project(':packages:core-ui')
+        substitute module('org.vander:core-domain') using project(':packages:android:core-domain')
+        substitute module('org.vander:core-dto') using project(':packages:android:core-dto')
+        substitute module('org.vander:core-ui') using project(':packages:android:core-ui')
     }
 }
 

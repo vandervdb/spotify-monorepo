@@ -114,10 +114,10 @@ android {
 dependencies {
 
     // --- Projects
-    implementation(project(":packages:core-domain"))
-    implementation(project(":packages:core-logger"))
-    implementation(project(":packages:core-dto"))
-    implementation(project(":packages:core-ui"))
+    implementation(project(":packages:android:core-domain"))
+    implementation(project(":packages:android:core-logger"))
+    implementation(project(":packages:android:core-dto"))
+    implementation(project(":packages:android:core-ui"))
 
     // --- KotlinX
     implementation(libs.kotlinx.coroutines.core)

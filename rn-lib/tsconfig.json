@@ -18,19 +18,28 @@
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
   "references": [
     {
-      "path": "../packages/core-config-ts"
+      "path": "../packages/typescript/core-config"
     },
     {
-      "path": "../packages/core-constants-ts"
+      "path": "../packages/typescript/core-constants"
     },
     {
-      "path": "../packages/core-dto-ts"
+      "path": "../packages/typescript/core-dto"
     },
     {
-      "path": "../packages/core-logger-ts"
+      "path": "../packages/typescript/core-logger"
     },
     {
-      "path": "../packages/core-domain-ts"
+      "path": "../packages/typescript/core-domain"
+    },
+    {
+      "path": "../packages/typescript/http-client"
+    },
+    {
+      "path": "../packages/typescript/keychain-service"
+    },
+    {
+      "path": "../packages/typescript/test-utils"
     }
   ]
 }

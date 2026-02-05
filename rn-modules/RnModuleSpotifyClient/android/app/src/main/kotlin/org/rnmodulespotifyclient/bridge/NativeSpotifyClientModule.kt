@@ -95,17 +95,6 @@ class NativeSpotifyClientModule(
         }
     }
 
-    override fun getAuthToken(): String {
-        if (activity == null) return@internalStartup
-        scope.launch {
-            try {
-                return bridge.getAuthToken()
-            } catch (t: Throwable) {
-                promise.reject("AUTH_TOKEN_ERROR", t.message ?: "Unknown error", t)
-            }
-        }
-    }
-
     private fun internalStartUp(
         promise: Promise,
         startAction: (activity: Activity?) -> Unit,
@@ -209,6 +198,14 @@ class NativeSpotifyClientModule(
             runCatching { bridge.getPlayerState() }
                 .onSuccess { state -> promise.resolve(state.toWritableMap()) }
                 .onFailure { t -> promise.reject("GET_PLAYLIST_STATE_FAIL", t) }
+        }
+    }
+
+    override fun getAuthToken(promise: Promise) {
+        scope.launch {
+            runCatching { bridge.getAuthToken() }
+                .onSuccess { token -> promise.resolve(token) }
+                .onFailure { t -> promise.reject("AUTH_TOKEN_ERROR", t) }
         }
     }
 

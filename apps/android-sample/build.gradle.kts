@@ -83,10 +83,10 @@ android {
 dependencies {
 
     implementation(project(":android-lib"))
-    implementation(project(":packages:core-domain"))
-    implementation(project(":packages:core-logger"))
-    implementation(project(":packages:core-ui"))
-    implementation(project(":packages:fake"))
+    implementation(project(":packages:android:core-domain"))
+    implementation(project(":packages:android:core-logger"))
+    implementation(project(":packages:android:core-ui"))
+    implementation(project(":packages:android:fake"))
 
     // --- Spotify SDK AARs
     implementation(files("../../android-lib/libs/spotify-app-remote-release-0.8.0.aar"))
