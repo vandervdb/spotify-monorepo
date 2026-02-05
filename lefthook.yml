@@ -12,7 +12,7 @@ pre-commit:
         # ---- Ktlint ----
         ktlint:
             glob: "*.kt"
-            run: echo "🔍 RUNNING Ktlint checks..." && ./gradlew ktlintCheck -x spotlessKotlin -x spotlessKotlinGradle
+            run: echo "\033[0;34m🔍 Running Ktlint checks...\033[0m" && ./gradlew ktlintCheck -x spotlessKotlin -x spotlessKotlinGradle || { echo "\033[0;31m❌ Ktlint checks FAILED!\033[0m" >&2; exit 1; }
 
         # ---- Prettier (TypeScript/JavaScript formatting) ----
         prettier:
@@ -23,7 +23,7 @@ pre-commit:
         eslint:
             root: "react-native"
             glob: "*.{ts,tsx,js,jsx}"
-            run: echo " ✅ RUNNING TS lint checks... " && npm run lint --if-present
+            run: echo "\033[0;34m🔍 Running ESLint checks...\033[0m" && npm run lint --if-present || { echo "\033[0;31m❌ ESLint checks FAILED!\033[0m" >&2; exit 1; }
 
 
 pre-push:
@@ -32,20 +32,20 @@ pre-push:
     commands:
         # ---- Android Lint ----
         android_lint:
-            run: echo " ✅ RUNNING Android lint checks... " && ./gradlew lint
+            run: echo "\033[0;34m🔍 Running Android Lint...\033[0m" && ./gradlew lint || { echo "\033[0;31m❌ Android Lint FAILED!\033[0m" >&2; exit 1; }
 
         # ---- Android Unit Tests ----
         android_tests:
-            run: echo " ✅ RUNNING Android tests checks... " &&  ./gradlew test
+            run: echo "\033[0;35m🧪 Running Android tests...\033[0m" && ./gradlew test || { echo "\033[0;31m❌ Android tests FAILED!\033[0m" >&2; exit 1; }
 
         # ---- React Native Tests (Jest) ----
         rn_tests:
             root: "react-native"
-            run: echo " ✅ RUNNING React native test checks... " && npm test --if-present
+            run: echo "\033[0;35m🧪 Running React Native tests...\033[0m" && npm test --if-present || { echo "\033[0;31m❌ React Native tests FAILED!\033[0m" >&2; exit 1; }
 
         # ---- Build Verification ----
         android_build:
-            run: echo " ✅ RUNNING Android builds... " && ./gradlew assembleDebug
+            run: echo "\033[0;33m🔨 Building Android app...\033[0m" && ./gradlew assembleDebug || { echo "\033[0;31m❌ Android build FAILED!\033[0m" >&2; exit 1; }
 
 
 #commit-msg:
