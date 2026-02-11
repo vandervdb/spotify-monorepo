@@ -11,7 +11,8 @@ const mapQueueToTracks = (queueItems: TrackItem[] | undefined): QueueTrack[] => 
     if (queueItems === undefined) return [];
     return queueItems
         .filter(track => track.trackName && track.artistName && track.trackId)
-        .map(track => ({
+        .map((track, index) => ({
+            id: index.toString(),
             trackName: track.trackName ?? '',
             artistName: track.artistName ?? '',
             trackUri: track.trackId ?? '',
@@ -26,8 +27,8 @@ const MiniPlayer = () => {
 
     if (!isConnected) return <MiniPlayerDisconnected authenticate={authenticateUser} />;
 
-    log.debug(`MiniPlayer: PLAYER STATE -> ${JSON.stringify(playerState)}`);
-    log.debug(`MiniPlayer: QUEUE -> ${JSON.stringify(queueTracks)}`);
+    // log.debug(`MiniPlayer: PLAYER STATE -> ${JSON.stringify(playerState)}`);
+    // log.debug(`MiniPlayer: QUEUE -> ${JSON.stringify(queueTracks)}`);
     log.debug(`MiniPlayer: CURRENTLY PLAYING -> ${JSON.stringify(playerState)}`);
 
     return (

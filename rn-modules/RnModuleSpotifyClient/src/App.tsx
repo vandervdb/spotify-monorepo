@@ -1,12 +1,14 @@
-import React, {useEffect, useMemo} from 'react';
-import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View} from 'react-native';
-import {Header} from 'react-native/Libraries/NewAppScreen';
+import React, {useEffect} from 'react';
+import {StatusBar, StyleSheet, View} from 'react-native';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import {PaperProvider} from 'react-native-paper';
 import MiniPlayer from './components/MiniPlayer';
 import {useSpotifySession, useStyle} from './hooks';
+import {BORDER_RADIUS, COLORS, SIZES, SPACING, TYPOGRAPHY} from './theme';
 
 function App(): React.JSX.Element {
     const {isDarkMode, backgroundStyle} = useStyle();
-    const {authenticateUser, isConnected, getAuthToken} = useSpotifySession();
+    const {authenticateUser, isConnected} = useSpotifySession();
 
     useEffect(() => {
         if (!isConnected) {
@@ -15,50 +17,82 @@ function App(): React.JSX.Element {
     }, [isConnected, authenticateUser]);
 
     return (
-        <SafeAreaView style={[styles.flex1, backgroundStyle]}>
-            <StatusBar
-                barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-                backgroundColor={backgroundStyle.backgroundColor}
-            />
-            <ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.flex1}>
-                <Header />
-                <View style={[styles.container]}>
-                    <MiniPlayer />
+        <SafeAreaProvider>
+            <PaperProvider>
+                <View style={[styles.flex1, backgroundStyle]}>
+                    <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+                    <SafeAreaView style={styles.flex1}>
+                        <View style={styles.container}>
+                            <View style={styles.topCard}></View>
+                            <View style={styles.middleCard}></View>
+                            <MiniPlayer />
+                        </View>
+                    </SafeAreaView>
                 </View>
-            </ScrollView>
-        </SafeAreaView>
+            </PaperProvider>
+        </SafeAreaProvider>
     );
 }
 
 const styles = StyleSheet.create({
     flex1: {flex: 1},
     container: {
-        paddingHorizontal: 16,
-        paddingBottom: 24,
-        backgroundColor: '#00000000',
+        flex: 1,
+        paddingHorizontal: SPACING.l,
+        paddingBottom: SPACING.xl,
+        backgroundColor: COLORS.transparent,
     },
-    h1: {fontSize: 22, fontWeight: '700', marginTop: 12, marginBottom: 12},
-    h2: {fontSize: 16, fontWeight: '600', marginTop: 16, marginBottom: 6},
+    topCard: {
+        height: SIZES.topCardHeight,
+        borderRadius: BORDER_RADIUS.l,
+        backgroundColor: COLORS.cardBackground,
+        marginBottom: SPACING.m,
+    },
+    middleCard: {
+        flex: 1,
+        borderRadius: BORDER_RADIUS.l,
+        backgroundColor: COLORS.cardBackground,
+        marginBottom: SPACING.m,
+    },
+    miniplayer: {justifyContent: 'flex-end'},
+    h1: {
+        ...TYPOGRAPHY.h1,
+        marginTop: SPACING.m,
+        marginBottom: SPACING.m,
+    },
+    h2: {
+        ...TYPOGRAPHY.h2,
+        marginTop: SPACING.l,
+        marginBottom: SPACING.s,
+    },
     input: {
         borderWidth: StyleSheet.hairlineWidth,
-        borderColor: '#555',
-        borderRadius: 8,
-        padding: 10,
-        marginBottom: 8,
-        color: '#222',
-        backgroundColor: '#fff',
+        borderColor: COLORS.border,
+        borderRadius: BORDER_RADIUS.m,
+        padding: SPACING.s + 2, // 10
+        marginBottom: SPACING.s,
+        color: COLORS.inputText,
+        backgroundColor: COLORS.inputBackground,
     },
     inputSmall: {flex: 1},
-    row: {flexDirection: 'row', alignItems: 'center', marginVertical: 6},
-    spacer: {width: 10},
-    small: {fontSize: 12, color: '#666', marginTop: 4},
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: SPACING.s - 2, // 6
+    },
+    spacer: {width: SPACING.s + 2}, // 10
+    small: {
+        ...TYPOGRAPHY.small,
+        color: COLORS.secondaryText,
+        marginTop: SPACING.xs,
+    },
     eventsBox: {
         borderWidth: StyleSheet.hairlineWidth,
-        borderColor: '#444',
-        borderRadius: 8,
-        padding: 10,
-        marginTop: 8,
-        backgroundColor: '#fafafa',
+        borderColor: COLORS.eventsBorder,
+        borderRadius: BORDER_RADIUS.m,
+        padding: SPACING.s + 2, // 10
+        marginTop: SPACING.s,
+        backgroundColor: COLORS.eventsBackground,
     },
 });
 

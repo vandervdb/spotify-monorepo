@@ -1,4 +1,5 @@
 export interface QueueTrack {
+    id: string;
     trackName: string;
     artistName: string;
     trackUri: string;

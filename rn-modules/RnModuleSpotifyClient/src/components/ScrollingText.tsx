@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Animated, Easing, ScrollView, StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
+import {log} from '@core/logger';
 
 export const ScrollingText = ({text, style, variant}: {text: string; style?: any; variant: any}) => {
     const [containerWidth, setContainerWidth] = useState(0);
@@ -8,6 +9,7 @@ export const ScrollingText = ({text, style, variant}: {text: string; style?: any
     const scrollX = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
+        log.debug(`ScrollingText: text="${text}", textWidth=${textWidth}, containerWidth=${containerWidth}`);
         scrollX.setValue(0);
         if (textWidth > containerWidth && containerWidth > 0) {
             const scrollDistance = textWidth - containerWidth + 40;
@@ -41,25 +43,20 @@ export const ScrollingText = ({text, style, variant}: {text: string; style?: any
                     flexDirection: 'row',
                     transform: [{translateX: scrollX}],
                     width: textWidth > 0 ? textWidth : undefined,
-                    minWidth: textWidth > 0 ? textWidth : undefined,
+                    minWidth: '100%',
                 }}>
-                <Text
-                    variant={variant}
-                    style={[style, {flexShrink: 0, width: textWidth > 0 ? textWidth : undefined}]}
-                    numberOfLines={1}
-                    ellipsizeMode="clip">
+                <Text variant={variant} style={[style, {flexShrink: 0}]} numberOfLines={1} ellipsizeMode="clip">
                     {text}
                 </Text>
             </Animated.View>
 
             <ScrollView
                 horizontal
-                style={{position: 'absolute', opacity: 0, height: 0}}
+                style={{position: 'absolute', top: -1000, left: -1000, opacity: 0, height: 100}}
                 contentContainerStyle={{alignItems: 'flex-start'}}
                 pointerEvents="none">
                 <Text
                     variant={variant}
-                    style={[style, {flexShrink: 0, width: undefined}]}
                     onLayout={e => {
                         const w = e.nativeEvent.layout.width;
                         if (w > 0) setTextWidth(w);

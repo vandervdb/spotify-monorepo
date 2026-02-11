@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import {Animated, Image} from 'react-native';
 import {log} from '@core/logger';
 import {SPOTIFY_CONSTANTS} from '../utils';
+import {BORDER_RADIUS, SIZES} from '../theme';
 
 export interface SpotifyTrackCoverProps {
     uri: string | undefined;

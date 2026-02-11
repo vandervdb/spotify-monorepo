@@ -1,11 +1,14 @@
 import {Card, IconButton, MD3Colors, ProgressBar} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
+import MiniPlayerTrack from './MiniPlayerTrack';
 import TracksList from './TracksList';
 import SpotifyTrackCover from './SpotifyTrackCover';
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {log} from '@core/logger';
 import {PlayerState} from '../../specs';
 import {QueueTrack} from '../types';
+import {BORDER_RADIUS, COLORS, SIZES, SPACING} from '../theme';
+import {TrackProgress} from './TrackProgress';
 
 export interface MiniplayerConnectedProps {
     currentlyPlaying: PlayerState | undefined;
@@ -16,9 +19,9 @@ export interface MiniplayerConnectedProps {
 }
 
 const MiniPlayerConnected = ({currentlyPlaying, queueTracks, setUri, pause, resume}: MiniplayerConnectedProps) => {
-    const {isPlaying, positionMs} = currentlyPlaying || {isPlaying: false, positionMs: 0};
+    const {isPlaying, durationMs, positionMs} = currentlyPlaying || {isPlaying: false};
     log.debug(
-        `Currently Playing: ${currentlyPlaying?.trackName} / ${currentlyPlaying?.artistName} / ${currentlyPlaying?.trackUri} }`,
+        `Currently Playing: ${currentlyPlaying?.trackName} / ${currentlyPlaying?.artistName} / ${positionMs} () is playing: ${isPlaying}`,
     );
 
     return (
@@ -28,24 +31,36 @@ const MiniPlayerConnected = ({currentlyPlaying, queueTracks, setUri, pause, resu
                     <SpotifyTrackCover uri={currentlyPlaying?.coverId} />
                 </View>
                 <View style={styles.tracksWrapper}>
-                    <TracksList
-                        trackList={queueTracks}
-                        currentlyPlaying={currentlyPlaying}
-                        onCurrentTrackChange={uri => setUri?.(uri)}
-                    />
+                    {queueTracks.length > 0 ? (
+                        <TracksList
+                            trackList={queueTracks}
+                            currentlyPlaying={currentlyPlaying}
+                            onCurrentTrackChange={uri => setUri?.(uri)}
+                        />
+                    ) : (
+                        <MiniPlayerTrack
+                            trackName={currentlyPlaying?.trackName || ' '}
+                            artistName={currentlyPlaying?.artistName || ' '}
+                        />
+                    )}
                 </View>
                 <View style={styles.controls}>
                     <IconButton
                         icon={isPlaying ? 'pause' : 'play'}
                         mode="contained"
-                        size={30}
-                        iconColor={'#FFFFFF'}
-                        containerColor={'#282828'}
+                        size={SIZES.iconButtonSize}
+                        iconColor={COLORS.white}
+                        containerColor={COLORS.cardBackground}
                         onPress={() => (isPlaying ? pause?.() : resume?.())}
                     />
                 </View>
             </View>
-            <ProgressBar progress={positionMs / 1000} color={MD3Colors.primary50} style={styles.progress} />
+            <TrackProgress
+                durationMs={durationMs}
+                positionMs={positionMs}
+                isPlaying={isPlaying}
+                style={styles.progress}
+            />
         </Card>
     );
 };
@@ -54,23 +69,23 @@ export default MiniPlayerConnected;
 
 const styles = StyleSheet.create({
     container: {
-        margin: 8,
-        borderRadius: 12,
+        marginBottom: SPACING.s,
+        borderRadius: BORDER_RADIUS.l,
         overflow: 'hidden',
-        backgroundColor: '#282828',
+        backgroundColor: COLORS.cardBackground,
     },
     content: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
+        paddingHorizontal: SPACING.l,
+        paddingVertical: SPACING.s,
     },
     coverContainer: {
-        marginRight: 12,
+        marginRight: SPACING.m,
     },
     tracksWrapper: {
         flex: 1,
-        height: 60,
+        height: SIZES.miniPlayerTrackHeight,
         overflow: 'hidden',
     },
     controls: {
@@ -78,6 +93,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     progress: {
-        height: 2,
+        height: SIZES.progressBarHeight,
+        marginBottom: SPACING.xs,
     },
 });

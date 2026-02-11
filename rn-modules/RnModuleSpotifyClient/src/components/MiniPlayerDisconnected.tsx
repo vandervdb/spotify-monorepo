@@ -1,6 +1,7 @@
 import {Card, Text} from 'react-native-paper';
 import {TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
+import {BORDER_RADIUS, COLORS, SPACING} from '../theme';
 
 export interface MiniPlayerDisconnectedProps {
     authenticate?: () => void;
@@ -19,18 +20,18 @@ export default MiniPlayerDisconnected;
 
 const styles = StyleSheet.create({
     container: {
-        margin: 8,
-        borderRadius: 12,
+        marginBottom: SPACING.s,
+        borderRadius: BORDER_RADIUS.l,
         overflow: 'hidden',
-        backgroundColor: '#282828',
+        backgroundColor: COLORS.cardBackground,
     },
     authButton: {
-        padding: 16,
+        padding: SPACING.l,
         alignItems: 'center',
         justifyContent: 'center',
     },
     authText: {
-        color: '#1DB954',
+        color: COLORS.spotifyGreen,
         fontWeight: 'bold',
     },
 });

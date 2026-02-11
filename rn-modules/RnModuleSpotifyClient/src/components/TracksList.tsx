@@ -1,101 +1,132 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {FlatList, ViewToken} from 'react-native';
-import MiniPlayerTrack from './MiniPlayerTrack';
+import {FlatList, LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {log} from '@core/logger';
 import {QueueTrack} from '../types';
 import {PlayerState} from '../../specs';
+import MiniPlayerTrack from './MiniPlayerTrack';
 
 export interface TracksComponentProps {
     trackList: QueueTrack[];
     currentlyPlaying: PlayerState | undefined;
-    onCurrentTrackChange: (trackId: string) => void;
+    onCurrentTrackChange: (trackUri: string) => void;
 }
 
 const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksComponentProps) => {
-    const flatListRef = useRef<FlatList>(null);
+    const flatListRef = useRef<FlatList<QueueTrack>>(null);
     const [containerWidth, setContainerWidth] = useState(0);
-    const displayedTrackId = useRef(currentlyPlaying?.trackUri);
-    const isScrollingProgrammatically = useRef(false);
+
     const currentTrackUri = currentlyPlaying?.trackUri;
 
-    log.debug(
-        `TracksComponent: currentlyPlaying = ${currentTrackUri} / displayedTrackId = ${displayedTrackId.current}`,
+    const isScrollingProgrammatically = useRef(false);
+    const lastOffsetXRef = useRef(0);
+
+    /**
+     * Capture largeur container
+     */
+    const onLayout = useCallback((e: LayoutChangeEvent) => {
+        const width = e.nativeEvent.layout.width;
+        setContainerWidth(prev => (prev === width ? prev : width));
+    }, []);
+
+    /**
+     * getItemLayout obligatoire pour scrollToIndex fiable
+     */
+    const getItemLayout = useCallback(
+        (_: ArrayLike<QueueTrack> | null | undefined, index: number) => ({
+            length: containerWidth,
+            offset: containerWidth * index,
+            index,
+        }),
+        [containerWidth],
     );
 
+    /**
+     * Scroll programmatique quand la piste change
+     */
     useEffect(() => {
-        if (currentTrackUri && trackList.length > 0 && currentTrackUri !== displayedTrackId.current) {
-            const index = trackList.findIndex(track => track.trackUri === currentTrackUri);
-            if (index !== -1 && index < trackList.length) {
-                log.debug(`Scrolling to index ${index} for track: ${currentTrackUri}`);
-                isScrollingProgrammatically.current = true;
-                displayedTrackId.current = currentTrackUri;
-                flatListRef.current?.scrollToIndex({
-                    index,
-                    animated: true,
-                    viewPosition: 0,
-                });
-                // Reset flag after animation
-                setTimeout(() => {
-                    isScrollingProgrammatically.current = false;
-                }, 500);
-            }
+        if (!currentTrackUri || trackList.length === 0 || containerWidth <= 0) {
+            return;
         }
-    }, [currentTrackUri, trackList]);
 
-    const onViewableItemsChanged = useCallback(
-        ({changed, viewableItems}: {changed: ViewToken<QueueTrack>[]; viewableItems: ViewToken<QueueTrack>[]}) => {
-            if (isScrollingProgrammatically.current) return;
+        const index = trackList.findIndex(track => track.trackUri === currentTrackUri);
 
-            const currentTrackId = viewableItems[0]?.item?.trackUri;
-            log.debug(`onCurrentTrack Viewable: ${currentTrackId}`);
-            log.debug(`onCurrentTrack Changed 0: ${changed[0]?.item?.trackUri}`);
-            log.debug(`onCurrentTrack Changed 1: ${changed[1]?.item?.trackUri}`);
+        if (index < 0) return;
 
-            if (currentTrackId) {
-                displayedTrackId.current = currentTrackId;
-            }
-        },
-        [],
+        log.debug(`TracksList: scrollToIndex ${index} for ${currentTrackUri}`);
+
+        isScrollingProgrammatically.current = true;
+
+        flatListRef.current?.scrollToIndex({
+            index,
+            animated: true,
+            viewPosition: 0,
+        });
+
+        setTimeout(() => {
+            isScrollingProgrammatically.current = false;
+        }, 400);
+    }, [currentTrackUri, trackList, containerWidth]);
+
+    /**
+     * Stocke l'offset horizontal
+     */
+    const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        lastOffsetXRef.current = e.nativeEvent.contentOffset.x;
+    }, []);
+
+    /**
+     * Commit du changement quand le scroll utilisateur est terminé
+     */
+    const onMomentumScrollEnd = useCallback(() => {
+        if (isScrollingProgrammatically.current) return;
+        if (containerWidth <= 0) return;
+
+        const index = Math.round(lastOffsetXRef.current / containerWidth);
+        const item = trackList[index];
+
+        log.debug(
+            `TracksList: onMomentumScrollEnd offset=${lastOffsetXRef.current} index=${index} uri=${item?.trackUri}`,
+        );
+
+        if (!item?.trackUri) return;
+        if (item.trackUri === currentTrackUri) return;
+
+        onCurrentTrackChange(item.trackUri);
+    }, [containerWidth, trackList, currentTrackUri, onCurrentTrackChange]);
+
+    /**
+     * Render item optimisé
+     */
+    const renderItem = useCallback(
+        ({item}: {item: QueueTrack}) => (
+            <MiniPlayerTrack
+                trackName={item.trackName ?? ''}
+                artistName={item.artistName ?? ''}
+                width={containerWidth}
+            />
+        ),
+        [containerWidth],
     );
 
-    const onScrollEnd = useCallback(() => {
-        if (isScrollingProgrammatically.current) return;
-
-        log.debug(`onScrollEnd: ${displayedTrackId.current}`);
-        if (displayedTrackId.current === currentTrackUri || !displayedTrackId.current) return;
-        onCurrentTrackChange(displayedTrackId.current);
-    }, [currentTrackUri, onCurrentTrackChange]);
     if (trackList.length === 0) {
+        log.debug('TracksList: trackList empty');
         return null;
     }
 
     return (
         <FlatList
             ref={flatListRef}
-            horizontal={true}
+            horizontal
             pagingEnabled
-            onLayout={e => setContainerWidth(e.nativeEvent.layout.width)}
             data={trackList}
-            renderItem={({item}) => (
-                <MiniPlayerTrack
-                    trackName={item.trackName ?? ''}
-                    artistName={item.artistName ?? ''}
-                    width={containerWidth}
-                />
-            )}
-            keyExtractor={(item, index) => item.trackUri || index.toString()}
-            onViewableItemsChanged={onViewableItemsChanged}
-            onMomentumScrollEnd={onScrollEnd}
-            onScrollToIndexFailed={info => {
-                log.error(`ScrollToIndex failed: ${JSON.stringify(info)}`);
-                // setTimeout(() => {
-                //     flatListRef.current?.scrollToIndex({
-                //         index: info.index,
-                //         animated: true,
-                //         viewPosition: 0,
-                //     });
-                // }, 100);
-            }}
+            renderItem={renderItem}
+            keyExtractor={item => item.trackUri}
+            onLayout={onLayout}
+            getItemLayout={containerWidth > 0 ? getItemLayout : undefined}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+            onMomentumScrollEnd={onMomentumScrollEnd}
+            showsHorizontalScrollIndicator={false}
         />
     );
 };
