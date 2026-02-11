@@ -119,6 +119,7 @@ spotify-monorepo/
 ├─ tsconfig.base.json              # Base TS config for workspaces
 ├─ tsconfig.json                   # TS project references
 ├─ turbo.json                      # Turborepo (if used)
+├─ types/                          # Shared TS ambient types (e.g. SVG modules)
 ├─ gradlew                         # Gradle wrapper (Unix)
 ├─ gradlew.bat                     # Gradle wrapper (Windows)
 ├─ LICENSE                         # MIT License
@@ -308,10 +309,10 @@ Key points in `apps/RnSample/metro.config.js`:
 - `watchFolders` → repo root + packages
 - `unstable_enableSymlinks: true`
 - SVG support via `react-native-svg` + `react-native-svg-transformer`
-- Types: `apps/RnSample/src/types/svg.d.ts`
+- Types: `types/svg.d.ts`
 
 ```ts
-// apps/RnSample/src/types/svg.d.ts
+// types/svg.d.ts
 declare module '*.svg' {
   import type { FC } from 'react';
   import type { SvgProps } from 'react-native-svg';
@@ -319,6 +320,8 @@ declare module '*.svg' {
   export default content;
 }
 ```
+
+Shared ambient types live in `types/` and are included by RN app/modules via their `tsconfig.json`.
 
 ---
 
