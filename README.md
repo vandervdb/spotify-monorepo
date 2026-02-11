@@ -202,6 +202,26 @@ Note: Some scripts delegate to workspace scripts via yarn workspaces foreach.
 
 ---
 
+## Git hooks (Lefthook)
+
+This repo uses Lefthook to run quality gates before commits and pushes. The configuration lives in `lefthook.yml`.
+
+Pre-commit (runs in parallel):
+- Spotless format checks for `*.kt`/`*.kts`
+- Ktlint checks for Kotlin
+- Prettier format checks for `*.ts`/`*.tsx`/`*.js`/`*.jsx`
+- ESLint for React Native (when available)
+
+Pre-push (runs sequentially):
+- Android lint
+- Android unit tests
+- React Native tests (Jest, when available)
+- Android debug build (`assembleDebug`)
+
+If you have Lefthook installed locally, run `lefthook install` once to enable the hooks.
+
+---
+
 ## Environment variables (.env)
 
 Create `apps/RnSample/.env`:
