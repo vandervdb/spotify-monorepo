@@ -20,17 +20,11 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
     const isScrollingProgrammatically = useRef(false);
     const lastOffsetXRef = useRef(0);
 
-    /**
-     * Capture largeur container
-     */
     const onLayout = useCallback((e: LayoutChangeEvent) => {
         const width = e.nativeEvent.layout.width;
         setContainerWidth(prev => (prev === width ? prev : width));
     }, []);
 
-    /**
-     * getItemLayout obligatoire pour scrollToIndex fiable
-     */
     const getItemLayout = useCallback(
         (_: ArrayLike<QueueTrack> | null | undefined, index: number) => ({
             length: containerWidth,
@@ -40,9 +34,6 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
         [containerWidth],
     );
 
-    /**
-     * Scroll programmatique quand la piste change
-     */
     useEffect(() => {
         if (!currentTrackUri || trackList.length === 0 || containerWidth <= 0) {
             return;
@@ -67,16 +58,10 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
         }, 400);
     }, [currentTrackUri, trackList, containerWidth]);
 
-    /**
-     * Stocke l'offset horizontal
-     */
     const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
         lastOffsetXRef.current = e.nativeEvent.contentOffset.x;
     }, []);
 
-    /**
-     * Commit du changement quand le scroll utilisateur est terminé
-     */
     const onMomentumScrollEnd = useCallback(() => {
         if (isScrollingProgrammatically.current) return;
         if (containerWidth <= 0) return;
@@ -94,9 +79,6 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
         onCurrentTrackChange(item.trackUri);
     }, [containerWidth, trackList, currentTrackUri, onCurrentTrackChange]);
 
-    /**
-     * Render item optimisé
-     */
     const renderItem = useCallback(
         ({item}: {item: QueueTrack}) => (
             <MiniPlayerTrack

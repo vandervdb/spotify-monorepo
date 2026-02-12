@@ -1,9 +1,9 @@
-import {Card, IconButton, MD3Colors, ProgressBar} from 'react-native-paper';
+import {Card, IconButton} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 import MiniPlayerTrack from './MiniPlayerTrack';
 import TracksList from './TracksList';
 import SpotifyTrackCover from './SpotifyTrackCover';
-import React, {useEffect, useMemo, useState} from 'react';
+import React from 'react';
 import {log} from '@core/logger';
 import {PlayerState} from '../../specs';
 import {QueueTrack} from '../types';
@@ -14,11 +14,19 @@ export interface MiniplayerConnectedProps {
     currentlyPlaying: PlayerState | undefined;
     queueTracks: QueueTrack[];
     setUri?: React.Dispatch<React.SetStateAction<string>>;
+    onSeek?: (positionMs: number) => void;
     pause?: () => void;
     resume?: () => void;
 }
 
-const MiniPlayerConnected = ({currentlyPlaying, queueTracks, setUri, pause, resume}: MiniplayerConnectedProps) => {
+const MiniPlayerConnected = ({
+    currentlyPlaying,
+    queueTracks,
+    setUri,
+    onSeek,
+    pause,
+    resume,
+}: MiniplayerConnectedProps) => {
     const {isPlaying, durationMs, positionMs} = currentlyPlaying || {isPlaying: false};
     log.debug(
         `Currently Playing: ${currentlyPlaying?.trackName} / ${currentlyPlaying?.artistName} / ${positionMs} () is playing: ${isPlaying}`,
@@ -58,6 +66,7 @@ const MiniPlayerConnected = ({currentlyPlaying, queueTracks, setUri, pause, resu
             <TrackProgress
                 durationMs={durationMs}
                 positionMs={positionMs}
+                onSeek={onSeek}
                 isPlaying={isPlaying}
                 style={styles.progress}
             />

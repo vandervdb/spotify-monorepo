@@ -40,7 +40,7 @@ export const useSpotifyPlayer = () => {
     );
 
     const [uri, setUri] = useState<string>('spotify:track:11dFghVXANMlKmJXsNCbNl');
-    const [positionMs, setPositionMs] = useState<string>('0');
+    const [positionMs, setPositionMs] = useState<number>(0);
     const [stateText] = useState<string>('—');
     const [playerState, setPlayerState] = useState<PlayerState | null>(null);
     const [queueState, setQueueState] = useState<QueueState | null>(null);
@@ -91,18 +91,20 @@ export const useSpotifyPlayer = () => {
     const pause = useCallback(() => withCatch(player.pause), [withCatch, player]);
     const resume = useCallback(() => withCatch(player.resume), [withCatch, player]);
 
-    const seek = useCallback(() => {
-        const ms = Number(positionMs);
-        if (Number.isNaN(ms)) {
-            Alert.alert('Invalid position', 'Enter milliseconds as a number');
-            return;
-        }
-        withCatch(async () => {
-            await player.seekTo(ms);
-        }).then(r => {
-            if (r!) log.error(r);
-        });
-    }, [positionMs, withCatch, player]);
+    const seek = useCallback(
+        (positionMs: number) => {
+            if (Number.isNaN(positionMs)) {
+                Alert.alert('Invalid position', 'Enter milliseconds as a number');
+                return;
+            }
+            withCatch(async () => {
+                await player.seekTo(positionMs);
+            }).then(r => {
+                if (r!) log.error(r);
+            });
+        },
+        [positionMs, withCatch, player],
+    );
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -119,7 +121,6 @@ export const useSpotifyPlayer = () => {
             uri,
             setUri,
             positionMs,
-            setPositionMs,
             stateText,
             play,
             pause,

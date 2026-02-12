@@ -21,7 +21,7 @@ const mapQueueToTracks = (queueItems: TrackItem[] | undefined): QueueTrack[] => 
 
 const MiniPlayer = () => {
     const {isConnected, authenticateUser} = useSpotifySession();
-    const {setUri, pause, resume, playerState, queueState} = useSpotifyPlayer();
+    const {setUri, pause, resume, seek, playerState, queueState} = useSpotifyPlayer();
     const queueItems = queueState?.items;
     const queueTracks = useMemo(() => mapQueueToTracks(queueItems), [queueItems]);
 
@@ -36,6 +36,7 @@ const MiniPlayer = () => {
             currentlyPlaying={playerState ?? undefined}
             queueTracks={queueTracks}
             setUri={setUri}
+            onSeek={seek}
             pause={pause}
             resume={resume}
         />

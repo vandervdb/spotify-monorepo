@@ -8,7 +8,7 @@ export interface TrackProgressProps {
     durationMs: number | undefined;
     positionMs: number | undefined;
     isPlaying: boolean;
-    onSeek?: (newPosition: number) => void;
+    onSeek?: (positionMs: number) => void;
     increment?: number;
     style?: StyleProp<ViewStyle>;
 }
@@ -51,11 +51,9 @@ export const TrackProgress = ({
     }, [position, durationMs]);
 
     const handleClick = (event: any) => {
-        log.debug(`TrackProgress: containerWidth: ${containerWidth}, handleClick: ${event.nativeEvent.locationX}`);
-        log.debug(`TrackProgress: progress before click -> position: ${progress}`);
-        setPosition((event.nativeEvent.locationX * durationMs!) / containerWidth);
-        log.debug(`TrackProgress: handleClick position: ${position}`);
-        log.debug(`TrackProgress: progress after click -> position: ${progress}`);
+        const clickedPosition = event.nativeEvent.locationX;
+        const newPosition = Math.round((clickedPosition * durationMs!) / containerWidth);
+        onSeek?.(newPosition);
     };
 
     return (
