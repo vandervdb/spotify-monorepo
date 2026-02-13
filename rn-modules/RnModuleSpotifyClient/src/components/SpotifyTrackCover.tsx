@@ -2,30 +2,26 @@ import React, {useEffect, useRef} from 'react';
 import {Animated, Image} from 'react-native';
 import {log} from '@core/logger';
 import {SPOTIFY_CONSTANTS} from '../utils';
-import {BORDER_RADIUS, SIZES} from '../theme';
+import {useSpotifyPlayer} from '../hooks';
 
-export interface SpotifyTrackCoverProps {
-    uri: string | undefined;
-    direction?: 'left' | 'right';
-}
-
-export const SpotifyTrackCover = ({uri, direction = 'right'}: SpotifyTrackCoverProps) => {
-    const coverUri = `${SPOTIFY_CONSTANTS.SPOTIFY_COVER_UI}${uri}`;
-    const translateX = useRef(new Animated.Value(direction === 'right' ? 100 : -100)).current;
+export const SpotifyTrackCover = () => {
+    const {coverId} = useSpotifyPlayer();
+    const coverUri = `${SPOTIFY_CONSTANTS.SPOTIFY_COVER_UI}${coverId}`;
+    const translateX = useRef(new Animated.Value(100)).current;
 
     log.debug(`Rendering SpotifyTrackCover with uri: ${coverUri}`);
 
     useEffect(() => {
-        log.debug(`SpotifyTrackCover: uri changed to ${uri}`);
+        log.debug(`SpotifyTrackCover: uri changed to ${coverId}`);
 
-        translateX.setValue(direction === 'right' ? 50 : -50);
+        translateX.setValue(0);
 
         Animated.timing(translateX, {
             toValue: 0,
             duration: 300,
             useNativeDriver: true,
         }).start();
-    }, [uri, direction]);
+    }, [coverId]);
 
     return (
         <Animated.View style={{transform: [{translateX}]}}>

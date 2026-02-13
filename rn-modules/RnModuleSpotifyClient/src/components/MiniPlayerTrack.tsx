@@ -10,7 +10,7 @@ export interface MiniPlayerTrackProps {
     width?: number;
 }
 
-const MiniPlayerTrack = React.memo(({trackName, artistName, width}: MiniPlayerTrackProps) => {
+const MiniPlayerTrack = ({trackName, artistName, width}: MiniPlayerTrackProps) => {
     log.debug(`Rendering MiniPlayerTrack: trackName="${trackName}", artistName="${artistName}"`);
     return (
         <View style={[styles.content, width ? {width} : {}]}>
@@ -20,7 +20,7 @@ const MiniPlayerTrack = React.memo(({trackName, artistName, width}: MiniPlayerTr
             </View>
         </View>
     );
-});
+};
 
 export default MiniPlayerTrack;
 

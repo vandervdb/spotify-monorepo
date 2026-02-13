@@ -2,20 +2,13 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {FlatList, LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {log} from '@core/logger';
 import {QueueTrack} from '../types';
-import {PlayerState} from '../../specs';
 import MiniPlayerTrack from './MiniPlayerTrack';
+import {useSpotifyPlayer} from '../hooks';
 
-export interface TracksComponentProps {
-    trackList: QueueTrack[];
-    currentlyPlaying: PlayerState | undefined;
-    onCurrentTrackChange: (trackUri: string) => void;
-}
-
-const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksComponentProps) => {
+const TracksList = () => {
+    const {queueTracks, trackUri, setUri} = useSpotifyPlayer();
     const flatListRef = useRef<FlatList<QueueTrack>>(null);
     const [containerWidth, setContainerWidth] = useState(0);
-
-    const currentTrackUri = currentlyPlaying?.trackUri;
 
     const isScrollingProgrammatically = useRef(false);
     const lastOffsetXRef = useRef(0);
@@ -35,15 +28,15 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
     );
 
     useEffect(() => {
-        if (!currentTrackUri || trackList.length === 0 || containerWidth <= 0) {
+        if (!trackUri || queueTracks.length === 0 || containerWidth <= 0) {
             return;
         }
 
-        const index = trackList.findIndex(track => track.trackUri === currentTrackUri);
+        const index = queueTracks.findIndex(track => track.trackUri === trackUri);
 
         if (index < 0) return;
 
-        log.debug(`TracksList: scrollToIndex ${index} for ${currentTrackUri}`);
+        log.debug(`TracksList: scrollToIndex ${index} for ${trackUri}`);
 
         isScrollingProgrammatically.current = true;
 
@@ -56,7 +49,7 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
         setTimeout(() => {
             isScrollingProgrammatically.current = false;
         }, 400);
-    }, [currentTrackUri, trackList, containerWidth]);
+    }, [trackUri, queueTracks, containerWidth]);
 
     const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
         lastOffsetXRef.current = e.nativeEvent.contentOffset.x;
@@ -67,30 +60,26 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
         if (containerWidth <= 0) return;
 
         const index = Math.round(lastOffsetXRef.current / containerWidth);
-        const item = trackList[index];
+        const item = queueTracks[index];
 
         log.debug(
             `TracksList: onMomentumScrollEnd offset=${lastOffsetXRef.current} index=${index} uri=${item?.trackUri}`,
         );
 
         if (!item?.trackUri) return;
-        if (item.trackUri === currentTrackUri) return;
+        if (item.trackUri === trackUri) return;
 
-        onCurrentTrackChange(item.trackUri);
-    }, [containerWidth, trackList, currentTrackUri, onCurrentTrackChange]);
+        setUri(item.trackUri);
+    }, [containerWidth, queueTracks, trackUri, setUri]);
 
     const renderItem = useCallback(
         ({item}: {item: QueueTrack}) => (
-            <MiniPlayerTrack
-                trackName={item.trackName ?? ''}
-                artistName={item.artistName ?? ''}
-                width={containerWidth}
-            />
+            <MiniPlayerTrack trackName={item.trackName} artistName={item.artistName} width={containerWidth} />
         ),
         [containerWidth],
     );
 
-    if (trackList.length === 0) {
+    if (queueTracks.length === 0) {
         log.debug('TracksList: trackList empty');
         return null;
     }
@@ -100,7 +89,7 @@ const TracksList = ({trackList, currentlyPlaying, onCurrentTrackChange}: TracksC
             ref={flatListRef}
             horizontal
             pagingEnabled
-            data={trackList}
+            data={queueTracks}
             renderItem={renderItem}
             keyExtractor={item => item.trackUri}
             onLayout={onLayout}

@@ -1,26 +1,17 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {LayoutChangeEvent, StyleProp, TouchableWithoutFeedback, View, ViewStyle} from 'react-native';
 import {MD3Colors, ProgressBar} from 'react-native-paper';
-import {log} from '@core/logger';
 import {SPACING} from '../theme';
+import {useSpotifyPlayer} from '../hooks';
 
 export interface TrackProgressProps {
-    durationMs: number | undefined;
-    positionMs: number | undefined;
-    isPlaying: boolean;
-    onSeek?: (positionMs: number) => void;
     increment?: number;
     style?: StyleProp<ViewStyle>;
 }
 
-export const TrackProgress = ({
-    positionMs,
-    durationMs,
-    isPlaying,
-    onSeek,
-    increment = 500,
-    style,
-}: TrackProgressProps) => {
+export const TrackProgress = ({increment = 500, style}: TrackProgressProps) => {
+    const {isPlaying, positionMs, durationMs, seek} = useSpotifyPlayer();
+
     const [position, setPosition] = useState(positionMs ?? 0);
     const [containerWidth, setContainerWidth] = useState(0);
 
@@ -52,8 +43,9 @@ export const TrackProgress = ({
 
     const handleClick = (event: any) => {
         const clickedPosition = event.nativeEvent.locationX;
+
         const newPosition = Math.round((clickedPosition * durationMs!) / containerWidth);
-        onSeek?.(newPosition);
+        seek?.(newPosition);
     };
 
     return (

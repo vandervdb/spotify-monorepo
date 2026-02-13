@@ -2,8 +2,9 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Alert, NativeEventEmitter} from 'react-native';
 import {log} from '@core/logger';
 import {createNativeModuleEmitter, mapSpotifyPlayerState, withCatch} from '../utils';
-import SpotifyModuleSpec from '../../specs/NativeSpotifyClientModule';
+import SpotifyModuleSpec, {TrackItem} from '../../specs/NativeSpotifyClientModule';
 import {PlayerState, QueueState} from '../../specs';
+import {QueueTrack} from '../types';
 
 export const useSpotifyPlayer = () => {
     const emitterRef = useRef<NativeEventEmitter | null>(null);
@@ -39,11 +40,34 @@ export const useSpotifyPlayer = () => {
         [],
     );
 
+    const mapQueueToTracks = (queueItems: TrackItem[] | undefined): QueueTrack[] => {
+        if (queueItems === undefined) return [];
+        return queueItems
+            .filter(track => track.trackName && track.artistName && track.trackId)
+            .map((track, index) => ({
+                id: index.toString(),
+                trackName: track.trackName ?? '',
+                artistName: track.artistName ?? '',
+                trackUri: track.trackId ?? '',
+            }));
+    };
+
     const [uri, setUri] = useState<string>('spotify:track:11dFghVXANMlKmJXsNCbNl');
-    const [positionMs, setPositionMs] = useState<number>(0);
-    const [stateText] = useState<string>('—');
     const [playerState, setPlayerState] = useState<PlayerState | null>(null);
     const [queueState, setQueueState] = useState<QueueState | null>(null);
+    const queueItems = queueState?.items;
+    const queueTracks = useMemo(() => mapQueueToTracks(queueItems), [queueItems]);
+
+    const {durationMs} = playerState ?? {durationMs: 0};
+    const {positionMs} = playerState ?? {positionMs: 0};
+    const {isPlaying} = playerState ?? {isPlaying: false};
+    const {trackUri} = playerState ?? {trackUri: ''};
+    const {coverId} = playerState ?? {coverId: ''};
+    const {trackName} = playerState ?? {trackName: ''};
+    const {artistName} = playerState ?? {artistName: ''};
+    const {albumName} = playerState ?? {albumName: ''};
+    const {isTrackSaved} = playerState ?? {isTrackSaved: false};
+
     const lastRawStateRef = useRef<string>('');
     const counter = useRef<number>(0);
 
@@ -118,15 +142,24 @@ export const useSpotifyPlayer = () => {
         () => ({
             playerState,
             queueState,
+            queueItems,
+            queueTracks,
             uri,
             setUri,
             positionMs,
-            stateText,
+            durationMs,
+            isPlaying,
+            trackUri,
+            coverId,
+            trackName,
+            artistName,
+            albumName,
+            isTrackSaved,
             play,
             pause,
             resume,
             seek,
         }),
-        [uri, positionMs, stateText, queueState, playerState, play, pause, resume, seek],
+        [uri, positionMs, queueState, playerState, play, pause, resume, seek],
     );
 };

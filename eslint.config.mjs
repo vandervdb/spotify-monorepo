@@ -23,6 +23,14 @@ export default [
       '**/*.cjs',
       '**/*.mjs',
     ],
+      languageOptions: {
+          parser: tsParser,
+          parserOptions: {
+              ecmaVersion: 'latest',
+              sourceType: 'module',
+              ecmaFeatures: { jsx: true },
+          },
+      },
     // Override or add rules here
     rules: {},
   },

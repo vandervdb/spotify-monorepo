@@ -4,53 +4,21 @@ import MiniPlayerTrack from './MiniPlayerTrack';
 import TracksList from './TracksList';
 import SpotifyTrackCover from './SpotifyTrackCover';
 import React from 'react';
-import {log} from '@core/logger';
-import {PlayerState} from '../../specs';
-import {QueueTrack} from '../types';
 import {BORDER_RADIUS, COLORS, SIZES, SPACING} from '../theme';
 import {TrackProgress} from './TrackProgress';
+import {useSpotifyPlayer} from '../hooks';
 
-export interface MiniplayerConnectedProps {
-    currentlyPlaying: PlayerState | undefined;
-    queueTracks: QueueTrack[];
-    setUri?: React.Dispatch<React.SetStateAction<string>>;
-    onSeek?: (positionMs: number) => void;
-    pause?: () => void;
-    resume?: () => void;
-}
-
-const MiniPlayerConnected = ({
-    currentlyPlaying,
-    queueTracks,
-    setUri,
-    onSeek,
-    pause,
-    resume,
-}: MiniplayerConnectedProps) => {
-    const {isPlaying, durationMs, positionMs} = currentlyPlaying || {isPlaying: false};
-    log.debug(
-        `Currently Playing: ${currentlyPlaying?.trackName} / ${currentlyPlaying?.artistName} / ${positionMs} () is playing: ${isPlaying}`,
-    );
+const MiniPlayerConnected = () => {
+    const {isPlaying, queueTracks, resume, pause} = useSpotifyPlayer();
 
     return (
         <Card style={styles.container} elevation={4}>
             <View style={styles.content}>
                 <View style={styles.coverContainer}>
-                    <SpotifyTrackCover uri={currentlyPlaying?.coverId} />
+                    <SpotifyTrackCover />
                 </View>
                 <View style={styles.tracksWrapper}>
-                    {queueTracks.length > 0 ? (
-                        <TracksList
-                            trackList={queueTracks}
-                            currentlyPlaying={currentlyPlaying}
-                            onCurrentTrackChange={uri => setUri?.(uri)}
-                        />
-                    ) : (
-                        <MiniPlayerTrack
-                            trackName={currentlyPlaying?.trackName || ' '}
-                            artistName={currentlyPlaying?.artistName || ' '}
-                        />
-                    )}
+                    {queueTracks.length > 0 ? <TracksList /> : <MiniPlayerTrack />}
                 </View>
                 <View style={styles.controls}>
                     <IconButton
@@ -63,13 +31,7 @@ const MiniPlayerConnected = ({
                     />
                 </View>
             </View>
-            <TrackProgress
-                durationMs={durationMs}
-                positionMs={positionMs}
-                onSeek={onSeek}
-                isPlaying={isPlaying}
-                style={styles.progress}
-            />
+            <TrackProgress style={styles.progress} />
         </Card>
     );
 };
