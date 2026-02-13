@@ -110,10 +110,10 @@ export const useSpotifyPlayer = () => {
         }).then(r => {
             if (r!) log.error(r);
         });
-    }, [uri, withCatch, player]);
+    }, [uri, player]);
 
-    const pause = useCallback(() => withCatch(player.pause), [withCatch, player]);
-    const resume = useCallback(() => withCatch(player.resume), [withCatch, player]);
+    const pause = useCallback(() => withCatch(player.pause), [player]);
+    const resume = useCallback(() => withCatch(player.resume), [player]);
 
     const seek = useCallback(
         (positionMs: number) => {
@@ -127,7 +127,7 @@ export const useSpotifyPlayer = () => {
                 if (r!) log.error(r);
             });
         },
-        [positionMs, withCatch, player],
+        [player],
     );
 
     useEffect(() => {
@@ -136,7 +136,7 @@ export const useSpotifyPlayer = () => {
             return;
         }
         play();
-    }, [play]);
+    }, [uri]);
 
     return useMemo(
         () => ({
@@ -160,6 +160,25 @@ export const useSpotifyPlayer = () => {
             resume,
             seek,
         }),
-        [uri, positionMs, queueState, playerState, play, pause, resume, seek],
+        [
+            playerState,
+            queueState,
+            queueItems,
+            queueTracks,
+            uri,
+            positionMs,
+            durationMs,
+            isPlaying,
+            trackUri,
+            coverId,
+            trackName,
+            artistName,
+            albumName,
+            isTrackSaved,
+            play,
+            pause,
+            resume,
+            seek,
+        ],
     );
 };

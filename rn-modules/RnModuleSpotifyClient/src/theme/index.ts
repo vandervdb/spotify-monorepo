@@ -12,6 +12,7 @@ export const BORDER_RADIUS = {
     xxs: 2,
     xs: 3,
     s: 4,
+    ms: 6,
     m: 8,
     l: 12,
     xl: 16,

@@ -36,11 +36,9 @@ export const useSpotifyModule = () => {
             pause: player.pause,
             resume: player.resume,
             seek: player.seek,
-            stateText: player.stateText,
             uri: player.uri,
             setUri: player.setUri,
             positionMs: player.positionMs,
-            setPositionMs: player.setPositionMs,
         };
     }, [session.connectionStatus, player]);
 

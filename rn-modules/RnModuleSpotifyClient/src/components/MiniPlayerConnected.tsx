@@ -1,15 +1,34 @@
 import {Card, IconButton} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
-import MiniPlayerTrack from './MiniPlayerTrack';
-import TracksList from './TracksList';
-import SpotifyTrackCover from './SpotifyTrackCover';
-import React from 'react';
+import React, {useMemo} from 'react';
+import {TracksList, MiniPlayerTrack, SpotifyTrackCover, TrackProgress} from './index';
 import {BORDER_RADIUS, COLORS, SIZES, SPACING} from '../theme';
-import {TrackProgress} from './TrackProgress';
 import {useSpotifyPlayer} from '../hooks';
+import {log} from '@core/logger';
 
 const MiniPlayerConnected = () => {
-    const {isPlaying, queueTracks, resume, pause} = useSpotifyPlayer();
+    const {isPlaying, queueTracks, trackName, artistName, resume, pause} = useSpotifyPlayer();
+
+    const handlePlayPauseToggle = () => {
+        if (isPlaying) {
+            pause?.();
+        } else {
+            resume?.();
+        }
+    };
+
+    const hasQueue = useMemo(() => {
+        const result = queueTracks && Array.isArray(queueTracks) && queueTracks.length > 0;
+        log.debug(`MiniPlayerConnected: hasQueue=${result}, queueTracks=${JSON.stringify(queueTracks)}`);
+        return result;
+    }, [queueTracks]);
+
+    const safeTrackName = useMemo(() => trackName || '', [trackName]);
+    const safeArtistName = useMemo(() => artistName || '', [artistName]);
+
+    log.debug(
+        `MiniPlayerConnected: Rendering - hasQueue=${hasQueue}, trackName="${safeTrackName}", artistName="${safeArtistName}"`,
+    );
 
     return (
         <Card style={styles.container} elevation={4}>
@@ -18,7 +37,11 @@ const MiniPlayerConnected = () => {
                     <SpotifyTrackCover />
                 </View>
                 <View style={styles.tracksWrapper}>
-                    {queueTracks.length > 0 ? <TracksList /> : <MiniPlayerTrack />}
+                    {hasQueue ? (
+                        <TracksList queueTracks={queueTracks} />
+                    ) : (
+                        <MiniPlayerTrack trackName={safeTrackName} artistName={safeArtistName} />
+                    )}
                 </View>
                 <View style={styles.controls}>
                     <IconButton
@@ -27,7 +50,7 @@ const MiniPlayerConnected = () => {
                         size={SIZES.iconButtonSize}
                         iconColor={COLORS.white}
                         containerColor={COLORS.cardBackground}
-                        onPress={() => (isPlaying ? pause?.() : resume?.())}
+                        onPress={handlePlayPauseToggle}
                     />
                 </View>
             </View>

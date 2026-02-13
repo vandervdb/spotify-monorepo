@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {PaperProvider} from 'react-native-paper';
-import MiniPlayer from './components/MiniPlayer';
+import {MiniPlayer, HeaderCard} from './components';
 import {useSpotifySession, useStyle} from './hooks';
 import {BORDER_RADIUS, COLORS, SIZES, SPACING, TYPOGRAPHY} from './theme';
 
@@ -23,7 +23,8 @@ function App(): React.JSX.Element {
                     <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
                     <SafeAreaView style={styles.flex1}>
                         <View style={styles.container}>
-                            <View style={styles.topCard}></View>
+                            <HeaderCard style={styles.topCard} />
+                            {/*<View style={styles.topCard}></View>*/}
                             <View style={styles.middleCard}></View>
                             <MiniPlayer />
                         </View>

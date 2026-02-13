@@ -1,14 +1,13 @@
 import React from 'react';
 import {useSpotifySession} from '../hooks';
-import MiniPlayerDisconnected from './MiniPlayerDisconnected';
-import MiniPlayerConnected from './MiniPlayerConnected';
+import {MiniPlayerDisconnected, MiniPlayerConnected} from './index';
 
 const MiniPlayer = () => {
-    const {isConnected, authenticateUser} = useSpotifySession();
+    const {isConnected} = useSpotifySession();
 
-    if (!isConnected) return <MiniPlayerDisconnected authenticate={authenticateUser} />;
+    if (!isConnected) return <MiniPlayerDisconnected />;
 
     return <MiniPlayerConnected />;
 };
 
-export default MiniPlayer;
+export default React.memo(MiniPlayer);

@@ -24,32 +24,34 @@ export const TrackProgress = ({increment = 500, style}: TrackProgressProps) => {
             setPosition(positionMs);
         }
         let interval: NodeJS.Timeout;
-        if (isPlaying) {
+        if (isPlaying && durationMs) {
             interval = setInterval(() => {
                 setPosition(prevPosition => {
-                    return prevPosition + increment;
+                    const newPosition = prevPosition + increment;
+                    return Math.min(newPosition, durationMs);
                 });
             }, increment);
         }
         return () => {
             if (interval) clearInterval(interval);
         };
-    }, [positionMs, isPlaying]);
+    }, [positionMs, isPlaying, durationMs, increment]);
 
     const progress = useMemo(() => {
         if (!durationMs || !position) return 0;
         return durationMs > 0 ? position / durationMs : 0;
     }, [position, durationMs]);
 
-    const handleClick = (event: any) => {
-        const clickedPosition = event.nativeEvent.locationX;
+    const handleClick = (event: {nativeEvent: {locationX: number}}) => {
+        if (!durationMs || !containerWidth || durationMs <= 0 || containerWidth <= 0) return;
 
-        const newPosition = Math.round((clickedPosition * durationMs!) / containerWidth);
+        const clickedPosition = event.nativeEvent.locationX;
+        const newPosition = Math.round((clickedPosition * durationMs) / containerWidth);
         seek?.(newPosition);
     };
 
     return (
-        <TouchableWithoutFeedback onPress={handleClick} onLayout={onLayout} disabled={!isPlaying}>
+        <TouchableWithoutFeedback onPress={handleClick} disabled={!isPlaying}>
             <View onLayout={onLayout} style={[{paddingTop: SPACING.s}, style]}>
                 <ProgressBar progress={progress} color={MD3Colors.primary50} style={style} pointerEvents={'none'} />
             </View>

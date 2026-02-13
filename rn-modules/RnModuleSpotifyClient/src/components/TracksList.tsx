@@ -2,16 +2,24 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {FlatList, LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {log} from '@core/logger';
 import {QueueTrack} from '../types';
-import MiniPlayerTrack from './MiniPlayerTrack';
+import {MiniPlayerTrack} from './index';
 import {useSpotifyPlayer} from '../hooks';
 
-const TracksList = () => {
-    const {queueTracks, trackUri, setUri} = useSpotifyPlayer();
+export interface TracksListProps {
+    queueTracks?: QueueTrack[];
+}
+
+const TracksList = ({queueTracks: queueTracksProp}: TracksListProps = {}) => {
+    const {queueTracks: queueTracksHook, trackUri, setUri} = useSpotifyPlayer();
+    const queueTracks = queueTracksProp ?? queueTracksHook;
     const flatListRef = useRef<FlatList<QueueTrack>>(null);
     const [containerWidth, setContainerWidth] = useState(0);
 
     const isScrollingProgrammatically = useRef(false);
     const lastOffsetXRef = useRef(0);
+    const lastTrackUriRef = useRef<string>('');
+
+    log.debug(`TracksList: Rendering with ${queueTracks?.length ?? 0} tracks, trackUri=${trackUri}`);
 
     const onLayout = useCallback((e: LayoutChangeEvent) => {
         const width = e.nativeEvent.layout.width;
@@ -32,12 +40,19 @@ const TracksList = () => {
             return;
         }
 
+        if (lastTrackUriRef.current === trackUri) {
+            return;
+        }
+
         const index = queueTracks.findIndex(track => track.trackUri === trackUri);
 
         if (index < 0) return;
 
-        log.debug(`TracksList: scrollToIndex ${index} for ${trackUri}`);
+        log.debug(
+            `TracksList: scrollToIndex ${index} for ${trackUri} (trackUri changed from ${lastTrackUriRef.current})`,
+        );
 
+        lastTrackUriRef.current = trackUri;
         isScrollingProgrammatically.current = true;
 
         flatListRef.current?.scrollToIndex({
@@ -45,18 +60,26 @@ const TracksList = () => {
             animated: true,
             viewPosition: 0,
         });
-
-        setTimeout(() => {
-            isScrollingProgrammatically.current = false;
-        }, 400);
     }, [trackUri, queueTracks, containerWidth]);
 
     const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
         lastOffsetXRef.current = e.nativeEvent.contentOffset.x;
+        log.debug(`TracksList: onScroll offset=${e.nativeEvent.contentOffset.x}`);
+    }, []);
+
+    const onScrollBeginDrag = useCallback(() => {
+        log.debug('TracksList: onScrollBeginDrag - user started dragging');
+        isScrollingProgrammatically.current = false;
     }, []);
 
     const onMomentumScrollEnd = useCallback(() => {
-        if (isScrollingProgrammatically.current) return;
+        log.debug(`TracksList: onMomentumScrollEnd isProgrammatic=${isScrollingProgrammatically.current}`);
+
+        if (isScrollingProgrammatically.current) {
+            isScrollingProgrammatically.current = false;
+            log.debug('TracksList: Ignoring momentum end (programmatic scroll)');
+            return;
+        }
         if (containerWidth <= 0) return;
 
         const index = Math.round(lastOffsetXRef.current / containerWidth);
@@ -69,6 +92,7 @@ const TracksList = () => {
         if (!item?.trackUri) return;
         if (item.trackUri === trackUri) return;
 
+        log.debug(`TracksList: Changing track to ${item.trackUri}`);
         setUri(item.trackUri);
     }, [containerWidth, queueTracks, trackUri, setUri]);
 
@@ -96,6 +120,7 @@ const TracksList = () => {
             getItemLayout={containerWidth > 0 ? getItemLayout : undefined}
             onScroll={onScroll}
             scrollEventThrottle={16}
+            onScrollBeginDrag={onScrollBeginDrag}
             onMomentumScrollEnd={onMomentumScrollEnd}
             showsHorizontalScrollIndicator={false}
         />

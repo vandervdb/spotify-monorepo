@@ -2,15 +2,14 @@ import {Card, Text} from 'react-native-paper';
 import {TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import {BORDER_RADIUS, COLORS, SPACING} from '../theme';
+import {useSpotifySession} from '../hooks';
 
-export interface MiniPlayerDisconnectedProps {
-    authenticate?: () => void;
-}
+const MiniPlayerDisconnected = () => {
+    const {authenticateUser} = useSpotifySession();
 
-const MiniPlayerDisconnected = ({authenticate}: MiniPlayerDisconnectedProps) => {
     return (
         <Card style={styles.container}>
-            <TouchableOpacity style={styles.authButton} onPress={authenticate}>
+            <TouchableOpacity style={styles.authButton} onPress={authenticateUser}>
                 <Text style={styles.authText}>Se connecter à Spotify</Text>
             </TouchableOpacity>
         </Card>

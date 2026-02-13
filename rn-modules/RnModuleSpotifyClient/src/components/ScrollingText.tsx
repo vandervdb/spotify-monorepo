@@ -75,3 +75,5 @@ const styles = StyleSheet.create({
         marginVertical: 1, // Petite marge pour éviter que les glyphes hauts ne soient coupés par l'overflow
     },
 });
+
+export default ScrollingText;
