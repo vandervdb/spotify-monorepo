@@ -10,10 +10,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withTimeout
 import org.vander.core.domain.auth.IAuthRepository
 import org.vander.core.domain.state.DomainPlayerState
 import org.vander.core.domain.state.SessionState
@@ -34,6 +38,7 @@ class SpotifyBridge
         private val appContext: Context,
         private val logger: Logger,
     ) : SpotifyBridgeApi {
+        private val authTimeoutMs = 5_000L
         private val job = SupervisorJob()
         private val scope = CoroutineScope(Dispatchers.Main.immediate + job)
 
@@ -63,7 +68,8 @@ class SpotifyBridge
                     val dto = state.toPlayerStateDto(null)
                     logger.d(
                         TAG,
-                        "playerEvents: isPlaying=${dto.isPlaying}, posMs=${dto.positionMs}, durMs=${dto.durationMs}, uri=${dto.trackUri}",
+                        "playerEvents: isPlaying=${dto.isPlaying}, posMs=${dto.positionMs}, " +
+                            "durMs=${dto.durationMs}, uri=${dto.trackUri}",
                     )
                     lastState.value = dto
                     dto
@@ -96,11 +102,20 @@ class SpotifyBridge
          *
          * This method interacts with the `authRepository` to obtain an access token, which may be null
          * if the retrieval fails or if no valid token is present.
-         * Tis method is used by TurboModule to allow ts code to make spotify REST API calls (Playground).
+         * This method is used by TurboModule to allow ts code to make spotify REST API calls (Playground).
          *
          * @return The authentication token as a nullable String, or null if no token is available.
          */
-        override suspend fun getAuthToken(): String? = authRepository.getAccessToken().getOrNull()
+        override suspend fun awaitTokenOrNull(maxWaitMs: Long): String? {
+            val deadline = System.currentTimeMillis() + maxWaitMs
+            while (System.currentTimeMillis() < deadline) {
+                authRepository.getAccessToken().getOrNull()?.let { token ->
+                    if (token.isNotBlank()) return token
+                }
+                delay(100)
+            }
+            return null
+        }
 
         override suspend fun startUpWithModuleActivityResult(
             activity: Activity,
@@ -109,6 +124,18 @@ class SpotifyBridge
             logger.d(TAG, "startUpWithModuleActivityResult(activity=$activity, config=$config)")
             val launcher = ActivityResultFactory.register(activity, createAuthCallback())
             startUp(launcher, activity, config)
+        }
+
+        override suspend fun startUpWithModuleActivityResultAndGetToken(
+            activity: Activity,
+            config: AuthConfigK?,
+            timeoutMs: Long?,
+        ): AuthResult {
+            logger.d(TAG, "startUpWithModuleActivityResultAndGetToken(activity=$activity, config=$config)")
+            startUpWithHostActivityResult(activity, config)
+            return awaitAuthResult(
+                timeoutMs ?: authTimeoutMs,
+            )
         }
 
         override suspend fun startUpWithHostActivityResult(
@@ -126,6 +153,16 @@ class SpotifyBridge
                     createAuthCallback(),
                 )
             startUp(launcher, activity, config)
+        }
+
+        override suspend fun startUpWithHostActivityResultAndGetToken(
+            activity: Activity,
+            config: AuthConfigK?,
+            timeoutMs: Long?,
+        ): AuthResult {
+            logger.d(TAG, "startUpWithHostActivityResultAndGetToken(activity=$activity, config=$config)")
+            startUpWithHostActivityResult(activity, config)
+            return awaitAuthResult(timeoutMs ?: authTimeoutMs)
         }
 
         override suspend fun disconnect() {
@@ -194,6 +231,43 @@ class SpotifyBridge
 
             logger.d(TAG, "starting up PlayerUseCase")
             useCase.startUp()
+        }
+
+        suspend fun awaitAuthResult(timeout: Long = authTimeoutMs): AuthResult {
+            logger.d(TAG, "filterSessionState() - filtering session state")
+            return try {
+                val terminal =
+                    withTimeout(timeout) {
+                        sessionState.first { it is SessionState.Ready || it is SessionState.Failed }
+                    }
+
+                when (terminal) {
+                    is SessionState.Ready -> {
+                        logger.d(TAG, "SessionState.Ready")
+                        val token = awaitTokenOrNull()
+                        if (token.isNullOrBlank()) {
+                            AuthResult.Failed(AuthResult.Reason.TOKEN_MISSING, null)
+                        } else {
+                            AuthResult.Authenticated(token)
+                        }
+                    }
+
+                    is SessionState.Failed -> {
+                        logger.d(TAG, "SessionState.Failed - ${terminal.exception.message}")
+                        AuthResult.Failed(AuthResult.Reason.SESSION_FAILED, terminal.exception)
+                    }
+
+                    else ->
+                        AuthResult.Failed(
+                            AuthResult.Reason.UNEXPECTED,
+                            IllegalStateException("Unexpected state: $terminal"),
+                        )
+                }
+            } catch (e: TimeoutCancellationException) {
+                AuthResult.Failed(AuthResult.Reason.TIMEOUT, e)
+            } catch (t: Throwable) {
+                AuthResult.Failed(AuthResult.Reason.UNEXPECTED, t)
+            }
         }
 
         private fun createAuthCallback(): (ActivityResult) -> Unit =

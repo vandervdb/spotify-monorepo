@@ -39,19 +39,35 @@ ktlint {
 }
 
 spotless {
-
-    lineEndings = LineEnding.UNIX
+    lineEndings = com.diffplug.spotless.LineEnding.UNIX
 
     kotlin {
-        target("**/*.kt")
-        targetExclude("**/build/**", "**/node_modules/**")
+
+        target(
+            fileTree("android-lib") { include("**/*.kt") },
+            fileTree("apps/android-sample") { include("**/*.kt") },
+            fileTree("apps/RnSample/android/app") { include("**/*.kt") },
+            fileTree("packages/android") { include("**/*.kt") },
+            fileTree("rn-modules/RnModuleSpotifyClient/android/app") { include("**/*.kt") },
+        )
 
         ktlint(libs.versions.ktlint.get())
     }
 
     kotlinGradle {
-        target("**/*.gradle.kts")
-        targetExclude("**/build/**", "**/node_modules/**")
+        target(
+            files(
+                "settings.gradle.kts",
+                "build.gradle.kts",
+                "android-lib/build.gradle.kts",
+                "apps/android-sample/build.gradle.kts",
+                "packages/android/core-domain/build.gradle.kts",
+                "packages/android/core-dto/build.gradle.kts",
+                "packages/android/core-logger/build.gradle.kts",
+                "packages/android/core-ui/build.gradle.kts",
+                "packages/android/fake/build.gradle.kts",
+            ),
+        )
 
         ktlint(libs.versions.ktlint.get())
     }
@@ -60,7 +76,8 @@ spotless {
 // Désactive le configuration cache uniquement pour Spotless (évite l'état "stale" récurrent)
 tasks.withType<SpotlessTask>().configureEach {
     notCompatibleWithConfigurationCache(
-        "Spotless utilise un cache JVM-local pouvant devenir stale avec le configuration cache (issue diffplug/spotless#987).",
+        "Spotless utilise un cache JVM-local pouvant devenir stale avec le " +
+            "configuration cache (issue diffplug/spotless#987).",
     )
 }
 

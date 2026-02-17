@@ -27,12 +27,22 @@ data class AuthConfigK(
     }
 }
 
-data class AuthorizeResultK(
-    val type: Type,
-    val value: String? = null,
-    val error: String? = null,
-) {
-    enum class Type { Code, Token, Error }
+sealed class AuthResult {
+    data class Authenticated(
+        val accessToken: String,
+    ) : AuthResult()
+
+    data class Failed(
+        val reason: Reason,
+        val cause: Throwable? = null,
+    ) : AuthResult()
+
+    enum class Reason {
+        TIMEOUT,
+        SESSION_FAILED,
+        TOKEN_MISSING,
+        UNEXPECTED,
+    }
 }
 
 data class PlayerStateDto(

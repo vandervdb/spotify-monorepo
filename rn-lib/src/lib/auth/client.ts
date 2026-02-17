@@ -1,24 +1,23 @@
 import { API_CONSTANTS } from '@core/constants';
 import { AuthClient, Result } from '@core/domain';
-// import { NativeModules, Platform } from 'react-native';
 import { SpotifyTokenResponseDto } from '@core/dto';
 import { log } from '@core/logger';
 import { CreatePostApiFn } from '@http/client';
-import { authorize, AuthorizeResult } from 'react-native-app-auth';
+import SpotifyModuleSpec from 'rn-module-spotify-client/specs/NativeSpotifyClientModule';
 
 import { buildAuthConfig } from './utils/spotifyAuthUrl';
-
-// import { authorize as tmAuthorize } from '@spotify/spotify-auth-module';
 
 export class DefaultAuthClient implements AuthClient {
     constructor(private readonly createApi: CreatePostApiFn) {}
 
-    async getAuthorization(): Promise<AuthorizeResult | undefined> {
+    async getAuthorization(): Promise<void> {
         log.debug('startAuthorization');
         const config = buildAuthConfig();
         try {
             log.debug('startAuthorization::config:', JSON.stringify(config));
-            return await authorize(config);
+            return await SpotifyModuleSpec.startUpWithModuleActivityResult(
+                config,
+            );
         } catch (e) {
             log.error(
                 'startAuthorization::Une erreur est survenue en chargeant le token Spotify',

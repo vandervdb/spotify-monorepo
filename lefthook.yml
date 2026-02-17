@@ -10,9 +10,15 @@ pre-commit:
             glob: "*.{kt,kts}"
 
         # ---- Ktlint ----
+
+        ktlintFormat:
+            glob: "*.kt"
+            run: echo "\033[0;34m🔍 Running Ktlint Format...\033[0m" && ./gradlew ktlintFormat -x spotlessKotlin -x spotlessKotlinGradle || { echo "\033[0;31m❌ Ktlint Format FAILED!\033[0m" >&2; exit 1; }
+
         ktlint:
             glob: "*.kt"
             run: echo "\033[0;34m🔍 Running Ktlint checks...\033[0m" && ./gradlew ktlintCheck -x spotlessKotlin -x spotlessKotlinGradle || { echo "\033[0;31m❌ Ktlint checks FAILED!\033[0m" >&2; exit 1; }
+
 
         # ---- Prettier (TypeScript/JavaScript formatting) ----
         prettier:

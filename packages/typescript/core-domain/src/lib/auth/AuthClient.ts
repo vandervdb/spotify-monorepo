@@ -4,7 +4,7 @@ import { AuthorizeResult } from 'react-native-app-auth';
 import { Result } from '../types/Result';
 
 export interface AuthClient {
-    getAuthorization(): Promise<AuthorizeResult | undefined>;
+    getAuthorization(): Promise<void>;
 
     fetchRefreshToken(): Promise<Result<SpotifyTokenResponseDto>>;
 }

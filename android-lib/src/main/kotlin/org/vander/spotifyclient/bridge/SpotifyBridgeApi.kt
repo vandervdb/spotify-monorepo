@@ -19,17 +19,29 @@ interface SpotifyBridgeApi {
 
     fun getUIQueueState(): UIQueueState
 
-    suspend fun getAuthToken(): String?
+    suspend fun awaitTokenOrNull(maxWaitMs: Long = 1_000): String?
 
     suspend fun startUpWithModuleActivityResult(
         activity: Activity,
         config: AuthConfigK? = null,
     )
 
+    suspend fun startUpWithModuleActivityResultAndGetToken(
+        activity: Activity,
+        config: AuthConfigK? = null,
+        timeoutMs: Long? = null,
+    ): AuthResult
+
     suspend fun startUpWithHostActivityResult(
         activity: Activity,
         config: AuthConfigK? = null,
     )
+
+    suspend fun startUpWithHostActivityResultAndGetToken(
+        activity: Activity,
+        config: AuthConfigK? = null,
+        timeoutMs: Long? = null,
+    ): AuthResult
 
     suspend fun disconnect()
 
