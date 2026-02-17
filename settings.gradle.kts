@@ -38,6 +38,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "spotify-monorepo"
 include(":android-lib")
 include(":apps:android-sample")
+include(":packages:android:core-security")
 include(":packages:android:core-logger")
 include(":packages:android:core-domain")
 include(":packages:android:core-dto")

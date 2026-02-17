@@ -1,4 +1,4 @@
-# 📝 packages/core-logger
+# 📝 packages/core-security
 
 Shared Kotlin logger based on Kermit, intended for Android/JVM modules in the monorepo.
 
@@ -6,10 +6,7 @@ Shared Kotlin logger based on Kermit, intended for Android/JVM modules in the mo
 
 ## Overview
 
-- Language: Kotlin (JDK 17)
-- Platforms: Android/JVM
-- Lib: co.touchlab:kermit
-- Type: Android Library (no Compose)
+
 
 ---
 
@@ -25,13 +22,13 @@ Shared Kotlin logger based on Kermit, intended for Android/JVM modules in the mo
 From the monorepo root:
 
 ```bash
-./gradlew :packages:core-logger:assemble
+./gradlew :packages:core-security:assemble
 ```
 
 Add as dependency:
 
 ```kotlin
-api(project(":packages:core-logger"))
+api(project(":packages:core-security"))
 ```
 
 ---
@@ -39,7 +36,7 @@ api(project(":packages:core-logger"))
 ## Structure
 
 ```
-packages/core-logger/
+packages/core-security/
 ├─ build.gradle.kts
 ├─ consumer-rules.pro
 └─ src/
@@ -50,7 +47,9 @@ packages/core-logger/
 
 ## Tests
 
-To use core-logger in tests, use NoOpLogger or TestLogger implementation.
+```bash
+./gradlew :packages:core-security:test
+```
 
 ---
 

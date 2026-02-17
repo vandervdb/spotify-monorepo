@@ -61,6 +61,7 @@ spotless {
                 "build.gradle.kts",
                 "android-lib/build.gradle.kts",
                 "apps/android-sample/build.gradle.kts",
+                "packages/android/core-security/build.gradle.kts",
                 "packages/android/core-domain/build.gradle.kts",
                 "packages/android/core-dto/build.gradle.kts",
                 "packages/android/core-logger/build.gradle.kts",

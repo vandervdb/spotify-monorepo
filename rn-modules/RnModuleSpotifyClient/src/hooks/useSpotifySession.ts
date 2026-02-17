@@ -15,7 +15,7 @@ export const useSpotifySession = () => {
         () => ({
             startUpWithHostActivityResult: SpotifyModuleSpec.startUpWithHostActivityResult,
             startUpWithModuleActivityResult: SpotifyModuleSpec.startUpWithModuleActivityResult,
-            getAuthToken: SpotifyModuleSpec.getAuthToken,
+            awaitTokenOrNull: SpotifyModuleSpec.awaitTokenOrNull,
             getSessionState: SpotifyModuleSpec.getSessionState,
             disconnect: SpotifyModuleSpec.disconnect,
 
@@ -187,18 +187,18 @@ export const useSpotifySession = () => {
         }
     }, [isConnected, startWithHostActivityResult]);
 
-    const getAuthToken = useCallback(async () => {
+    const awaitTokenOrNull = useCallback(async () => {
         log.debug('useSpotifySession: Getting auth token');
         const r = await withCatch(async () => {
-            log.debug('useSpotifySession: Calling session.getAuthToken');
-            const token = await session.getAuthToken();
-            log.debug('useSpotifySession: getAuthToken completed');
+            log.debug('useSpotifySession: Calling session.awaitTokenOrNull');
+            const token = await session.awaitTokenOrNull();
+            log.debug('useSpotifySession: awaitTokenOrNull completed');
             return token;
         });
         if (r!) {
-            log.error('useSpotifySession: Error in getAuthToken', r);
+            log.error('useSpotifySession: Error in awaitTokenOrNull', r);
         } else {
-            log.debug('useSpotifySession: getAuthToken succeeded');
+            log.debug('useSpotifySession: awaitTokenOrNull succeeded');
         }
     }, []);
 
@@ -224,12 +224,12 @@ export const useSpotifySession = () => {
             authenticateUser,
             startWithModuleActivityResult,
             startWithHostActivityResult,
-            getAuthToken,
+            awaitTokenOrNull,
             connectionStatus,
             isConnected,
             disconnect,
             lastSessionError,
         }),
-        [showDialog, authenticateUser, getAuthToken, connectionStatus, isConnected, disconnect, lastSessionError],
+        [showDialog, authenticateUser, awaitTokenOrNull, connectionStatus, isConnected, disconnect, lastSessionError],
     );
 };

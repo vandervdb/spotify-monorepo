@@ -20,13 +20,14 @@ private val Context.dataStore by preferencesDataStore(name = "spotify_prefs")
 class DataStoreManager
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
         private val logger: Logger,
     ) : IDataStoreManager {
         companion object {
             private const val TAG = "DataStoreManager"
             private const val DATASTORE_NAME = "spotify_prefs"
             private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
+            private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
         }
 
         private val Context.dataStore by preferencesDataStore(name = DATASTORE_NAME)
@@ -68,4 +69,16 @@ class DataStoreManager
             } catch (e: IOException) {
                 Result.failure(e)
             }
+
+        override suspend fun saveRefreshToken(token: String): Result<Unit> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getRefreshToken(): Result<String> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun clearRefreshToken(): Result<Unit> {
+            TODO("Not yet implemented")
+        }
     }

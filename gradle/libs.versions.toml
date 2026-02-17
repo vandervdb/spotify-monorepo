@@ -32,6 +32,7 @@ compose-compiler = "1.5.15"
 
 # KotlinX
 coroutines = "1.8.1"
+tinkAndroid = "1.20.0"
 turbine = "1.0.0"
 runner = "1.5.2"
 serialization = "1.6.3"
@@ -131,6 +132,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tinkAndroid" }
 
 # ---------- Plugins ----------
 [plugins]

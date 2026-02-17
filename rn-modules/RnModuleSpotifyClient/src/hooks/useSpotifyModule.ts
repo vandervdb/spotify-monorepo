@@ -20,7 +20,7 @@ export const useSpotifyModule = () => {
             connectionStatus: session.connectionStatus,
             lastSessionError: session.lastSessionError,
             authenticateUser,
-            getAuthToken: session.getAuthToken,
+            awaitTokenOrNull: session.awaitTokenOrNull,
             disconnect: session.disconnect,
         };
     }, [session.isConnected, session.connectionStatus, session.lastSessionError]);

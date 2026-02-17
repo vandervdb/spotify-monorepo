@@ -24,7 +24,6 @@ function App(): React.JSX.Element {
                     <SafeAreaView style={styles.flex1}>
                         <View style={styles.container}>
                             <HeaderCard style={styles.topCard} />
-                            {/*<View style={styles.topCard}></View>*/}
                             <View style={styles.middleCard}></View>
                             <MiniPlayer />
                         </View>

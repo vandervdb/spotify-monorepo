@@ -45,24 +45,36 @@ export type TrackItem = {
     trackId?: string;
 };
 
+export type Reason = 'TIMEOUT' | 'SESSION_FAILED' | 'TOKEN_MISSING' | 'UNEXPECTED';
+
+export type Failed = {
+    reason: Reason;
+    cause: string;
+};
+
+export type AuthResult = {
+    accessToken?: string;
+    failed?: Failed;
+};
+
 export interface Spec extends TurboModule {
-    // PLAYER (sync session)
+    // SESSION
     startUp(config: AuthConfig): Promise<void>;
     startUpWithModuleActivityResult(config: AuthConfig): Promise<void>;
+    startUpWithModuleActivityResultAndGetToken(config: AuthConfig, timeoutMs?: number): Promise<AuthResult>;
     startUpWithHostActivityResult(config: AuthConfig): Promise<void>;
+    startUpWithHostActivityResultAndGetToken(config: AuthConfig, timeoutMs?: number): Promise<AuthResult>;
+    getSessionState(): Promise<SessionState>;
+    awaitTokenOrNull(maxWaitMs?: number): Promise<string>;
     disconnect(): Promise<void>;
+
+    // PLAYER
     playUri(uri: string): Promise<void>;
     pause(): Promise<void>;
     resume(): Promise<void>;
     seekTo(ms: number): Promise<void>;
-
-    // PLAYER
     getPlayerState(): Promise<PlayerState>;
     getQueueState(): Promise<QueueState>;
-
-    // SESSION
-    getSessionState(): Promise<SessionState>;
-    getAuthToken(): Promise<string>;
 
     addListener(eventName: string): void;
     removeListeners(count: number): void;

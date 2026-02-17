@@ -9,7 +9,7 @@ group = "org.vander.core"
 version = rootProject.findProperty("VERSION_NAME") ?: "0.1.0-SNAPSHOT"
 
 android {
-    namespace = "org.vander.core.logger"
+    namespace = "org.vander.core.security"
 
     compileSdk =
         libs.versions.android.compileSdk
@@ -53,21 +53,16 @@ kotlin {
 }
 
 dependencies {
-    api(libs.kotlinx.coroutines.core)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+
+    implementation(libs.datastore.preferences)
+
+    implementation(libs.tink.android)
+
+    implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.androidx.core.ktx)
 
-    api(libs.kermit)
-
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-    kapt(libs.androidx.hilt.compiler)
-
-    // Hilt(androidTest)
-    androidTestImplementation(libs.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.compiler)
-
-    // Hilt Unit tests
-    testImplementation(libs.hilt.android.testing)
-    kaptTest(libs.hilt.compiler)
+    androidTestImplementation(libs.androidx.test.ext.junit)
 }

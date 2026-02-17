@@ -1,10 +1,10 @@
+import { AuthResult } from '@core/domain/lib/auth/AuthResult';
 import { SpotifyTokenResponseDto } from '@core/dto';
-import { AuthorizeResult } from 'react-native-app-auth';
 
 import { Result } from '../types/Result';
 
 export interface AuthClient {
-    getAuthorization(): Promise<void>;
+    getAuthorization(): Promise<Result<AuthResult>>;
 
     fetchRefreshToken(): Promise<Result<SpotifyTokenResponseDto>>;
 }

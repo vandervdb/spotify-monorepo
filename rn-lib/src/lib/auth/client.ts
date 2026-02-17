@@ -1,5 +1,5 @@
 import { API_CONSTANTS } from '@core/constants';
-import { AuthClient, Result } from '@core/domain';
+import { AuthClient, AuthResult, Result } from '@core/domain';
 import { SpotifyTokenResponseDto } from '@core/dto';
 import { log } from '@core/logger';
 import { CreatePostApiFn } from '@http/client';
@@ -10,20 +10,22 @@ import { buildAuthConfig } from './utils/spotifyAuthUrl';
 export class DefaultAuthClient implements AuthClient {
     constructor(private readonly createApi: CreatePostApiFn) {}
 
-    async getAuthorization(): Promise<void> {
+    async getAuthorization(): Promise<Result<AuthResult>> {
         log.debug('startAuthorization');
         const config = buildAuthConfig();
         try {
             log.debug('startAuthorization::config:', JSON.stringify(config));
-            return await SpotifyModuleSpec.startUpWithModuleActivityResult(
-                config,
-            );
+            const tokenResponse =
+                await SpotifyModuleSpec.startUpWithModuleActivityResultAndGetToken(
+                    config,
+                );
+            return { ok: true, value: tokenResponse };
         } catch (e) {
             log.error(
                 'startAuthorization::Une erreur est survenue en chargeant le token Spotify',
                 e,
             );
-            return undefined;
+            return { ok: false, error: e as Error };
         }
     }
 
