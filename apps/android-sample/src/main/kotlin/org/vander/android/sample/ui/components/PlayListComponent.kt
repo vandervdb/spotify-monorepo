@@ -11,20 +11,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Audiotrack
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.vander.core.domain.data.Playlist
 import org.vander.core.ui.presentation.viewmodel.PlaylistViewModel
 
@@ -34,7 +29,7 @@ fun PlaylistComponent(
     viewModel: PlaylistViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val playlistCollection by viewModel.playlists.collectAsState()
+    val playlistCollection by viewModel.playlists.collectAsStateWithLifecycle()
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(60.dp),
@@ -58,12 +53,6 @@ fun PlaylistCoverItem(playlist: Playlist) {
     val id = playlist.id
     val name = playlist.name
     val coverUrl = playlist.coverUrl
-    val painter =
-        rememberAsyncImagePainter(
-            model = coverUrl,
-            placeholder = rememberVectorPainter(Icons.Default.Audiotrack),
-            error = rememberVectorPainter(Icons.Default.Error),
-        )
     val modifier =
         Modifier
             .fillMaxWidth()
@@ -81,9 +70,8 @@ fun PlaylistCoverItem(playlist: Playlist) {
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         SpotifyTrackCover(
-            modifier,
-            coverUrl,
-            painter,
+            modifier = modifier,
+            model = coverUrl,
         )
         Text(
             text = name,

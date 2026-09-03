@@ -27,7 +27,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,12 +40,17 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import org.vander.android.sample.ui.components.preview.PreviewMiniPlayerWithLocalCover
 import org.vander.core.domain.state.SessionState
 import org.vander.core.logger.Logger
 import org.vander.core.ui.domain.UIQueueItem
 import org.vander.core.ui.presentation.viewmodel.PlayerViewModel
+
+// Spotify's own "restart vs. go to previous track" cutoff for skipPrevious() — not
+// documented by the SDK, approximated from observed behavior. Tune if it misfires.
+private const val SKIP_PREVIOUS_RESTART_THRESHOLD_MS = 3000L
 
 data class TrackParams(
     val tracksQueue: List<UIQueueItem>,
@@ -63,12 +67,13 @@ fun MiniPlayer(
     viewModel: PlayerViewModel,
     logger: Logger,
 ) {
-    val playerState by viewModel.domainPlayerState.collectAsState()
-    val uIQueueState by viewModel.uiQueueState.collectAsState()
+    val playerState by viewModel.domainPlayerState.collectAsStateWithLifecycle()
+    val uIQueueState by viewModel.uiQueueState.collectAsStateWithLifecycle()
 
     logger.d("MiniPlayer", "Session is ready")
     logger.d("MiniPlayer", "Player state: $playerState")
     logger.d("MiniPlayer", "Queue state: $uIQueueState")
+
     if (uIQueueState.items.isNotEmpty()) {
         MiniPlayerContent(
             trackParams =
@@ -124,23 +129,34 @@ private fun MiniPlayerContent(
     var suppressSwipeCallback by remember { mutableStateOf(false) }
 
     LaunchedEffect(currentTrackId) {
-        val index = trackParams.tracksQueue.indexOfFirst { it.trackId == currentTrackId }
-        if (index >= 0 && index != pagerState.currentPage) {
+        if (currentTrackIndex >= 0 && currentTrackIndex != pagerState.currentPage) {
             suppressSwipeCallback = true
-            pagerState.animateScrollToPage(index)
+            pagerState.animateScrollToPage(currentTrackIndex)
             delay(300)
             suppressSwipeCallback = false
         }
     }
     LaunchedEffect(pagerState.currentPage) {
-        if (!suppressSwipeCallback) {
+        // currentTrackIndex == -1 means domainPlayerState hasn't caught up with a freshly
+        // rebuilt uiQueueState yet — the real current track isn't identified in the queue,
+        // so page 0 can't be trusted as a user swipe target.
+        if (!suppressSwipeCallback && currentTrackIndex >= 0) {
             val newTrackId = trackParams.tracksQueue.getOrNull(pagerState.currentPage)?.trackId
             if (newTrackId != null && newTrackId != currentTrackId) {
                 logger.d("MiniPlayer", "Swiped to trackId=$newTrackId")
                 val newTrackIndex = trackParams.tracksQueue.indexOfFirst { it.trackId == newTrackId }
                 if (currentTrackIndex > newTrackIndex) {
+                    // Spotify's skipPrevious() only moves to the previous track when called
+                    // close to the start of the current one; past that, it restarts the
+                    // current track instead (confirmed via SpotifyPlayerClient logs: call
+                    // accepted, track unchanged, position reset to 0). So: if we're already
+                    // near the start, one call is enough; otherwise the first call just
+                    // restarts and a second one (now near position 0) is needed to actually
+                    // move back.
                     skipPrevious()
-                    skipPrevious()
+                    if (trackParams.positionMS > SKIP_PREVIOUS_RESTART_THRESHOLD_MS) {
+                        skipPrevious()
+                    }
                 } else {
                     skipNext()
                 }
@@ -272,9 +288,9 @@ fun MiniPlayerWithPainter(
     coverPainter: Painter,
     logger: Logger,
 ) {
-    val sessionState by viewModel.sessionState.collectAsState()
-    val playerState by viewModel.domainPlayerState.collectAsState()
-    val uIQueueState by viewModel.uiQueueState.collectAsState()
+    val sessionState by viewModel.sessionState.collectAsStateWithLifecycle()
+    val playerState by viewModel.domainPlayerState.collectAsStateWithLifecycle()
+    val uIQueueState by viewModel.uiQueueState.collectAsStateWithLifecycle()
 
     if (sessionState is SessionState.Ready) {
         MiniPlayerContent(

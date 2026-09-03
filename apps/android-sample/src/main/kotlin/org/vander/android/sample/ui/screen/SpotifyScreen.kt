@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.vander.android.sample.R
 import org.vander.android.sample.theme.AndroidAppTheme
@@ -58,8 +58,8 @@ fun SpotifyScreen(
     navController: NavController? = null,
 ) {
     val tag = "SpotifyScreen"
-    val sessionState by playerViewModel.sessionState.collectAsState()
-    val user by userViewModel.currentUser.collectAsState(User.empty)
+    val sessionState by playerViewModel.sessionState.collectAsStateWithLifecycle()
+    val user by userViewModel.currentUser.collectAsStateWithLifecycle(User.empty)
 
     if (launchStartup) {
         val activity = LocalActivity.current

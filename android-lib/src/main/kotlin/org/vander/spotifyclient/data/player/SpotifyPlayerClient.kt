@@ -66,36 +66,68 @@ class SpotifyPlayerClient
 
         override suspend fun play(trackUri: String) {
             logger.d(TAG, "play trackUri: $trackUri")
-            playerApi?.play(trackUri)
+            playerApi
+                ?.play(trackUri)
+                ?.setResultCallback { logger.d(TAG, "play: accepted") }
+                ?.setErrorCallback { logger.e(TAG, "play: failed", it) }
+                ?: logger.e(TAG, "play: spotifyPlayerApi is null")
         }
 
         override suspend fun pause() {
-            playerApi?.pause()
+            playerApi
+                ?.pause()
+                ?.setResultCallback { logger.d(TAG, "pause: accepted") }
+                ?.setErrorCallback { logger.e(TAG, "pause: failed", it) }
+                ?: logger.e(TAG, "pause: spotifyPlayerApi is null")
         }
 
         override suspend fun resume() {
             logger.d(TAG, "resume: ")
-            playerApi?.resume()
+            playerApi
+                ?.resume()
+                ?.setResultCallback { logger.d(TAG, "resume: accepted") }
+                ?.setErrorCallback { logger.e(TAG, "resume: failed", it) }
+                ?: logger.e(TAG, "resume: spotifyPlayerApi is null")
         }
 
         override suspend fun skipNext() {
-            playerApi?.skipNext()
+            playerApi
+                ?.skipNext()
+                ?.setResultCallback { logger.d(TAG, "skipNext: accepted") }
+                ?.setErrorCallback { logger.e(TAG, "skipNext: failed", it) }
+                ?: logger.e(TAG, "skipNext: spotifyPlayerApi is null")
         }
 
         override suspend fun skipPrevious() {
-            playerApi?.skipPrevious()
+            playerApi
+                ?.skipPrevious()
+                ?.setResultCallback { logger.d(TAG, "skipPrevious: accepted") }
+                ?.setErrorCallback { logger.e(TAG, "skipPrevious: failed", it) }
+                ?: logger.e(TAG, "skipPrevious: spotifyPlayerApi is null")
         }
 
         override fun seekTo(position: Long) {
-            playerApi?.seekTo(position)
+            playerApi
+                ?.seekTo(position)
+                ?.setResultCallback { logger.d(TAG, "seekTo: accepted") }
+                ?.setErrorCallback { logger.e(TAG, "seekTo: failed", it) }
+                ?: logger.e(TAG, "seekTo: spotifyPlayerApi is null")
         }
 
         override fun setShuffle(shuffle: Boolean) {
-            playerApi?.setShuffle(shuffle)
+            playerApi
+                ?.setShuffle(shuffle)
+                ?.setResultCallback { logger.d(TAG, "setShuffle: accepted") }
+                ?.setErrorCallback { logger.e(TAG, "setShuffle: failed", it) }
+                ?: logger.e(TAG, "setShuffle: spotifyPlayerApi is null")
         }
 
         override fun setRepeat(repeat: Int) {
-            playerApi?.setRepeat(repeat)
+            playerApi
+                ?.setRepeat(repeat)
+                ?.setResultCallback { logger.d(TAG, "setRepeat: accepted") }
+                ?.setErrorCallback { logger.e(TAG, "setRepeat: failed", it) }
+                ?: logger.e(TAG, "setRepeat: spotifyPlayerApi is null")
         }
 
         override fun isPlaying(): Boolean = isPlaying

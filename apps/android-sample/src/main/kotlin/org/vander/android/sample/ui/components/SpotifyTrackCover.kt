@@ -12,10 +12,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import org.vander.android.sample.R
 import org.vander.androidapp.data.util.SPOTIFY_COVER_UI
 
@@ -25,27 +27,40 @@ fun SpotifyTrackCover(
     modifier: Modifier = Modifier,
     imageUri: String? = null,
     painter: Painter? = null,
+    model: Any? = null,
 ) {
-    val finalPainter =
-        painter ?: rememberAsyncImagePainter(
-            model = "$SPOTIFY_COVER_UI$imageUri",
-            placeholder = rememberVectorPainter(Icons.Default.Audiotrack),
-            error = rememberVectorPainter(Icons.Default.Error),
+    val shape =
+        RoundedCornerShape(
+            topEnd = 4.dp,
+            topStart = 4.dp,
+            bottomEnd = 4.dp,
+            bottomStart = 4.dp,
         )
 
-    Image(
-        painter = finalPainter,
+    if (painter != null) {
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = modifier.clip(shape),
+            contentScale = ContentScale.Crop,
+        )
+        return
+    }
+
+    val request =
+        ImageRequest
+            .Builder(LocalContext.current)
+            .data(model ?: "$SPOTIFY_COVER_UI$imageUri")
+            .crossfade(true)
+            .build()
+
+    AsyncImage(
+        model = request,
         contentDescription = null,
-        modifier =
-            modifier.clip(
-                RoundedCornerShape(
-                    topEnd = 4.dp,
-                    topStart = 4.dp,
-                    bottomEnd = 4.dp,
-                    bottomStart = 4.dp,
-                ),
-            ),
+        placeholder = rememberVectorPainter(Icons.Default.Audiotrack),
+        error = rememberVectorPainter(Icons.Default.Error),
         contentScale = ContentScale.Crop,
+        modifier = modifier.clip(shape),
     )
 }
 
