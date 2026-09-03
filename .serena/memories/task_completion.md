@@ -1,0 +1,3 @@
+Kotlin change: run the touched module's unit tests (`./gradlew :packages:android:<module>:testDebugUnitTest` or `:android-lib:...`/`:apps:android-sample:...`). ktlint/Spotless have `ignoreFailures = true` so they will NOT fail CI/local runs on style violations — do not rely on them as a correctness gate, only `./gradlew test`/`lint`/`assembleDebug` (enforced at pre-push via lefthook) are hard gates.
+
+TS/RN change: `yarn workspace <pkg> test`, `yarn workspace <pkg> typecheck` (or `tsc --noEmit`/`tsc -b` per package script), `yarn workspace <pkg> lint`. Pre-push (lefthook) additionally runs the RN app's `npm test` in a `root: "react-native"` context — verify that path still resolves if `lefthook.yml` changes.

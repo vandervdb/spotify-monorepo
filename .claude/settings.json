@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew *)",
+      "Bash(adb *)",
+      "Bash(yarn *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(git *)"
+    ]
+  }
+}

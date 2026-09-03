@@ -1,0 +1,5 @@
+Android (from repo root): `./gradlew :packages:android:core-security:testDebugUnitTest` (module-scoped unit tests), `./gradlew test` (all), `./gradlew lint`, `./gradlew assembleDebug`, `./gradlew ktlintFormat`, `./gradlew checkCatalogConsistency` (custom task: fails if a `libs.versions.toml` version key is declared but unused), `./gradlew checkVersionHardcodedUsages` (custom task: fails if any `dependencies {}` block uses a hardcoded GAV string instead of `libs.*`).
+
+TS/RN (from repo root, Yarn workspaces): `yarn workspaces foreach -A -p -t run <script>` is the pattern behind `yarn build`/`yarn lint`/`yarn test`/`yarn typecheck`/`yarn clean`. Single package: `yarn workspace <pkg-name> <script>` (package names are scoped, e.g. `@core/domain`, `@spotify/client`, `rn-sample`, `rn-module-spotify-client` — not directory names). App run: `yarn android` / `yarn ios` / `yarn start` (delegates to `rn-sample` workspace).
+
+Darwin-specific: no GNU-only flag divergence observed in scripts; standard `find`/`grep` (BSD) used directly in ad-hoc searches, not the repo's own tooling.

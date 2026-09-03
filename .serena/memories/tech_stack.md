@@ -1,0 +1,7 @@
+Root: Yarn 4.10.3 (Berry, workspaces) + Gradle 9.1 (Kotlin DSL, version catalog `gradle/libs.versions.toml`, `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`).
+
+Android/Kotlin: Kotlin 1.9.25 pinned repo-wide via `resolutionStrategy.force` (root `build.gradle.kts` + `android-lib`), JVM target 17, AGP, Hilt (DI), Jetpack Compose + Material3, Ktor client (network), DataStore (prefs), Tink (crypto, `core-security`), Coil (images), kotlinx-serialization + kotlinx-coroutines, Gson (legacy, `apps/android-sample` only). Lint: ktlint (via `org.jlleitschuh.gradle.ktlint`, `ignoreFailures = true` repo-wide — does NOT fail builds) + Spotless (line endings/format only, config-cache disabled for it due to diffplug/spotless#987).
+
+TypeScript/RN: TypeScript 5.9, React 18.3.1, React Native 0.76.3 pinned via root `resolutions`, MobX + mobx-react-lite (state management in `rn-lib` stores, not Redux), Jest, ESLint flat config (`eslint.config.mjs`, largely unconfigured — no custom rules beyond TS parser), Prettier (singleQuote, semi, printWidth 80, trailingComma all, `@trivago/prettier-plugin-sort-imports` with explicit `importOrder`). `turbo.json` exists but is minimal (build/lint/test pipeline only).
+
+Git hooks: `lefthook.yml` — pre-commit runs Spotless/ktlint (Kotlin) and Prettier/ESLint (TS) per changed-file glob; pre-push runs `./gradlew lint`, `./gradlew test`, RN jest tests, and `./gradlew assembleDebug`.
