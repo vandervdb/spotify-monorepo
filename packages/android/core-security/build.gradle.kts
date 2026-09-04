@@ -64,5 +64,11 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
 
+    testImplementation(kotlin("test"))
+    testImplementation(libs.junit4)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.kotlinx.turbine)
+    testImplementation(libs.mockk)
+
     androidTestImplementation(libs.androidx.test.ext.junit)
 }
