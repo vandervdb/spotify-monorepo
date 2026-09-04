@@ -32,6 +32,23 @@ Ce repo est un terrain d'entraînement personnel : consolidation des technos emp
 Format suggéré après un diff non trivial :
 > 📚 **Pourquoi** : *(règle/principe appliqué, 1-3 phrases, compromis éventuel)*
 
+### Repères techniques du repo (pour ancrer les explications)
+
+Points d'ancrage concrets à citer/illustrer quand une explication pédagogique s'y prête — vérifier le fichier réel avant de s'y fier, ces repères évoluent avec le code :
+
+| Domaine | API / pattern clé | Exemple dans ce repo |
+|---|---|---|
+| DI Android | Hilt : `@HiltViewModel` + `@Inject constructor`, `@Binds` (interface→impl) vs `@Provides` (objets non constructibles), `@InstallIn(<scope>)` au plus étroit possible | `android-lib/.../di/` — 1 module par concern (`AuthModule`, `NetworkModule`, `PlayerModule`, `RepositoryModule`, ...) |
+| State UI Android | `MutableStateFlow` privé exposé en `StateFlow` via `.asStateFlow()`, collecté côté Compose avec `collectAsStateWithLifecycle()` (pas `collectAsState()`) | ViewModels de `apps/android-sample` |
+| Crypto multi-backend | Split `api/` (interfaces `CryptoEngine`, `KeysetRepository`, `SecureTokenStorage`) / `impl/tink` (`TinkCryptoEngine`, `TinkKeysetHandleProvider`) / `impl/storage` (`DataStoreKeysetRepository`) — pattern spécifique à ce module, pas à généraliser ailleurs | `packages/android/core-security` |
+| Compose bas niveau | `Layout` custom (mesure/placement manuel), `BoxWithConstraints` (contraintes du parent connues en composition), `Animatable` + `LaunchedEffect`, `rememberTextMeasurer` | `MarqueeTextInfinite.kt` |
+| Logging Android | Interface `Logger` (`core-logger`, backée par Kermit) injectée via Hilt — jamais `android.util.Log` direct dans un module qui dépend de `core-logger` | `LoggerModule`, `KermitLoggerImpl` |
+| Tests Android | JUnit4 + MockK (`every`/`coEvery`, pas Mockito) + Turbine (`.test { awaitItem() }` sur un `Flow`) + `kotlinx-coroutines-test` (`runTest`) | `android-lib/src/test/kotlin` |
+| State management RN | MobX : `makeAutoObservable`, mutations via méthodes explicites + `runInAction` pour l'async, classe implémentant une interface `@core/domain` | `rn-lib/src/lib/auth/store.ts` (`DefaultAuthStore implements AuthStore`) |
+| DI RN | Injection manuelle par constructeur — un objet `deps: { authClient, storage, ... }` d'interfaces, jamais un singleton global importé directement | `rn-lib/src/lib/<feature>/service.ts` |
+| Pont natif RN | TurboModule JSI avec codegen (`codegenConfig` + `specs/`) — éditer le spec, pas le généré | `rn-modules/RnModuleSpotifyClient` |
+| Contrats cross-module | Interfaces/types purs, zéro dépendance Android/Compose côté Kotlin ou React côté TS | `core-domain` (Kotlin), `@core/domain` (TS) |
+
 ## Project Overview
 
 **`spotify-monorepo`** — Yarn 4 / Gradle 8 monorepo exploring a cross-platform architecture (native Android + React Native, iOS planned) around the Spotify Web/App APIs. Two independent trees that do **not** share code or build together:
@@ -92,6 +109,17 @@ Config in `lefthook.yml`. Pre-commit: Spotless/ktlint checks for `*.kt`/`*.kts`,
 - **Secrets**: environment variables / `local.properties` / `.env` only — never hardcoded, never committed.
 
 ---
+
+## Revue des changements dans Android Studio [Enforced]
+
+Après avoir créé ou modifié un ou plusieurs fichiers **Kotlin/Android** (`android-lib/`, `apps/android-sample/`, `packages/android/*`), ouvre-les dans Android Studio pour que je puisse valider/commenter avant de considérer l'étape terminée :
+
+```bash
+open -a "Android Studio" <fichier1> <fichier2> ...
+```
+
+- En mode "point par point" (plusieurs étapes validées une à une), ouvrir après **chaque point livré**, pas seulement à la toute fin de la tâche.
+- Champ d'application : arbre Android/Kotlin uniquement — Android Studio est l'IDE dédié à cet arbre (cf. profil dev dans `~/.claude/CLAUDE.md`). Non pertinent pour `rn-lib`/TypeScript.
 
 ## Requirements
 
